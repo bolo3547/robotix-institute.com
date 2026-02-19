@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import LanguageToggle from '@/components/layout/LanguageToggle';
 import ThemeToggle from '@/components/layout/ThemeToggle';
+import { useTheme } from '@/hooks/useTheme';
 
 function getDashboardPath(role?: string) {
   switch (role) {
@@ -20,6 +21,7 @@ function getDashboardPath(role?: string) {
 export default function Header() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  const { isDark } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState('/logo.svg');
 
@@ -104,7 +106,11 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+    <header className={`sticky top-0 z-50 backdrop-blur-sm border-b shadow-sm ${
+      isDark 
+        ? 'bg-slate-900/95 border-slate-700' 
+        : 'bg-white/95 border-gray-200'
+    }`}>
       <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
@@ -129,8 +135,10 @@ export default function Header() {
                 href={link.href}
                 className={`px-4 py-2 text-sm rounded-lg transition-colors ${
                   isActive
-                    ? 'text-brand-600 bg-brand-50 font-semibold'
-                    : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
+                    ? 'text-brand-500 bg-brand-50/10 font-semibold'
+                    : isDark 
+                      ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-800'
+                      : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
                 }`}
               >
                 {link.label}
@@ -141,15 +149,25 @@ export default function Header() {
 
         {/* Platform dropdown */}
         <div className="hidden md:flex items-center relative group">
-          <button className="px-4 py-2 text-sm text-accent-600 hover:text-accent-700 hover:bg-accent-50 rounded-lg transition-colors font-medium">
+          <button className={`px-4 py-2 text-sm rounded-lg transition-colors font-medium ${
+            isDark 
+              ? 'text-accent-400 hover:text-accent-300 hover:bg-slate-800' 
+              : 'text-accent-600 hover:text-accent-700 hover:bg-accent-50'
+          }`}>
             Platform ▾
           </button>
-          <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-200 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+          <div className={`absolute top-full right-0 mt-1 w-48 border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 ${
+            isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
+          }`}>
             {platformLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-4 py-2.5 text-sm text-gray-600 hover:text-brand-600 hover:bg-brand-50 first:rounded-t-xl last:rounded-b-xl transition-colors"
+                className={`block px-4 py-2.5 text-sm first:rounded-t-xl last:rounded-b-xl transition-colors ${
+                  isDark 
+                    ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-700' 
+                    : 'text-gray-600 hover:text-brand-600 hover:bg-brand-50'
+                }`}
               >
                 {link.label}
               </Link>
@@ -159,15 +177,25 @@ export default function Header() {
 
         {/* More dropdown */}
         <div className="hidden md:flex items-center relative group">
-          <button className="px-4 py-2 text-sm text-gray-700 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors">
+          <button className={`px-4 py-2 text-sm rounded-lg transition-colors ${
+            isDark 
+              ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-800' 
+              : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
+          }`}>
             More ▾
           </button>
-          <div className="absolute top-full right-0 mt-1 w-44 bg-white border border-gray-200 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+          <div className={`absolute top-full right-0 mt-1 w-44 border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 ${
+            isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
+          }`}>
             {moreLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-4 py-2.5 text-sm text-gray-600 hover:text-brand-600 hover:bg-brand-50 first:rounded-t-xl last:rounded-b-xl transition-colors"
+                className={`block px-4 py-2.5 text-sm first:rounded-t-xl last:rounded-b-xl transition-colors ${
+                  isDark 
+                    ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-700' 
+                    : 'text-gray-600 hover:text-brand-600 hover:bg-brand-50'
+                }`}
               >
                 {link.label}
               </Link>
@@ -183,31 +211,45 @@ export default function Header() {
             <>
               <Link
                 href={getDashboardPath((session.user as any).role)}
-                className="px-4 py-2 text-sm font-medium text-accent-600 hover:text-accent-700 hover:bg-accent-50 rounded-lg transition-colors"
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  isDark 
+                    ? 'text-accent-400 hover:text-accent-300 hover:bg-slate-800' 
+                    : 'text-accent-600 hover:text-accent-700 hover:bg-accent-50'
+                }`}
               >
                 Dashboard
               </Link>
               <div className="relative group">
-                <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-brand-50 rounded-lg transition-colors">
+                <button className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  isDark ? 'text-slate-300 hover:bg-slate-800' : 'text-gray-700 hover:bg-brand-50'
+                }`}>
                   <span className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white text-xs font-bold">
                     {session.user.name?.charAt(0).toUpperCase() || 'U'}
                   </span>
                   <span className="max-w-[100px] truncate">{session.user.name?.split(' ')[0]}</span>
                 </button>
-                <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-200 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{session.user.name}</p>
-                    <p className="text-xs text-gray-500 truncate">{session.user.email}</p>
+                <div className={`absolute top-full right-0 mt-1 w-48 border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 ${
+                  isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
+                }`}>
+                  <div className={`px-4 py-3 border-b ${
+                    isDark ? 'border-slate-700' : 'border-gray-100'
+                  }`}>
+                    <p className={`text-sm font-semibold truncate ${isDark ? 'text-slate-100' : 'text-gray-900'}`}>{session.user.name}</p>
+                    <p className={`text-xs truncate ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>{session.user.email}</p>
                   </div>
                   <Link
                     href={getDashboardPath((session.user as any).role)}
-                    className="block px-4 py-2.5 text-sm text-gray-600 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                    className={`block px-4 py-2.5 text-sm transition-colors ${
+                      isDark ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-700' : 'text-gray-600 hover:text-brand-600 hover:bg-brand-50'
+                    }`}
                   >
                     My Dashboard
                   </Link>
                   <button
                     onClick={() => signOut({ callbackUrl: '/' })}
-                    className="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-b-xl transition-colors"
+                    className={`block w-full text-left px-4 py-2.5 text-sm rounded-b-xl transition-colors ${
+                      isDark ? 'text-red-400 hover:bg-slate-700' : 'text-red-600 hover:bg-red-50'
+                    }`}
                   >
                     Sign Out
                   </button>
@@ -218,7 +260,9 @@ export default function Header() {
             <>
               <Link
                 href="/auth/login"
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors"
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  isDark ? 'text-slate-300 hover:text-brand-400' : 'text-gray-600 hover:text-brand-600'
+                }`}
               >
                 Log in
               </Link>
@@ -234,7 +278,7 @@ export default function Header() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden p-2 -mr-2 text-gray-600 hover:text-brand-600"
+          className={`md:hidden p-2 -mr-2 transition-colors ${isDark ? 'text-slate-300 hover:text-brand-400' : 'text-gray-600 hover:text-brand-600'}`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -252,7 +296,9 @@ export default function Header() {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white px-6 py-4">
+        <div className={`md:hidden border-t px-6 py-4 ${
+          isDark ? 'border-slate-700 bg-slate-900' : 'border-gray-200 bg-white'
+        }`}>
           <div className="space-y-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
@@ -262,8 +308,10 @@ export default function Header() {
                   href={link.href}
                   className={`block px-3 py-2.5 rounded-lg transition-colors ${
                     isActive
-                      ? 'text-brand-600 bg-brand-50 font-semibold'
-                      : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
+                      ? 'text-brand-500 bg-brand-50/10 font-semibold'
+                      : isDark
+                        ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-800'
+                        : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -272,37 +320,41 @@ export default function Header() {
               );
             })}
           </div>
-          <div className="mt-2 pt-2 border-t border-gray-200 space-y-1">
-            <p className="px-3 py-1 text-xs font-semibold text-accent-600 uppercase tracking-wider">Platform</p>
+          <div className={`mt-2 pt-2 border-t space-y-1 ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
+            <p className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-accent-400' : 'text-accent-600'}`}>Platform</p>
             {platformLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-3 py-2.5 text-gray-700 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                className={`block px-3 py-2.5 rounded-lg transition-colors ${
+                  isDark ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-800' : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
           </div>
-          <div className="mt-2 pt-2 border-t border-gray-200 space-y-1">
-            <p className="px-3 py-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">More</p>
+          <div className={`mt-2 pt-2 border-t space-y-1 ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
+            <p className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-gray-400'}`}>More</p>
             {moreLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-3 py-2.5 text-gray-700 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                className={`block px-3 py-2.5 rounded-lg transition-colors ${
+                  isDark ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-800' : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-200 flex items-center gap-2 px-3">
+          <div className={`mt-3 pt-3 border-t flex items-center gap-2 px-3 ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
             <LanguageToggle />
             <ThemeToggle />
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-200 space-y-2">
+          <div className={`mt-3 pt-3 border-t space-y-2 ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
             {status === 'authenticated' && session?.user ? (
               <>
                 <Link
@@ -314,7 +366,9 @@ export default function Header() {
                 </Link>
                 <button
                   onClick={() => { setMobileMenuOpen(false); signOut({ callbackUrl: '/' }); }}
-                  className="block w-full px-3 py-2.5 text-center text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className={`block w-full px-3 py-2.5 text-center rounded-lg transition-colors ${
+                    isDark ? 'text-red-400 hover:bg-slate-800' : 'text-red-600 hover:bg-red-50'
+                  }`}
                 >
                   Sign Out
                 </button>
@@ -323,7 +377,9 @@ export default function Header() {
               <>
                 <Link
                   href="/auth/login"
-                  className="block px-3 py-2.5 text-center text-gray-600 hover:bg-brand-50 rounded-lg transition-colors"
+                  className={`block px-3 py-2.5 text-center rounded-lg transition-colors ${
+                    isDark ? 'text-slate-300 hover:bg-slate-800' : 'text-gray-600 hover:bg-brand-50'
+                  }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Log in

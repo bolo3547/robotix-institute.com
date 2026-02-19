@@ -2,6 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════
+   THEME CSS VARIABLES
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Light mode (default) */
+  --color-bg-primary: 255 255 255;
+  --color-bg-secondary: 249 250 251;
+  --color-bg-tertiary: 243 244 246;
+  --color-bg-elevated: 255 255 255;
+  
+  --color-text-primary: 17 24 39;
+  --color-text-secondary: 75 85 99;
+  --color-text-tertiary: 107 114 128;
+  --color-text-inverted: 255 255 255;
+  
+  --color-border-primary: 229 231 235;
+  --color-border-secondary: 209 213 219;
+  
+  --color-surface-card: 255 255 255;
+  --color-surface-overlay: 0 0 0;
+  --overlay-opacity: 0.5;
+  
+  /* Brand colors stay constant */
+  --color-brand-500: 59 130 246;
+  --color-brand-600: 37 99 235;
+  --color-accent-500: 139 92 246;
+  --color-accent-600: 124 58 237;
+}
+
+[data-theme="dark"] {
+  --color-bg-primary: 15 23 42;
+  --color-bg-secondary: 30 41 59;
+  --color-bg-tertiary: 51 65 85;
+  --color-bg-elevated: 30 41 59;
+  
+  --color-text-primary: 241 245 249;
+  --color-text-secondary: 203 213 225;
+  --color-text-tertiary: 148 163 184;
+  --color-text-inverted: 15 23 42;
+  
+  --color-border-primary: 51 65 85;
+  --color-border-secondary: 71 85 105;
+  
+  --color-surface-card: 30 41 59;
+  --color-surface-overlay: 0 0 0;
+  --overlay-opacity: 0.7;
+}
+
 @layer base {
   * {
     @apply box-border;
@@ -12,14 +61,76 @@
   }
 
   body {
-    @apply bg-white text-gray-900 antialiased;
+    background-color: rgb(var(--color-bg-primary));
+    color: rgb(var(--color-text-primary));
     font-family: 'Nunito', sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    @apply antialiased transition-colors duration-300;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
+  
+  /* Theme-aware cards */
+  .card-surface {
+    background-color: rgb(var(--color-surface-card));
+    border-color: rgb(var(--color-border-primary));
+  }
+  
+  /* Theme-aware text */
+  .text-theme-primary {
+    color: rgb(var(--color-text-primary));
+  }
+  
+  .text-theme-secondary {
+    color: rgb(var(--color-text-secondary));
+  }
+  
+  .text-theme-tertiary {
+    color: rgb(var(--color-text-tertiary));
+  }
+  
+  /* Theme-aware backgrounds */
+  .bg-theme-primary {
+    background-color: rgb(var(--color-bg-primary));
+  }
+  
+  .bg-theme-secondary {
+    background-color: rgb(var(--color-bg-secondary));
+  }
+  
+  .bg-theme-elevated {
+    background-color: rgb(var(--color-bg-elevated));
+  }
+  
+  /* Theme-aware borders */
+  .border-theme {
+    border-color: rgb(var(--color-border-primary));
+  }
+}
+
+/* Light mode specific overrides */
+[data-theme="light"] body,
+:root:not([data-theme="dark"]) body {
+  @apply bg-white text-gray-900;
+}
+
+[data-theme="light"] .dark\:bg-slate-900,
+[data-theme="light"] .dark\:bg-gray-900,
+:root:not([data-theme="dark"]) .bg-slate-900,
+:root:not([data-theme="dark"]) .bg-gray-900 {
+  @apply bg-white;
+}
+
+[data-theme="light"] .dark\:text-white,
+:root:not([data-theme="dark"]) .text-white {
+  @apply text-gray-900;
+}
+
+/* Dark mode specific */
+[data-theme="dark"] body {
+  @apply bg-slate-900 text-white;
 }
 
 @layer components {

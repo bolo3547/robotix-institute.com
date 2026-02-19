@@ -10,6 +10,7 @@ import OutcomesSection from '@/components/landing/OutcomesSection';
 import BrochureDownload from '@/components/landing/BrochureDownload';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import CTASection from '@/components/landing/CTASection';
+import VideoShowcase from '@/components/landing/VideoShowcase';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function HomePage() {
@@ -66,6 +67,11 @@ export default function HomePage() {
       {/* Parent testimonials */}
       <ScrollReveal direction="up">
         <TestimonialsSection />
+      </ScrollReveal>
+
+      {/* TikTok Video Showcase */}
+      <ScrollReveal direction="up">
+        <VideoShowcase />
       </ScrollReveal>
 
       {/* Final CTA */}
