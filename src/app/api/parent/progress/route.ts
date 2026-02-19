@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 // GET - Parent views child's progress (by userId query param)
 export async function GET(req: NextRequest) {
@@ -23,21 +25,22 @@ export async function GET(req: NextRequest) {
     });
 
     // Compute summary stats
-    const allProgress = enrollments.flatMap(e => e.progress);
+    const allProgress = enrollments.flatMap((e: { progress: Array<{ score: number | null; attendance: string; homework: string }> }) => e.progress);
     const totalWeeks = allProgress.length;
-    const avgScore = totalWeeks > 0
-      ? Math.round(allProgress.filter(p => p.score !== null).reduce((a, b) => a + (b.score || 0), 0) / Math.max(allProgress.filter(p => p.score !== null).length, 1))
+    const scoredEntries = allProgress.filter((p: { score: number | null }) => p.score !== null);
+    const avgScore = scoredEntries.length > 0
+      ? Math.round(scoredEntries.reduce((a: number, b: { score: number | null }) => a + (b.score || 0), 0) / scoredEntries.length)
       : 0;
     const attendanceRate = totalWeeks > 0
-      ? Math.round((allProgress.filter(p => p.attendance === 'present' || p.attendance === 'late').length / totalWeeks) * 100)
+      ? Math.round((allProgress.filter((p: { attendance: string }) => p.attendance === 'present' || p.attendance === 'late').length / totalWeeks) * 100)
       : 0;
-    const homeworkCompleted = allProgress.filter(p => p.homework === 'submitted' || p.homework === 'graded').length;
+    const homeworkCompleted = allProgress.filter((p: { homework: string }) => p.homework === 'submitted' || p.homework === 'graded').length;
 
     return NextResponse.json({
       enrollments,
       summary: {
         totalEnrollments: enrollments.length,
-        activeEnrollments: enrollments.filter(e => e.status === 'active').length,
+        activeEnrollments: enrollments.filter((e: { status: string }) => e.status === 'active').length,
         totalWeeks,
         avgScore,
         attendanceRate,
