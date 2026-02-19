@@ -1,0 +1,25 @@
+# ROBOTIX INSTITUTE - robots.txt
+# https://www.robotixinstitute.io
+
+User-agent: *
+Allow: /
+
+# Disallow admin and auth pages from indexing
+Disallow: /admin/
+Disallow: /admin-dashboard/
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /api/
+
+# Allow specific public pages
+Allow: /programs/
+Allow: /about
+Allow: /contact
+Allow: /testimonials
+Allow: /pricing
+
+# Sitemap location
+Sitemap: https://www.robotixinstitute.io/sitemap.xml
+
+# Crawl delay for politeness
+Crawl-delay: 1

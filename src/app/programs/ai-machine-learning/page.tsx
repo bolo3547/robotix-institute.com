@@ -1,0 +1,286 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Link from 'next/link';
+import { CheckCircle, Users, Clock, Award, Zap, Target } from 'lucide-react';
+
+const curriculum = [
+  {
+    week: 'Week 1-2',
+    topic: 'AI Concepts & Python Review',
+    details: ['What is AI?', 'AI in everyday life', 'Python refresher', 'Data basics'],
+  },
+  {
+    week: 'Week 3-4',
+    topic: 'Machine Learning Fundamentals',
+    details: ['Supervised learning', 'Classification', 'Training models', 'Evaluation basics'],
+  },
+  {
+    week: 'Week 5-6',
+    topic: 'AI for Robotics',
+    details: ['Computer vision basics', 'Sensor data & AI', 'Simple neural networks', 'Smart robot behaviour'],
+  },
+  {
+    week: 'Week 7-12',
+    topic: 'AI Projects & Showcase',
+    details: ['Hands-on AI project', 'IoT + AI integration', 'Real-world applications', 'Showcase at BongoHive'],
+  },
+];
+
+const outcomes = [
+  'Understand AI & ML concepts',
+  'Build simple AI models with Python',
+  'Apply AI to robotics projects',
+  'Work with real-world datasets',
+  'Explore computer vision & sensors',
+  'Foundation for future AI studies',
+];
+
+export default function AIMLPage() {
+  return (
+    <main className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="pt-32 pb-12 px-4 bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="text-5xl mb-4">🧠</div>
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">AI & Machine Learning</h1>
+            <p className="text-xl opacity-90 mb-6">
+              Explore AI concepts, build intelligent projects, and discover how machine learning is shaping the future — at BongoHive, Lusaka
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                <span>12 weeks per cohort</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                <span>Ages 13-18</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Award className="w-5 h-5" />
+                <span>Advanced</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Quick Stats */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <Card variant="elevated">
+              <CardContent className="text-center">
+                <p className="text-4xl font-bold text-violet-600 mb-2">12</p>
+                <p className="text-gray-600">Weeks</p>
+              </CardContent>
+            </Card>
+            <Card variant="elevated">
+              <CardContent className="text-center">
+                <p className="text-4xl font-bold text-violet-600 mb-2">2hr</p>
+                <p className="text-gray-600">Per Session</p>
+              </CardContent>
+            </Card>
+            <Card variant="elevated">
+              <CardContent className="text-center">
+                <p className="text-4xl font-bold text-violet-600 mb-2">10</p>
+                <p className="text-gray-600">Max Students</p>
+              </CardContent>
+            </Card>
+            <Card variant="elevated">
+              <CardContent className="text-center">
+                <p className="text-2xl font-bold text-violet-600 mb-2">Contact Us</p>
+                <p className="text-gray-600">For Pricing</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Overview */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold mb-8 text-gray-900">What You'll Master</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-gray-900">
+                <Zap className="w-6 h-6 text-violet-600" />
+                Key Skills
+              </h3>
+              <ul className="space-y-3 text-gray-600">
+                {outcomes.map((outcome, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span>{outcome}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-gray-900">
+                <Target className="w-6 h-6 text-violet-600" />
+                Who It's For
+              </h3>
+              <div className="space-y-3 text-gray-600">
+                <p>✓ Ages 13-18</p>
+                <p>✓ Python skills required</p>
+                <p>✓ Curious about AI & the future</p>
+                <p>✓ STEM enthusiasts</p>
+                <p>✓ Future AI innovators</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Curriculum */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold mb-8 text-gray-900">12-Week Curriculum</h2>
+          <div className="space-y-4">
+            {curriculum.map((week, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <Card variant="outlined">
+                  <CardContent>
+                    <div className="flex items-start gap-4">
+                      <div className="bg-violet-600 text-white rounded-lg p-3 font-bold flex-shrink-0">
+                        {week.week}
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="text-xl font-bold mb-2">{week.topic}</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {week.details.map((detail, i) => (
+                            <span
+                              key={i}
+                              className="bg-violet-100 text-violet-700 px-3 py-1 rounded-full text-sm"
+                            >
+                              {detail}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* AI Applications */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold mb-8 text-gray-900">Real-World AI Projects</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { icon: '🤖', title: 'Smart Robot', desc: 'Build an AI-powered robot' },
+              { icon: '👁️', title: 'Computer Vision', desc: 'Image recognition with sensors' },
+              { icon: '💬', title: 'Chatbot', desc: 'Create a conversational AI assistant' },
+              { icon: '📈', title: 'Data Predictions', desc: 'Predict outcomes with real data' },
+            ].map((item, i) => (
+              <Card key={i} variant="elevated">
+                <CardContent className="text-center">
+                  <div className="text-5xl mb-4">{item.icon}</div>
+                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                  <p className="text-gray-600">{item.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Career Impact */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold mb-8 text-center text-gray-900">AI in the Real World</h2>
+          <Card variant="kid" className="mb-8">
+            <CardContent>
+              <p className="text-lg text-gray-700 mb-4">
+                AI is transforming every industry. Explore how these concepts apply to:
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[
+                  'Smart Agriculture',
+                  'Healthcare Tech',
+                  'Autonomous Vehicles',
+                  'Robotics & IoT',
+                  'Energy & Climate',
+                  'Creative Arts',
+                ].map((item, i) => (
+                  <div key={i} className="bg-gradient-to-br from-violet-50 to-fuchsia-50 p-3 rounded-lg text-center font-semibold text-violet-700">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Pricing & CTA */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <Card variant="kid" className="mb-8">
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">Pricing</p>
+                  <p className="text-3xl font-bold text-violet-600 mb-1">Contact Us</p>
+                  <p className="text-sm text-gray-600">Cohort-based enrolment</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">What's Included</p>
+                  <ul className="text-sm space-y-1 text-gray-700">
+                    <li>✓ AI tools & resources</li>
+                    <li>✓ Hands-on projects</li>
+                    <li>✓ Certificate</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">Schedule</p>
+                  <p className="font-bold text-gray-900 mb-1">Weekends at BongoHive</p>
+                  <p className="text-sm text-gray-600">Hive Coworking, Lusaka</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <Link href="/contact">
+              <Button variant="primary" className="w-full md:w-auto">
+                Contact Us to Enrol
+              </Button>
+            </Link>
+            <Link href="/contact">
+              <Button variant="outline" className="w-full md:w-auto">
+                Ask Questions
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}

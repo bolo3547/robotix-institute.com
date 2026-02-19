@@ -1,0 +1,57 @@
+﻿src/app/admin/quotations/page.tsx(24,3): error TS6133: 'AlertCircle' is declared but its value is never read.
+src/app/dashboard/instructor/page.tsx(3,8): error TS6133: 'React' is declared but its value is never read.
+src/app/dashboard/instructor/page.tsx(7,1): error TS6133: 'Card' is declared but its value is never read.
+src/app/dashboard/instructor/page.tsx(9,20): error TS6133: 'BarChart3' is declared but its value is never read.
+src/app/dashboard/instructor/page.tsx(9,52): error TS6133: 'Clock' is declared but its value is never read.
+src/app/dashboard/instructor/page.tsx(10,35): error TS6133: 'AlertCircle' is declared but its value is never read.
+src/app/dashboard/instructor/page.tsx(195,38): error TS6133: 'idx' is declared but its value is never read.
+src/app/dashboard/instructor/page.tsx(231,22): error TS2304: Cannot find name 'ChevronRight'.
+src/app/dashboard/page.tsx(6,1): error TS6133: 'Card' is declared but its value is never read.
+src/app/dashboard/parent/page.tsx(3,8): error TS6133: 'React' is declared but its value is never read.
+src/app/dashboard/parent/page.tsx(7,1): error TS6133: 'Card' is declared but its value is never read.
+src/app/dashboard/parent/page.tsx(9,8): error TS6133: 'Trophy' is declared but its value is never read.
+src/app/dashboard/parent/page.tsx(10,34): error TS6133: 'ChevronRight' is declared but its value is never read.
+src/app/dashboard/parent/page.tsx(214,21): error TS6133: 'Icon' is declared but its value is never read.
+src/app/design-system/page.tsx(6,37): error TS6133: 'AlertCircle' is declared but its value is never read.
+src/app/design-system/page.tsx(42,25): error TS2322: Type '"default"' is not assignable to type '"primary" | "secondary" | "outline" | "ghost" | "destructive" | "kidPrimary" | null | undefined'.
+src/app/design-system/page.tsx(46,25): error TS2322: Type '"success"' is not assignable to type '"primary" | "secondary" | "outline" | "ghost" | "destructive" | "kidPrimary" | null | undefined'.
+src/app/design-system/page.tsx(47,25): error TS2322: Type '"warning"' is not assignable to type '"primary" | "secondary" | "outline" | "ghost" | "destructive" | "kidPrimary" | null | undefined'.
+src/app/design-system/page.tsx(57,25): error TS2820: Type '"kidSecondary"' is not assignable to type '"primary" | "secondary" | "outline" | "ghost" | "destructive" | "kidPrimary" | null | undefined'. Did you mean '"secondary"'?
+src/app/design-system/page.tsx(58,25): error TS2322: Type '"kidGhost"' is not assignable to type '"primary" | "secondary" | "outline" | "ghost" | "destructive" | "kidPrimary" | null | undefined'.
+src/app/design-system/page.tsx(66,25): error TS2322: Type '"xs"' is not assignable to type '"sm" | "md" | "lg" | "icon" | null | undefined'.
+src/app/design-system/page.tsx(70,25): error TS2322: Type '"xl"' is not assignable to type '"sm" | "md" | "lg" | "icon" | null | undefined'.
+src/app/design-system/page.tsx(96,25): error TS2322: Type '"icon-lg"' is not assignable to type '"sm" | "md" | "lg" | "icon" | null | undefined'.
+src/app/design-system/page.tsx(148,21): error TS2322: Type '"surface"' is not assignable to type '"default" | "elevated" | "outlined" | "kid" | null | undefined'.
+src/app/instructor-dashboard/page.tsx(137,26): error TS2322: Type '{ id: number; name: string; class: string; progress: number; attendance: string; status: string; }[]' is not assignable to type 'Student[]'.
+  Type '{ id: number; name: string; class: string; progress: number; attendance: string; status: string; }' is not assignable to type 'Student'.
+    Types of property 'status' are incompatible.
+      Type 'string' is not assignable to type '"excellent" | "good" | "needs_help"'.
+src/app/parent-dashboard/page.tsx(7,25): error TS6133: 'LineChart' is declared but its value is never read.
+src/app/parent-dashboard/page.tsx(7,36): error TS6133: 'Line' is declared but its value is never read.
+src/app/parent-dashboard/page.tsx(8,46): error TS6133: 'AlertCircle' is declared but its value is never read.
+src/app/parent-dashboard/page.tsx(8,59): error TS6133: 'Bell' is declared but its value is never read.
+src/app/parent-dashboard/page.tsx(167,39): error TS6133: 'entry' is declared but its value is never read.
+src/app/parent-dashboard/page.tsx(184,25): error TS2322: Type '{ id: number; date: string; description: string; amount: number; status: string; }[]' is not assignable to type 'Payment[]'.
+  Type '{ id: number; date: string; description: string; amount: number; status: string; }' is not assignable to type 'Payment'.
+    Types of property 'status' are incompatible.
+      Type 'string' is not assignable to type '"pending" | "paid" | "overdue"'.
+src/app/referral/page.tsx(6,10): error TS6133: 'Gift' is declared but its value is never read.
+src/app/what-you-get/page.tsx(7,10): error TS6133: 'Gift' is declared but its value is never read.
+src/app/what-you-get/page.tsx(7,29): error TS6133: 'Zap' is declared but its value is never read.
+src/app/what-you-get/page.tsx(7,41): error TS6133: 'Users' is declared but its value is never read.
+src/app/what-you-get/page.tsx(7,48): error TS6133: 'Clock' is declared but its value is never read.
+src/components/dashboard/admin/FinancialOverview.tsx(4,22): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/components/dashboard/admin/FinancialOverview.tsx(4,34): error TS6133: 'CreditCard' is declared but its value is never read.
+src/components/dashboard/admin/FinancialOverview.tsx(5,80): error TS6133: 'Legend' is declared but its value is never read.
+src/components/dashboard/admin/SystemHealth.tsx(4,38): error TS6133: 'Clock' is declared but its value is never read.
+src/components/dashboard/admin/UserManagement.tsx(4,27): error TS6133: 'UserMinus' is declared but its value is never read.
+src/components/dashboard/instructor/ClassList.tsx(4,27): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/components/dashboard/instructor/PerformanceAnalytics.tsx(4,80): error TS6133: 'Legend' is declared but its value is never read.
+src/components/dashboard/parent/ChildProfile.tsx(4,25): error TS6133: 'BookOpen' is declared but its value is never read.
+src/components/dashboard/parent/InstructorFeedback.tsx(4,25): error TS6133: 'User' is declared but its value is never read.
+src/components/ui/Alert.tsx(27,18): error TS2430: Interface 'AlertProps' incorrectly extends interface 'HTMLAttributes<HTMLDivElement>'.
+  Types of property 'title' are incompatible.
+    Type 'ReactNode' is not assignable to type 'string | undefined'.
+      Type 'null' is not assignable to type 'string | undefined'.
+src/lib/auth.ts(1,17): error TS7016: Could not find a declaration file for module 'jsonwebtoken'. 'C:/Users/DENUEL/Desktop/ROBOTIX INSTITUTE ZM/robotix-platform/node_modules/jsonwebtoken/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/jsonwebtoken` if it exists or add a new declaration (.d.ts) file containing `declare module 'jsonwebtoken';`
