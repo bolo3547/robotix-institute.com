@@ -9,36 +9,46 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  name      String
-  role      String    @default("parent") // parent | student | instructor | admin
-  image     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  payments  Payment[]
+  id          String         @id @default(cuid())
+  email       String         @unique
+  password    String
+  name        String
+  role        String         @default("parent") // parent | student | instructor | admin
+  image       String?
+  phone       String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  payments    Payment[]
+  enrollments Enrollment[]
+  progress    StudentProgress[]
+  // For parents linking to children
+  children    User[]         @relation("ParentChild")
+  parent      User?          @relation("ParentChild", fields: [parentId], references: [id])
+  parentId    String?
 }
 
 model Payment {
-  id            String   @id @default(cuid())
+  id            String      @id @default(cuid())
   userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollmentId  String?
+  enrollment    Enrollment? @relation(fields: [enrollmentId], references: [id])
   description   String
   amount        Float
-  currency      String   @default("ZMW")
-  status        String   @default("pending") // pending | paid | overdue | cancelled
-  method        String?  // mobile_money | bank_transfer | card | cash
-  reference     String?  // payment reference / transaction ID
-  receiptNumber String?  @unique
+  currency      String      @default("ZMW")
+  status        String      @default("pending") // pending | paid | overdue | cancelled
+  method        String?     // mobile_money | bank_transfer | card | cash
+  reference     String?     // payment reference / transaction ID
+  receiptNumber String?     @unique
   paidAt        DateTime?
   dueDate       DateTime?
   notes         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@index([userId])
   @@index([status])
+  @@index([enrollmentId])
 }
 
 model SiteSetting {
@@ -84,4 +94,67 @@ model PageContent {
   updatedAt DateTime @updatedAt
 
   @@index([pageId])
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String   @db.Text
+  content     String   @db.Text // Full article content (HTML or Markdown)
+  category    String   @default("News") // Robotics | Coding | STEM Tips | Parent Guide | News
+  image       String?
+  readTime    String   @default("5 min")
+  author      String   @default("Robotix Institute")
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([published])
+  @@index([category])
+}
+
+model Enrollment {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program     String   // Program name (e.g., "Robotics Foundations", "Python Programming")
+  level       String   @default("beginner") // beginner | intermediate | advanced
+  status      String   @default("active") // active | completed | paused | cancelled
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  notes       String?
+  payments    Payment[]
+  progress    StudentProgress[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([program])
+}
+
+model StudentProgress {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollmentId String
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  week         Int        // Week number (1, 2, 3, ...)
+  topic        String     // What was covered
+  score        Int?       // Score out of 100
+  attendance   String     @default("present") // present | absent | late | excused
+  homework     String     @default("pending") // pending | submitted | graded | late
+  homeworkGrade Int?      // Grade out of 100
+  notes        String?    @db.Text // Instructor feedback
+  skills       String?    @db.Text // JSON: skills learned / milestones
+  behavior     String     @default("good") // excellent | good | needs_improvement
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([enrollmentId])
+  @@unique([enrollmentId, week])
 }

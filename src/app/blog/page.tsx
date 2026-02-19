@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +8,20 @@ import { Calendar, Clock, ArrowRight, Search, Tag } from 'lucide-react';
 
 const categories = ['All', 'Robotics', 'Coding', 'STEM Tips', 'Parent Guide', 'News'];
 
-const posts = [
+interface BlogPost {
+  id: string | number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  date?: string;
+  createdAt?: string;
+  readTime: string;
+  image: string | null;
+  featured: boolean;
+}
+
+const fallbackPosts: BlogPost[] = [
   {
     id: 1,
     slug: 'why-every-child-in-zambia-should-learn-to-code',
@@ -78,8 +91,37 @@ const posts = [
 ];
 
 export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>(fallbackPosts);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const res = await fetch('/api/blog');
+        if (res.ok) {
+          const dbPosts = await res.json();
+          if (dbPosts && dbPosts.length > 0) {
+            const mapped = dbPosts.map((p: Record<string, unknown>) => ({
+              id: p.id,
+              slug: p.slug,
+              title: p.title,
+              excerpt: p.excerpt,
+              category: p.category,
+              date: p.createdAt ? new Date(p.createdAt as string).toISOString().split('T')[0] : '',
+              readTime: p.readTime || '5 min',
+              image: p.image || '/robotix1.jpg',
+              featured: p.featured || false,
+            }));
+            setPosts(mapped);
+          }
+        }
+      } catch {
+        // fallback to hardcoded posts already set
+      }
+    };
+    loadPosts();
+  }, []);
 
   const filtered = posts.filter((post) => {
     const matchCategory = activeCategory === 'All' || post.category === activeCategory;

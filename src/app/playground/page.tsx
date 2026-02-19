@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { 
@@ -915,6 +915,342 @@ function TypingRacerGame() {
   );
 }
 
+// Snake Game
+function SnakeGame() {
+  const GRID = 15;
+  const [snake, setSnake] = useState<Array<{x: number; y: number}>>([{x: 7, y: 7}, {x: 6, y: 7}, {x: 5, y: 7}]);
+  const [food, setFood] = useState<{x: number; y: number}>({x: 10, y: 10});
+  const [direction, setDirection] = useState<'UP'|'DOWN'|'LEFT'|'RIGHT'>('RIGHT');
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [speed, setSpeed] = useState(200);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const spawnFood = useCallback((snk: Array<{x: number; y: number}>) => {
+    let pos: {x: number; y: number};
+    do {
+      pos = { x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID) };
+    } while (snk.some(s => s.x === pos.x && s.y === pos.y));
+    return pos;
+  }, []);
+
+  useEffect(() => {
+    if (!isPlaying || gameOver) return;
+    const interval = setInterval(() => {
+      setSnake(prev => {
+        const head = { ...prev[0] };
+        if (direction === 'UP') head.y -= 1;
+        if (direction === 'DOWN') head.y += 1;
+        if (direction === 'LEFT') head.x -= 1;
+        if (direction === 'RIGHT') head.x += 1;
+
+        if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID || prev.some(s => s.x === head.x && s.y === head.y)) {
+          setGameOver(true);
+          setIsPlaying(false);
+          setHighScore(h => Math.max(h, score));
+          return prev;
+        }
+
+        const newSnake = [head, ...prev];
+        if (head.x === food.x && head.y === food.y) {
+          setScore(s => s + 10);
+          setFood(spawnFood(newSnake));
+          setSpeed(sp => Math.max(80, sp - 5));
+        } else {
+          newSnake.pop();
+        }
+        return newSnake;
+      });
+    }, speed);
+    return () => clearInterval(interval);
+  }, [isPlaying, gameOver, direction, food, speed, score, spawnFood]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp' && direction !== 'DOWN') setDirection('UP');
+      if (e.key === 'ArrowDown' && direction !== 'UP') setDirection('DOWN');
+      if (e.key === 'ArrowLeft' && direction !== 'RIGHT') setDirection('LEFT');
+      if (e.key === 'ArrowRight' && direction !== 'LEFT') setDirection('RIGHT');
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [direction]);
+
+  const restart = () => {
+    setSnake([{x: 7, y: 7}, {x: 6, y: 7}, {x: 5, y: 7}]);
+    setFood({x: 10, y: 10});
+    setDirection('RIGHT');
+    setGameOver(false);
+    setScore(0);
+    setSpeed(200);
+    setIsPlaying(true);
+  };
+
+  return (
+    <div className="p-6 bg-gradient-to-br from-green-800 to-emerald-900 rounded-3xl">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold text-white">🐍 Snake</h3>
+        <div className="flex gap-4 text-white font-bold">
+          <span>Score: {score}</span>
+          <span className="text-yellow-400">Best: {highScore}</span>
+        </div>
+      </div>
+
+      <div className="bg-slate-900 rounded-xl p-2 mx-auto inline-block">
+        <div className="grid gap-[1px]" style={{ gridTemplateColumns: `repeat(${GRID}, 1.2rem)` }}>
+          {[...Array(GRID * GRID)].map((_, i) => {
+            const x = i % GRID;
+            const y = Math.floor(i / GRID);
+            const isHead = snake[0]?.x === x && snake[0]?.y === y;
+            const isBody = snake.some((s, idx) => idx > 0 && s.x === x && s.y === y);
+            const isFood = food.x === x && food.y === y;
+            return (
+              <div
+                key={i}
+                className={`w-[1.2rem] h-[1.2rem] rounded-sm ${
+                  isHead ? 'bg-green-400' : isBody ? 'bg-green-600' : isFood ? 'bg-red-500' : 'bg-slate-800'
+                }`}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Mobile controls */}
+      <div className="mt-4 flex flex-col items-center gap-1">
+        <motion.button whileTap={{ scale: 0.9 }} onClick={() => direction !== 'DOWN' && setDirection('UP')} className="w-12 h-12 bg-white/20 rounded-xl text-white text-xl font-bold">↑</motion.button>
+        <div className="flex gap-1">
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => direction !== 'RIGHT' && setDirection('LEFT')} className="w-12 h-12 bg-white/20 rounded-xl text-white text-xl font-bold">←</motion.button>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => direction !== 'UP' && setDirection('DOWN')} className="w-12 h-12 bg-white/20 rounded-xl text-white text-xl font-bold">↓</motion.button>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => direction !== 'LEFT' && setDirection('RIGHT')} className="w-12 h-12 bg-white/20 rounded-xl text-white text-xl font-bold">→</motion.button>
+        </div>
+      </div>
+
+      {!isPlaying && (
+        <div className="mt-4 text-center">
+          {gameOver && <p className="text-red-400 font-bold text-xl mb-2">Game Over! Score: {score}</p>}
+          <motion.button whileTap={{ scale: 0.95 }} onClick={restart} className="px-8 py-3 bg-green-500 hover:bg-green-400 rounded-full text-white font-bold text-lg">
+            {gameOver ? '🔄 Try Again' : '▶ Start Game'}
+          </motion.button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Simon Says Memory Game
+function SimonSaysGame() {
+  const colors = ['red', 'blue', 'green', 'yellow'];
+  const colorClasses: Record<string, { base: string; lit: string }> = {
+    red: { base: 'bg-red-700', lit: 'bg-red-400 shadow-lg shadow-red-400/50' },
+    blue: { base: 'bg-blue-700', lit: 'bg-blue-400 shadow-lg shadow-blue-400/50' },
+    green: { base: 'bg-green-700', lit: 'bg-green-400 shadow-lg shadow-green-400/50' },
+    yellow: { base: 'bg-yellow-700', lit: 'bg-yellow-400 shadow-lg shadow-yellow-400/50' },
+  };
+
+  const [sequence, setSequence] = useState<string[]>([]);
+  const [playerInput, setPlayerInput] = useState<string[]>([]);
+  const [activeColor, setActiveColor] = useState<string | null>(null);
+  const [isShowingSequence, setIsShowingSequence] = useState(false);
+  const [round, setRound] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [highScore, setHighScore] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const playSequence = useCallback(async (seq: string[]) => {
+    setIsShowingSequence(true);
+    for (let i = 0; i < seq.length; i++) {
+      await new Promise(r => setTimeout(r, 400));
+      setActiveColor(seq[i]);
+      await new Promise(r => setTimeout(r, 500));
+      setActiveColor(null);
+    }
+    await new Promise(r => setTimeout(r, 200));
+    setIsShowingSequence(false);
+  }, []);
+
+  const startGame = () => {
+    const first = colors[Math.floor(Math.random() * 4)];
+    setSequence([first]);
+    setPlayerInput([]);
+    setRound(1);
+    setGameOver(false);
+    setIsPlaying(true);
+    setTimeout(() => playSequence([first]), 500);
+  };
+
+  const handleColorClick = (color: string) => {
+    if (isShowingSequence || gameOver || !isPlaying) return;
+    setActiveColor(color);
+    setTimeout(() => setActiveColor(null), 200);
+
+    const newInput = [...playerInput, color];
+    setPlayerInput(newInput);
+
+    const idx = newInput.length - 1;
+    if (newInput[idx] !== sequence[idx]) {
+      setGameOver(true);
+      setIsPlaying(false);
+      setHighScore(h => Math.max(h, round));
+      return;
+    }
+
+    if (newInput.length === sequence.length) {
+      const nextColor = colors[Math.floor(Math.random() * 4)];
+      const newSeq = [...sequence, nextColor];
+      setSequence(newSeq);
+      setPlayerInput([]);
+      setRound(r => r + 1);
+      setTimeout(() => playSequence(newSeq), 800);
+    }
+  };
+
+  return (
+    <div className="p-6 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-3xl">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold text-white">🧠 Simon Says</h3>
+        <div className="flex gap-4 text-white font-bold">
+          <span>Round: {round}</span>
+          <span className="text-yellow-400">Best: {highScore}</span>
+        </div>
+      </div>
+      <p className="text-center text-purple-200 mb-4 text-sm">
+        {isShowingSequence ? '👀 Watch the pattern...' : isPlaying ? '👆 Your turn! Repeat the sequence' : 'Press Start to begin!'}
+      </p>
+
+      <div className="grid grid-cols-2 gap-3 max-w-[250px] mx-auto mb-6">
+        {colors.map(color => (
+          <motion.button
+            key={color}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleColorClick(color)}
+            disabled={isShowingSequence || !isPlaying}
+            className={`w-full aspect-square rounded-2xl transition-all duration-150 ${
+              activeColor === color ? colorClasses[color].lit : colorClasses[color].base
+            }`}
+          />
+        ))}
+      </div>
+
+      {!isPlaying && (
+        <div className="text-center">
+          {gameOver && <p className="text-red-400 font-bold text-lg mb-2">Wrong! You reached round {round} 🎯</p>}
+          <motion.button whileTap={{ scale: 0.95 }} onClick={startGame} className="px-8 py-3 bg-purple-500 hover:bg-purple-400 rounded-full text-white font-bold text-lg">
+            {gameOver ? '🔄 Try Again' : '▶ Start Game'}
+          </motion.button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Whack-a-Mole Game
+function WhackAMoleGame() {
+  const [moles, setMoles] = useState<boolean[]>(Array(9).fill(false));
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [combo, setCombo] = useState(0);
+  const [speed, setSpeed] = useState(1000);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const timer = setInterval(() => {
+      setTimeLeft(t => {
+        if (t <= 1) {
+          setIsPlaying(false);
+          setHighScore(h => Math.max(h, score));
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [isPlaying, score]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const interval = setInterval(() => {
+      setMoles(prev => {
+        const next = Array(9).fill(false);
+        const count = Math.min(3, 1 + Math.floor(score / 50));
+        for (let i = 0; i < count; i++) {
+          next[Math.floor(Math.random() * 9)] = true;
+        }
+        return next;
+      });
+    }, speed);
+    return () => clearInterval(interval);
+  }, [isPlaying, speed, score]);
+
+  const whack = (idx: number) => {
+    if (!moles[idx] || !isPlaying) return;
+    setMoles(prev => { const n = [...prev]; n[idx] = false; return n; });
+    const newCombo = combo + 1;
+    setCombo(newCombo);
+    const points = 10 + (newCombo >= 5 ? 10 : newCombo >= 3 ? 5 : 0);
+    setScore(s => s + points);
+    if (score > 0 && score % 40 === 0) setSpeed(s => Math.max(400, s - 50));
+  };
+
+  const start = () => {
+    setScore(0);
+    setTimeLeft(30);
+    setCombo(0);
+    setSpeed(1000);
+    setMoles(Array(9).fill(false));
+    setIsPlaying(true);
+  };
+
+  return (
+    <div className="p-6 bg-gradient-to-br from-amber-700 to-orange-800 rounded-3xl">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold text-white">🔨 Whack-a-Mole!</h3>
+        <div className="flex gap-4 text-white font-bold text-sm">
+          <span>⏱ {timeLeft}s</span>
+          <span>Score: {score}</span>
+          <span className="text-yellow-400">Best: {highScore}</span>
+        </div>
+      </div>
+      {combo >= 3 && isPlaying && (
+        <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center text-yellow-300 font-bold mb-2">
+          🔥 {combo}x Combo! +{combo >= 5 ? 10 : 5} bonus
+        </motion.p>
+      )}
+
+      <div className="grid grid-cols-3 gap-3 max-w-[300px] mx-auto mb-4">
+        {moles.map((isUp, i) => (
+          <motion.button
+            key={i}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => whack(i)}
+            className={`w-full aspect-square rounded-2xl text-4xl flex items-center justify-center transition-all ${
+              isUp ? 'bg-amber-400 shadow-lg shadow-amber-400/30' : 'bg-amber-900/50'
+            }`}
+          >
+            {isUp ? (
+              <motion.span initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>🐹</motion.span>
+            ) : (
+              <span className="opacity-30">🕳️</span>
+            )}
+          </motion.button>
+        ))}
+      </div>
+
+      {!isPlaying && (
+        <div className="text-center">
+          {timeLeft === 0 && <p className="text-yellow-300 font-bold text-xl mb-2">Time&apos;s up! Score: {score} ⭐</p>}
+          <motion.button whileTap={{ scale: 0.95 }} onClick={start} className="px-8 py-3 bg-yellow-500 hover:bg-yellow-400 rounded-full text-amber-900 font-bold text-lg">
+            {timeLeft === 0 ? '🔄 Play Again' : '▶ Start Game'}
+          </motion.button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ======================
 // BUILDER GAMES (10-13)
 // ======================
@@ -1336,6 +1672,384 @@ function BugHunterGame() {
   );
 }
 
+// Tower Stack - Addictive timing-based stacking game
+function TowerStackGame() {
+  const [blocks, setBlocks] = useState<Array<{ x: number; width: number }>>([{ x: 0, width: 200 }]);
+  const [moving, setMoving] = useState({ x: -100, width: 200, dir: 1 });
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [best, setBest] = useState(0);
+  const [dropping, setDropping] = useState(false);
+  const [perfect, setPerfect] = useState(0);
+
+  useEffect(() => {
+    if (gameOver || dropping) return;
+    const interval = setInterval(() => {
+      setMoving(prev => {
+        const speed = 3 + Math.min(score * 0.5, 8);
+        let nx = prev.x + prev.dir * speed;
+        let nd = prev.dir;
+        if (nx > 300 - prev.width) { nx = 300 - prev.width; nd = -1; }
+        if (nx < -100) { nx = -100; nd = 1; }
+        return { ...prev, x: nx, dir: nd };
+      });
+    }, 16);
+    return () => clearInterval(interval);
+  }, [gameOver, dropping, score]);
+
+  const dropBlock = () => {
+    if (gameOver || dropping) return;
+    setDropping(true);
+    const last = blocks[blocks.length - 1];
+    const overlap = Math.min(last.x + last.width, moving.x + moving.width) - Math.max(last.x, moving.x);
+    
+    if (overlap <= 0) {
+      setGameOver(true);
+      setBest(b => Math.max(b, score));
+      setDropping(false);
+      return;
+    }
+
+    const nx = Math.max(last.x, moving.x);
+    const isPerfect = Math.abs(moving.x - last.x) < 5;
+    const nw = isPerfect ? last.width : overlap;
+    
+    if (isPerfect) setPerfect(p => p + 1);
+    else setPerfect(0);
+
+    setTimeout(() => {
+      setBlocks(prev => [...prev, { x: nx, width: nw }]);
+      setScore(s => s + 1 + (isPerfect ? perfect : 0));
+      setMoving({ x: -100, width: nw, dir: 1 });
+      setDropping(false);
+    }, 200);
+  };
+
+  const restart = () => {
+    setBlocks([{ x: 0, width: 200 }]);
+    setMoving({ x: -100, width: 200, dir: 1 });
+    setGameOver(false);
+    setScore(0);
+    setPerfect(0);
+    setDropping(false);
+  };
+
+  const visibleBlocks = blocks.slice(-8);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between text-sm">
+        <span className="text-cyan-400">🏗️ Score: {score}</span>
+        <span className="text-yellow-400">🏆 Best: {best}</span>
+        {perfect > 1 && <span className="text-pink-400">🔥 x{perfect} Perfect!</span>}
+      </div>
+
+      <div 
+        className="relative bg-slate-900/80 rounded-xl overflow-hidden cursor-pointer"
+        style={{ height: 300 }}
+        onClick={dropBlock}
+      >
+        {visibleBlocks.map((block, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-sm"
+            style={{
+              left: `${((block.x + 100) / 300) * 100}%`,
+              bottom: `${i * 30}px`,
+              width: `${(block.width / 300) * 100}%`,
+              height: 28,
+              background: `hsl(${(i * 25 + 200) % 360}, 70%, 55%)`,
+            }}
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+          />
+        ))}
+        
+        {!gameOver && (
+          <motion.div
+            className="absolute rounded-sm border-2 border-white/50"
+            style={{
+              left: `${((moving.x + 100) / 300) * 100}%`,
+              bottom: `${visibleBlocks.length * 30}px`,
+              width: `${(moving.width / 300) * 100}%`,
+              height: 28,
+              background: `hsl(${(visibleBlocks.length * 25 + 200) % 360}, 70%, 55%)`,
+            }}
+          />
+        )}
+
+        {gameOver && (
+          <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center">
+            <p className="text-2xl font-bold text-white mb-2">Tower: {score} floors!</p>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={restart}
+              className="px-6 py-2 bg-cyan-500 rounded-lg font-bold text-white"
+            >
+              Build Again 🏗️
+            </motion.button>
+          </div>
+        )}
+      </div>
+      <p className="text-center text-purple-300 text-sm">
+        {gameOver ? 'Tap to rebuild!' : 'Tap to drop the block! Aim for perfect stacks!'}
+      </p>
+    </div>
+  );
+}
+
+// Maze Runner - Procedural maze with timer
+function MazeRunnerGame() {
+  const SIZE = 9;
+  const [maze, setMaze] = useState<number[][]>([]);
+  const [player, setPlayer] = useState({ r: 1, c: 1 });
+  const [moves, setMoves] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [won, setWon] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [bestTime, setBestTime] = useState(999);
+
+  const generateMaze = useCallback(() => {
+    const m: number[][] = Array.from({ length: SIZE }, () => Array(SIZE).fill(1));
+    const carve = (r: number, c: number) => {
+      m[r][c] = 0;
+      const dirs = [[0,2],[0,-2],[2,0],[-2,0]].sort(() => Math.random() - 0.5);
+      for (const [dr, dc] of dirs) {
+        const nr = r + dr, nc = c + dc;
+        if (nr > 0 && nr < SIZE - 1 && nc > 0 && nc < SIZE - 1 && m[nr][nc] === 1) {
+          m[r + dr/2][c + dc/2] = 0;
+          carve(nr, nc);
+        }
+      }
+    };
+    carve(1, 1);
+    m[SIZE - 2][SIZE - 2] = 0;
+    m[SIZE - 2][SIZE - 3] = 0;
+    // Add random extra passages based on level
+    for (let i = 0; i < Math.max(0, 5 - level); i++) {
+      const r = 1 + Math.floor(Math.random() * (SIZE - 2));
+      const c = 1 + Math.floor(Math.random() * (SIZE - 2));
+      if (r > 0 && r < SIZE - 1 && c > 0 && c < SIZE - 1) m[r][c] = 0;
+    }
+    return m;
+  }, [level]);
+
+  useEffect(() => {
+    setMaze(generateMaze());
+    setPlayer({ r: 1, c: 1 });
+    setMoves(0);
+    setWon(false);
+    setTimer(0);
+  }, [level, generateMaze]);
+
+  useEffect(() => {
+    if (won || maze.length === 0) return;
+    const t = setInterval(() => setTimer(p => p + 1), 1000);
+    return () => clearInterval(t);
+  }, [won, maze, level]);
+
+  const move = (dr: number, dc: number) => {
+    if (won) return;
+    const nr = player.r + dr, nc = player.c + dc;
+    if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && maze[nr]?.[nc] === 0) {
+      setPlayer({ r: nr, c: nc });
+      setMoves(m => m + 1);
+      if (nr === SIZE - 2 && nc === SIZE - 2) {
+        setWon(true);
+        setBestTime(b => Math.min(b, timer));
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const map: Record<string, [number, number]> = {
+        ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1],
+        w: [-1, 0], s: [1, 0], a: [0, -1], d: [0, 1],
+      };
+      const d = map[e.key];
+      if (d) { e.preventDefault(); move(d[0], d[1]); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  });
+
+  const cellSize = 28;
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between text-sm">
+        <span className="text-green-400">🏃 Level {level}</span>
+        <span className="text-cyan-400">⏱️ {timer}s</span>
+        <span className="text-yellow-400">👣 {moves}</span>
+        {bestTime < 999 && <span className="text-pink-400">🏆 {bestTime}s</span>}
+      </div>
+
+      <div className="flex justify-center">
+        <div className="inline-grid gap-0 bg-slate-900 rounded-lg p-1" style={{ gridTemplateColumns: `repeat(${SIZE}, ${cellSize}px)` }}>
+          {maze.map((row, r) => row.map((cell, c) => (
+            <div
+              key={`${r}-${c}`}
+              className={`flex items-center justify-center text-xs font-bold ${
+                r === player.r && c === player.c ? 'bg-cyan-500 rounded-sm' :
+                r === SIZE - 2 && c === SIZE - 2 ? 'bg-green-500/60 rounded-sm' :
+                cell === 1 ? 'bg-slate-700' : 'bg-slate-900/50'
+              }`}
+              style={{ width: cellSize, height: cellSize }}
+            >
+              {r === player.r && c === player.c ? '🤖' :
+               r === SIZE - 2 && c === SIZE - 2 ? '🏁' : ''}
+            </div>
+          )))}
+        </div>
+      </div>
+
+      {/* D-Pad for mobile */}
+      <div className="flex justify-center">
+        <div className="grid grid-cols-3 gap-1 w-32">
+          <div />
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => move(-1, 0)} className="bg-slate-700 rounded p-2 text-center">↑</motion.button>
+          <div />
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => move(0, -1)} className="bg-slate-700 rounded p-2 text-center">←</motion.button>
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => move(1, 0)} className="bg-slate-700 rounded p-2 text-center">↓</motion.button>
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => move(0, 1)} className="bg-slate-700 rounded p-2 text-center">→</motion.button>
+        </div>
+      </div>
+
+      {won && (
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center space-y-2">
+          <p className="text-green-400 font-bold">🎉 Escaped in {timer}s with {moves} moves!</p>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setLevel(l => l + 1)}
+            className="px-4 py-2 bg-green-500 rounded-lg font-bold text-white"
+          >
+            Level {level + 1} →
+          </motion.button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+// Reaction Speed - Test reflexes with progressive difficulty  
+function ReactionSpeedGame() {
+  const [state, setState] = useState<'waiting' | 'ready' | 'go' | 'result' | 'early'>('waiting');
+  const [reactionTime, setReactionTime] = useState(0);
+  const [times, setTimes] = useState<number[]>([]);
+  const [best, setBest] = useState(999);
+  const [round, setRound] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const startRef = useRef(0);
+
+  const startRound = () => {
+    setState('ready');
+    setRound(r => r + 1);
+    const delay = 1000 + Math.random() * 3000;
+    timerRef.current = setTimeout(() => {
+      setState('go');
+      startRef.current = Date.now();
+    }, delay);
+  };
+
+  const handleClick = () => {
+    if (state === 'waiting' || state === 'result' || state === 'early') {
+      startRound();
+    } else if (state === 'ready') {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setState('early');
+      setStreak(0);
+    } else if (state === 'go') {
+      const rt = Date.now() - startRef.current;
+      setReactionTime(rt);
+      setTimes(prev => [...prev, rt]);
+      setBest(b => Math.min(b, rt));
+      setStreak(s => rt < 400 ? s + 1 : 0);
+      setState('result');
+    }
+  };
+
+  const avg = times.length > 0 ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0;
+  const rating = reactionTime < 200 ? '⚡ SUPERHUMAN!' : reactionTime < 300 ? '🔥 Blazing!' : reactionTime < 400 ? '✨ Fast!' : reactionTime < 500 ? '👍 Good' : '🐢 Keep trying!';
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between text-sm">
+        <span className="text-cyan-400">🎯 Round: {round}</span>
+        {best < 999 && <span className="text-yellow-400">🏆 Best: {best}ms</span>}
+        {avg > 0 && <span className="text-purple-400">📊 Avg: {avg}ms</span>}
+        {streak > 1 && <span className="text-pink-400">🔥 x{streak}</span>}
+      </div>
+
+      <motion.div
+        className={`rounded-xl p-8 text-center cursor-pointer select-none min-h-[200px] flex flex-col items-center justify-center ${
+          state === 'waiting' ? 'bg-slate-700' :
+          state === 'ready' ? 'bg-red-600' :
+          state === 'go' ? 'bg-green-500' :
+          state === 'early' ? 'bg-orange-600' :
+          'bg-slate-700'
+        }`}
+        onClick={handleClick}
+        whileTap={{ scale: 0.97 }}
+      >
+        {state === 'waiting' && (
+          <div>
+            <p className="text-4xl mb-2">🎯</p>
+            <p className="text-xl font-bold text-white">Tap to Start</p>
+            <p className="text-sm text-slate-300">Test your reflexes!</p>
+          </div>
+        )}
+        {state === 'ready' && (
+          <div>
+            <p className="text-4xl mb-2">🔴</p>
+            <p className="text-xl font-bold text-white">Wait for green...</p>
+            <p className="text-sm text-red-200">Don&apos;t tap yet!</p>
+          </div>
+        )}
+        {state === 'go' && (
+          <motion.div initial={{ scale: 0.5 }} animate={{ scale: 1 }}>
+            <p className="text-4xl mb-2">🟢</p>
+            <p className="text-xl font-bold text-white">TAP NOW!</p>
+          </motion.div>
+        )}
+        {state === 'early' && (
+          <div>
+            <p className="text-4xl mb-2">💥</p>
+            <p className="text-xl font-bold text-white">Too early!</p>
+            <p className="text-sm text-orange-200">Tap to try again</p>
+          </div>
+        )}
+        {state === 'result' && (
+          <div>
+            <p className="text-4xl mb-2">{rating.split(' ')[0]}</p>
+            <p className="text-3xl font-bold text-white">{reactionTime}ms</p>
+            <p className="text-lg text-cyan-300">{rating}</p>
+            <p className="text-sm text-slate-300 mt-2">Tap to go again!</p>
+          </div>
+        )}
+      </motion.div>
+
+      {times.length > 0 && (
+        <div className="flex gap-1 justify-center">
+          {times.slice(-10).map((t, i) => (
+            <div
+              key={i}
+              className="rounded-sm"
+              style={{
+                width: 20,
+                height: Math.max(8, Math.min(60, (600 - t) / 5)),
+                background: t < 250 ? '#22c55e' : t < 400 ? '#eab308' : '#ef4444',
+              }}
+              title={`${t}ms`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ======================
 // CODER GAMES (14-18)
 // ======================
@@ -1741,6 +2455,472 @@ function RegexTesterGame() {
   );
 }
 
+// Mini 2048 - Number merging puzzle
+function Mini2048Game() {
+  type Board = number[][];
+  const SIZE = 4;
+
+  const emptyBoard = (): Board => Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+
+  const addRandom = (board: Board): Board => {
+    const b = board.map(r => [...r]);
+    const empty: [number, number][] = [];
+    b.forEach((row, r) => row.forEach((v, c) => { if (v === 0) empty.push([r, c]); }));
+    if (empty.length === 0) return b;
+    const [r, c] = empty[Math.floor(Math.random() * empty.length)];
+    b[r][c] = Math.random() < 0.9 ? 2 : 4;
+    return b;
+  };
+
+  const slideRow = (row: number[]): { result: number[]; scored: number } => {
+    const filtered = row.filter(v => v !== 0);
+    let scored = 0;
+    const merged: number[] = [];
+    let i = 0;
+    while (i < filtered.length) {
+      if (i + 1 < filtered.length && filtered[i] === filtered[i + 1]) {
+        merged.push(filtered[i] * 2);
+        scored += filtered[i] * 2;
+        i += 2;
+      } else {
+        merged.push(filtered[i]);
+        i++;
+      }
+    }
+    while (merged.length < SIZE) merged.push(0);
+    return { result: merged, scored };
+  };
+
+  const moveBoard = (board: Board, dir: string): { board: Board; scored: number } => {
+    let b = board.map(r => [...r]);
+    let totalScored = 0;
+
+    const rotate = (m: Board): Board => m[0].map((_, i) => m.map(r => r[i]).reverse());
+
+    let rotations = dir === 'left' ? 0 : dir === 'down' ? 1 : dir === 'right' ? 2 : 3;
+    for (let i = 0; i < rotations; i++) b = rotate(b);
+
+    b = b.map(row => {
+      const { result, scored } = slideRow(row);
+      totalScored += scored;
+      return result;
+    });
+
+    for (let i = 0; i < (4 - rotations) % 4; i++) b = rotate(b);
+    return { board: b, scored: totalScored };
+  };
+
+  const [board, setBoard] = useState<Board>(() => addRandom(addRandom(emptyBoard())));
+  const [score, setScore] = useState(0);
+  const [best, setBest] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+
+  const canMove = (b: Board): boolean => {
+    for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
+      if (b[r][c] === 0) return true;
+      if (c < SIZE - 1 && b[r][c] === b[r][c + 1]) return true;
+      if (r < SIZE - 1 && b[r][c] === b[r + 1][c]) return true;
+    }
+    return false;
+  };
+
+  const doMove = useCallback((dir: string) => {
+    if (gameOver) return;
+    const { board: newBoard, scored } = moveBoard(board, dir);
+    if (JSON.stringify(newBoard) === JSON.stringify(board)) return;
+    const withNew = addRandom(newBoard);
+    setBoard(withNew);
+    setScore(s => { const ns = s + scored; setBest(b => Math.max(b, ns)); return ns; });
+    if (!canMove(withNew)) setGameOver(true);
+  }, [board, gameOver]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const map: Record<string, string> = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' };
+      if (map[e.key]) { e.preventDefault(); doMove(map[e.key]); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [doMove]);
+
+  // Swipe support
+  const touchRef = useRef<{ x: number; y: number } | null>(null);
+
+  const tileColor = (v: number): string => {
+    const colors: Record<number, string> = {
+      2: '#6366f1', 4: '#8b5cf6', 8: '#a855f7', 16: '#d946ef',
+      32: '#ec4899', 64: '#f43f5e', 128: '#f59e0b', 256: '#eab308',
+      512: '#84cc16', 1024: '#22c55e', 2048: '#14b8a6',
+    };
+    return colors[v] || '#06b6d4';
+  };
+
+  const restart = () => { setBoard(addRandom(addRandom(emptyBoard()))); setScore(0); setGameOver(false); };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between text-sm">
+        <span className="text-cyan-400">🔢 Score: {score}</span>
+        <span className="text-yellow-400">🏆 Best: {best}</span>
+        <motion.button whileTap={{ scale: 0.9 }} onClick={restart} className="text-pink-400 text-xs">🔄 New</motion.button>
+      </div>
+
+      <div
+        className="grid gap-1 bg-slate-800 p-2 rounded-xl mx-auto"
+        style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)`, maxWidth: 280 }}
+        onTouchStart={e => { touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }}
+        onTouchEnd={e => {
+          if (!touchRef.current) return;
+          const dx = e.changedTouches[0].clientX - touchRef.current.x;
+          const dy = e.changedTouches[0].clientY - touchRef.current.y;
+          if (Math.abs(dx) > Math.abs(dy)) doMove(dx > 0 ? 'right' : 'left');
+          else doMove(dy > 0 ? 'down' : 'up');
+          touchRef.current = null;
+        }}
+      >
+        {board.map((row, r) => row.map((val, c) => (
+          <motion.div
+            key={`${r}-${c}`}
+            className="aspect-square rounded-md flex items-center justify-center font-bold text-white text-sm"
+            style={{ background: val ? tileColor(val) : 'rgba(51,65,85,0.5)' }}
+            animate={{ scale: val ? [0.8, 1] : 1 }}
+            transition={{ duration: 0.15 }}
+          >
+            {val > 0 && val}
+          </motion.div>
+        )))}
+      </div>
+
+      {/* Mobile controls */}
+      <div className="flex justify-center">
+        <div className="grid grid-cols-3 gap-1 w-28">
+          <div />
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => doMove('up')} className="bg-slate-700 rounded p-1.5 text-center text-sm">↑</motion.button>
+          <div />
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => doMove('left')} className="bg-slate-700 rounded p-1.5 text-center text-sm">←</motion.button>
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => doMove('down')} className="bg-slate-700 rounded p-1.5 text-center text-sm">↓</motion.button>
+          <motion.button whileTap={{ scale: 0.8 }} onClick={() => doMove('right')} className="bg-slate-700 rounded p-1.5 text-center text-sm">→</motion.button>
+        </div>
+      </div>
+
+      {gameOver && (
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center">
+          <p className="text-red-400 font-bold mb-2">Game Over! Score: {score}</p>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={restart} className="px-4 py-2 bg-purple-500 rounded-lg font-bold text-white">
+            Play Again 🔄
+          </motion.button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+// Binary Decoder - Decode binary to earn points
+function BinaryDecoderGame() {
+  const [level, setLevel] = useState(1);
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [best, setBest] = useState(0);
+  const [binary, setBinary] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [target, setTarget] = useState(0);
+  const [feedback, setFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle');
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [mode, setMode] = useState<'num' | 'char'>('num');
+
+  const generatePuzzle = useCallback(() => {
+    if (mode === 'num') {
+      const max = Math.min(255, 8 + level * 12);
+      const num = Math.floor(Math.random() * max) + 1;
+      setBinary(num.toString(2).padStart(8, '0'));
+      setTarget(num);
+    } else {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const ch = chars[Math.floor(Math.random() * 26)];
+      setBinary(ch.charCodeAt(0).toString(2).padStart(8, '0'));
+      setTarget(ch.charCodeAt(0));
+    }
+    setAnswer('');
+    setFeedback('idle');
+  }, [level, mode]);
+
+  useEffect(() => { generatePuzzle(); }, [level, generatePuzzle]);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const t = setInterval(() => setTimeLeft(p => p - 1), 1000);
+    return () => clearInterval(t);
+  }, [timeLeft]);
+
+  const check = () => {
+    const val = parseInt(answer);
+    if (mode === 'char') {
+      if (answer.toUpperCase().charCodeAt(0) === target || val === target) {
+        setFeedback('correct');
+        const pts = 10 + streak * 5 + Math.max(0, timeLeft);
+        setScore(s => s + pts);
+        setStreak(s => s + 1);
+        setBest(b => Math.max(b, score + pts));
+        setTimeout(() => { setLevel(l => l + 1); setTimeLeft(Math.max(10, 30 - level * 2)); }, 800);
+      } else {
+        setFeedback('wrong');
+        setStreak(0);
+      }
+    } else {
+      if (val === target) {
+        setFeedback('correct');
+        const pts = 10 + streak * 5 + Math.max(0, timeLeft);
+        setScore(s => s + pts);
+        setStreak(s => s + 1);
+        setBest(b => Math.max(b, score + pts));
+        setTimeout(() => { setLevel(l => l + 1); setTimeLeft(Math.max(10, 30 - level * 2)); }, 800);
+      } else {
+        setFeedback('wrong');
+        setStreak(0);
+      }
+    }
+  };
+
+  const restart = () => {
+    setLevel(1); setScore(0); setStreak(0); setTimeLeft(30);
+    setMode(mode === 'num' ? 'char' : 'num');
+    generatePuzzle();
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between text-sm">
+        <span className="text-green-400">💻 Level {level}</span>
+        <span className="text-cyan-400">🎯 {score}</span>
+        <span className="text-yellow-400">🏆 {best}</span>
+        {streak > 1 && <span className="text-pink-400">🔥 x{streak}</span>}
+      </div>
+
+      <div className="text-center space-y-3">
+        <p className="text-sm text-purple-300">{mode === 'num' ? 'Convert binary to decimal' : 'Convert binary to letter'}</p>
+        <div className="flex justify-center gap-1">
+          {binary.split('').map((bit, i) => (
+            <motion.span
+              key={i}
+              className={`w-8 h-10 flex items-center justify-center rounded text-lg font-mono font-bold ${
+                bit === '1' ? 'bg-cyan-500/30 text-cyan-400' : 'bg-slate-700 text-slate-400'
+              }`}
+              initial={{ rotateY: 90 }}
+              animate={{ rotateY: 0 }}
+              transition={{ delay: i * 0.05 }}
+            >
+              {bit}
+            </motion.span>
+          ))}
+        </div>
+        <div className="flex justify-center gap-1 text-xs text-slate-500">
+          {[128, 64, 32, 16, 8, 4, 2, 1].map(v => (
+            <span key={v} className="w-8 text-center">{v}</span>
+          ))}
+        </div>
+
+        <div className="flex justify-center gap-2">
+          <input
+            type="text"
+            value={answer}
+            onChange={e => setAnswer(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && check()}
+            className="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-center w-32 focus:border-cyan-400 outline-none"
+            placeholder={mode === 'num' ? '???' : 'A-Z'}
+          />
+          <motion.button whileTap={{ scale: 0.9 }} onClick={check} className="px-4 py-2 bg-cyan-500 rounded-lg font-bold text-white">
+            Check
+          </motion.button>
+        </div>
+
+        <div className="w-full bg-slate-800 rounded-full h-2">
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: timeLeft > 10 ? '#22c55e' : '#ef4444' }}
+            animate={{ width: `${(timeLeft / 30) * 100}%` }}
+          />
+        </div>
+
+        {feedback === 'correct' && (
+          <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-green-400 font-bold">
+            ✅ Correct! {target} {mode === 'char' && `= "${String.fromCharCode(target)}"`}
+          </motion.p>
+        )}
+        {feedback === 'wrong' && (
+          <motion.p initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-red-400">
+            ❌ Try again! Hint: add the place values where bit = 1
+          </motion.p>
+        )}
+        {timeLeft <= 0 && (
+          <div className="text-center">
+            <p className="text-yellow-400 mb-2">⏰ Time&apos;s up! Answer was {target}{mode === 'char' ? ` = "${String.fromCharCode(target)}"` : ''}</p>
+            <motion.button whileTap={{ scale: 0.9 }} onClick={restart} className="px-4 py-2 bg-purple-500 rounded-lg font-bold text-white">
+              Switch to {mode === 'num' ? 'Letters' : 'Numbers'} Mode 🔄
+            </motion.button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Hacker Terminal - Type fast to "hack" systems
+function HackerTerminalGame() {
+  const missions = [
+    { name: 'Firewall Bypass', commands: ['decrypt --key alpha', 'bypass firewall 443', 'inject payload.sh', 'grant access root'] },
+    { name: 'Data Extraction', commands: ['connect server 192.168', 'ls -la /secrets', 'cat database.sql', 'exfiltrate --stealth'] },
+    { name: 'System Override', commands: ['scan ports 1-1024', 'exploit cve-2024', 'escalate privileges', 'override mainframe'] },
+    { name: 'Satellite Hack', commands: ['ping satellite-7', 'crack encryption aes', 'redirect orbit path', 'transmit signal home'] },
+    { name: 'AI Containment', commands: ['isolate neural-net', 'patch logic gates', 'rewrite core loop', 'contain singularity'] },
+  ];
+
+  const [mission, setMission] = useState(0);
+  const [cmdIndex, setCmdIndex] = useState(0);
+  const [typed, setTyped] = useState('');
+  const [log, setLog] = useState<string[]>(['[SYSTEM] Terminal ready. Type commands to hack.']);
+  const [score, setScore] = useState(0);
+  const [wpm, setWpm] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [totalChars, setTotalChars] = useState(0);
+  const [completed, setCompleted] = useState(false);
+  const [glitch, setGlitch] = useState(false);
+  const logRef = useRef<HTMLDivElement>(null);
+
+  const currentMission = missions[mission % missions.length];
+  const currentCmd = currentMission.commands[cmdIndex] || '';
+
+  useEffect(() => {
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [log]);
+
+  const handleType = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (completed) return;
+    if (startTime === 0) setStartTime(Date.now());
+    const val = e.target.value;
+    setTyped(val);
+
+    if (val === currentCmd) {
+      setGlitch(true);
+      setTimeout(() => setGlitch(false), 200);
+      
+      const chars = totalChars + val.length;
+      setTotalChars(chars);
+      const elapsed = (Date.now() - startTime) / 1000 / 60;
+      if (elapsed > 0) setWpm(Math.round((chars / 5) / elapsed));
+
+      setLog(prev => [...prev, `> ${val}`, `[OK] ${['Access granted', 'Bypassed', 'Executing...', 'Success!'][cmdIndex % 4]}`]);
+      setScore(s => s + 25 + (cmdIndex * 10));
+      setTyped('');
+
+      if (cmdIndex + 1 >= currentMission.commands.length) {
+        setLog(prev => [...prev, `[✅] Mission "${currentMission.name}" COMPLETE!`, '---']);
+        setCompleted(true);
+      } else {
+        setCmdIndex(i => i + 1);
+      }
+    }
+  };
+
+  const nextMission = () => {
+    setMission(m => m + 1);
+    setCmdIndex(0);
+    setTyped('');
+    setCompleted(false);
+    setLog(prev => [...prev, `[NEW MISSION] ${missions[(mission + 1) % missions.length].name}`]);
+    setStartTime(0);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between text-sm">
+        <span className="text-green-400">🎯 Mission {mission + 1}: {currentMission.name}</span>
+        <span className="text-cyan-400">💯 {score}</span>
+        {wpm > 0 && <span className="text-yellow-400">⌨️ {wpm} WPM</span>}
+      </div>
+
+      <div
+        ref={logRef}
+        className={`bg-black rounded-lg p-3 font-mono text-sm h-40 overflow-y-auto border ${
+          glitch ? 'border-red-500 shadow-lg shadow-red-500/30' : 'border-green-500/30'
+        }`}
+      >
+        {log.map((line, i) => (
+          <div
+            key={i}
+            className={`${
+              line.startsWith('[OK]') || line.startsWith('[✅]') ? 'text-green-400' :
+              line.startsWith('[NEW') ? 'text-cyan-400' :
+              line.startsWith('>') ? 'text-yellow-300' :
+              'text-green-600'
+            }`}
+          >
+            {line}
+          </div>
+        ))}
+        {!completed && (
+          <div className="text-slate-500 mt-1">
+            {`> ${currentCmd}`}
+          </div>
+        )}
+      </div>
+
+      {/* Progress bar */}
+      <div className="flex gap-1">
+        {currentMission.commands.map((_, i) => (
+          <div
+            key={i}
+            className={`h-1.5 flex-1 rounded-full ${
+              i < cmdIndex ? 'bg-green-500' :
+              i === cmdIndex && !completed ? 'bg-yellow-500' :
+              completed ? 'bg-green-500' : 'bg-slate-700'
+            }`}
+          />
+        ))}
+      </div>
+
+      <div className="relative">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-400 font-mono">&gt;</span>
+        <input
+          type="text"
+          value={typed}
+          onChange={handleType}
+          disabled={completed}
+          className="w-full bg-black border border-green-500/30 rounded-lg pl-8 pr-4 py-2 font-mono text-green-400 focus:border-green-500 outline-none"
+          placeholder={completed ? 'Mission complete!' : 'Type the command...'}
+          autoFocus
+        />
+      </div>
+
+      {/* Character match display */}
+      {!completed && (
+        <div className="font-mono text-sm flex flex-wrap gap-0">
+          {currentCmd.split('').map((ch, i) => (
+            <span
+              key={i}
+              className={`${
+                i < typed.length
+                  ? typed[i] === ch ? 'text-green-400' : 'text-red-400 bg-red-400/20'
+                  : 'text-slate-600'
+              }`}
+            >
+              {ch}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {completed && (
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center">
+          <p className="text-green-400 font-bold mb-2">🎉 Mission Complete! +{25 + cmdIndex * 10} pts</p>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={nextMission} className="px-4 py-2 bg-green-600 rounded-lg font-bold text-white">
+            Next Mission →
+          </motion.button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
 // ======================
 // MAIN PAGE
 // ======================
@@ -1763,18 +2943,27 @@ export default function PlaygroundPage() {
       { name: 'Word Scramble', icon: <Sparkles className="w-6 h-6" />, component: <WordScrambleGame /> },
       { name: 'Catch Stars', icon: <Star className="w-6 h-6" />, component: <CatchStarsGame /> },
       { name: 'Typing Racer', icon: <Zap className="w-6 h-6" />, component: <TypingRacerGame /> },
+      { name: 'Snake Game', icon: <Gamepad2 className="w-6 h-6" />, component: <SnakeGame /> },
+      { name: 'Simon Says', icon: <Brain className="w-6 h-6" />, component: <SimonSaysGame /> },
+      { name: 'Whack-a-Mole', icon: <Zap className="w-6 h-6" />, component: <WhackAMoleGame /> },
     ],
     builder: [
       { name: 'Robot Code', icon: <Gamepad2 className="w-6 h-6" />, component: <BlockCodePuzzle /> },
       { name: 'Pixel Art', icon: <Palette className="w-6 h-6" />, component: <PixelArtCreator /> },
       { name: 'Logic Gates', icon: <Brain className="w-6 h-6" />, component: <LogicGatePuzzle /> },
       { name: 'Bug Hunter', icon: <Code className="w-6 h-6" />, component: <BugHunterGame /> },
+      { name: 'Tower Stack', icon: <Gamepad2 className="w-6 h-6" />, component: <TowerStackGame /> },
+      { name: 'Maze Runner', icon: <Zap className="w-6 h-6" />, component: <MazeRunnerGame /> },
+      { name: 'Reaction Test', icon: <Star className="w-6 h-6" />, component: <ReactionSpeedGame /> },
     ],
     coder: [
       { name: 'Code Challenge', icon: <Code className="w-6 h-6" />, component: <CodeChallenge /> },
       { name: 'Sort Algorithm', icon: <Brain className="w-6 h-6" />, component: <AlgorithmSorterGame /> },
       { name: 'API Explorer', icon: <Zap className="w-6 h-6" />, component: <APIBuilderGame /> },
       { name: 'Regex Tester', icon: <Code className="w-6 h-6" />, component: <RegexTesterGame /> },
+      { name: 'Mini 2048', icon: <Brain className="w-6 h-6" />, component: <Mini2048Game /> },
+      { name: 'Binary Decoder', icon: <Code className="w-6 h-6" />, component: <BinaryDecoderGame /> },
+      { name: 'Hacker Terminal', icon: <Gamepad2 className="w-6 h-6" />, component: <HackerTerminalGame /> },
     ],
   };
 

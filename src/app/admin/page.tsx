@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp } from 'lucide-react';
 
 const adminSections = [
   {
@@ -29,6 +29,30 @@ const adminSections = [
     href: '/admin/payments',
     color: 'from-indigo-500 to-indigo-600',
     count: 'Manage',
+  },
+  {
+    icon: PenTool,
+    title: 'Blog Posts',
+    description: 'Create & publish blog articles on the website',
+    href: '/admin/blog',
+    color: 'from-violet-500 to-violet-600',
+    count: 'Write',
+  },
+  {
+    icon: GraduationCap,
+    title: 'Student Enrollments',
+    description: 'Enroll students in programs & manage registrations',
+    href: '/admin/enrollments',
+    color: 'from-sky-500 to-sky-600',
+    count: 'Enroll',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Student Progress',
+    description: 'Track & update each child\'s weekly learning progress',
+    href: '/admin/progress',
+    color: 'from-lime-500 to-lime-600',
+    count: 'Track',
   },
   {
     icon: Upload,
