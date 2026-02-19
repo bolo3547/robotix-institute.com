@@ -110,7 +110,7 @@ export default function WhatYouGetTodayPage() {
             className="text-center"
           >
             <div className="text-6xl mb-4">🎉</div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">What You Get Today</h1>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4">What You Get Today</h1>
             <p className="text-xl opacity-90 mb-6">
               Enroll today and unlock exclusive benefits, special offers, and lifetime support
             </p>
@@ -124,7 +124,7 @@ export default function WhatYouGetTodayPage() {
       {/* Special Offers */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Special Offers & Bonuses</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Special Offers & Bonuses</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {offers.map((offer, index) => (
               <motion.div
@@ -157,7 +157,7 @@ export default function WhatYouGetTodayPage() {
       {/* What's Included */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">What's Included in Every Program</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">What's Included in Every Program</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {inclusions.map((item, index) => (
               <motion.div
@@ -178,7 +178,7 @@ export default function WhatYouGetTodayPage() {
       {/* Bonus Packages */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Bonus Packages</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Bonus Packages</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {bonuses.map((bonus, index) => (
               <motion.div
@@ -209,7 +209,7 @@ export default function WhatYouGetTodayPage() {
       {/* Pricing Comparison */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Enrollment Options</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Enrollment Options</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
@@ -308,9 +308,9 @@ export default function WhatYouGetTodayPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl p-12 text-center"
+            className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl p-6 sm:p-8 md:p-12 text-center"
           >
-            <h2 className="text-4xl font-bold mb-4">🎊 Limited Time Offer</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">🎊 Limited Time Offer</h2>
             <p className="text-2xl mb-2">Get 30% OFF Your First Month!</p>
             <p className="text-lg opacity-90 mb-8">Plus a FREE consultation with our director</p>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
@@ -333,7 +333,7 @@ export default function WhatYouGetTodayPage() {
       {/* FAQ */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Common Questions</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Common Questions</h2>
           <div className="space-y-4">
             {[
               {
@@ -370,7 +370,7 @@ export default function WhatYouGetTodayPage() {
       {/* Final CTA */}
       <section className="py-12 px-4 bg-gradient-to-br from-emerald-100 to-teal-100">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Child's Future?</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Child's Future?</h2>
           <p className="text-lg text-gray-700 mb-8">
             Join 2,500+ families who have trusted ROBOTIX Institute. Start with a free trial today!
           </p>

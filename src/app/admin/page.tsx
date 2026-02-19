@@ -3,9 +3,25 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase } from 'lucide-react';
 
 const adminSections = [
+  {
+    icon: UserPlus,
+    title: 'Sign Ups',
+    description: 'View all new user registrations & accounts',
+    href: '/admin/signups',
+    color: 'from-cyan-500 to-cyan-600',
+    count: 'New Users',
+  },
+  {
+    icon: Briefcase,
+    title: 'Team Applications',
+    description: 'Review & manage join-team applications',
+    href: '/admin/applications',
+    color: 'from-amber-500 to-orange-600',
+    count: 'Applications',
+  },
   {
     icon: Receipt,
     title: 'Quotations',

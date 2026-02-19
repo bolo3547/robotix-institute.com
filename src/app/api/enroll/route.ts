@@ -99,6 +99,28 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Notify admin (email)
+    try {
+      await fetch(process.env.ADMIN_NOTIFY_URL ?? '', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'enroll',
+          enrollment: {
+            enrollmentId: enrollment.id,
+            studentId: studentUser.id,
+            parentId: parentUser.id,
+            program: programName,
+            student: { studentFirstName, studentLastName, studentDOB, studentGender, studentGrade },
+            parent: { parentFirstName, parentLastName, parentEmail, parentPhone, parentRelation },
+            emergency: { emergencyName, emergencyPhone, emergencyRelation },
+            notes: enrollment.notes,
+          },
+        }),
+      });
+    } catch (e) {
+      // Ignore notification errors
+    }
     return NextResponse.json(
       { 
         message: 'Enrollment submitted successfully',

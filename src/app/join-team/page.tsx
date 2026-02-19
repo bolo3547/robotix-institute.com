@@ -171,7 +171,7 @@ export default function JoinTeamPage() {
       {/* Hero */}
       <section className="pt-28 pb-8 px-4 text-center">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-3">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-3">
             Join the ROBOTIX Team 🚀
           </h1>
           <p className="text-purple-200 text-lg max-w-xl mx-auto">

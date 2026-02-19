@@ -50,7 +50,7 @@ export default function AdvancedRoboticsPage() {
             transition={{ duration: 0.6 }}
           >
             <div className="text-5xl mb-4">⚙️</div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">Advanced Robotics</h1>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4">Advanced Robotics</h1>
             <p className="text-xl opacity-90 mb-6">
               Take your robotics skills further with C++, sensors, IoT, and advanced projects at BongoHive, Lusaka
             </p>

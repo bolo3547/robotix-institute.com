@@ -87,7 +87,7 @@ export default function PaymentsPage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-500/20 text-accent-400 rounded-full text-sm font-medium mb-4">
             <CreditCard className="w-4 h-4" /> Payments
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Payments & Billing</h1>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Payments &amp; Billing</h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Pay securely with Mobile Money, bank transfer, or card. View history and manage installment plans.
           </p>

@@ -260,14 +260,14 @@ export default function CommunityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-5xl mx-auto px-6">
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/20 text-amber-600 rounded-full text-sm font-medium mb-4">
             <Users className="w-4 h-4" /> Community
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Parent &amp; Instructor Forum</h1>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Parent &amp; Instructor Forum</h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Connect with other parents, share experiences, ask questions, and celebrate your children&apos;s achievements.
           </p>
@@ -510,7 +510,7 @@ export default function CommunityPage() {
                         {post.comments.length > 0 && post.comments.map((comment) => {
                           const commentLiked = isLikedByMe(comment.likes);
                           return (
-                            <div key={comment.id} className="px-5 py-4 border-b border-gray-100 last:border-0 ml-12">
+                            <div key={comment.id} className="px-3 sm:px-5 py-4 border-b border-gray-100 last:border-0 ml-4 sm:ml-12">
                               <div className="flex items-start gap-3">
                                 {comment.user.image ? (
                                   <Image src={comment.user.image} alt={comment.user.name} width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
@@ -557,14 +557,14 @@ export default function CommunityPage() {
 
                         {/* No comments yet message */}
                         {post.comments.length === 0 && (
-                          <div className="px-5 py-6 ml-12 text-center text-gray-400 text-sm">
+                          <div className="px-3 sm:px-5 py-6 ml-4 sm:ml-12 text-center text-gray-400 text-sm">
                             No comments yet. Be the first to reply!
                           </div>
                         )}
 
                         {/* Comment Input */}
                         {currentUser ? (
-                          <div className="px-5 py-4 ml-12">
+                          <div className="px-3 sm:px-5 py-4 ml-4 sm:ml-12">
                             <div className="flex gap-3">
                               <input
                                 type="text"
@@ -584,7 +584,7 @@ export default function CommunityPage() {
                             </div>
                           </div>
                         ) : (
-                          <div className="px-5 py-4 ml-12 text-center">
+                          <div className="px-3 sm:px-5 py-4 ml-4 sm:ml-12 text-center">
                             <Link href="/auth/login" className="text-amber-600 hover:text-amber-700 text-sm font-medium">
                               Sign in to join the conversation →
                             </Link>

@@ -73,7 +73,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
+            className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
           >
             About ROBOTIX Institute
           </motion.h1>
@@ -129,7 +129,7 @@ export default function AboutPage() {
       {/* Values Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Our Core Values</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Our Core Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {values.map((value, index) => (
               <motion.div
@@ -153,7 +153,7 @@ export default function AboutPage() {
       {/* Timeline Section */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Our Journey</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Our Journey</h2>
           <div className="space-y-8">
             {milestones.map((milestone, index) => (
               <motion.div
@@ -185,7 +185,7 @@ export default function AboutPage() {
       {/* Team Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Our Leadership Team</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Our Leadership Team</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {team.map((member, index) => (
               <motion.div
@@ -208,23 +208,23 @@ export default function AboutPage() {
       {/* Stats Section */}
       <section className="py-16 px-4 bg-brand-500 text-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">By The Numbers</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">By The Numbers</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
             <div>
-              <p className="text-5xl font-bold mb-2">9+</p>
-              <p className="text-lg opacity-90">Years Experience</p>
+              <p className="text-3xl sm:text-5xl font-bold mb-2">9+</p>
+              <p className="text-sm sm:text-lg opacity-90">Years Experience</p>
             </div>
             <div>
-              <p className="text-5xl font-bold mb-2">2,500+</p>
-              <p className="text-lg opacity-90">Students Served</p>
+              <p className="text-3xl sm:text-5xl font-bold mb-2">2,500+</p>
+              <p className="text-sm sm:text-lg opacity-90">Students Served</p>
             </div>
             <div>
-              <p className="text-5xl font-bold mb-2">6-18</p>
-              <p className="text-lg opacity-90">Age Range</p>
+              <p className="text-3xl sm:text-5xl font-bold mb-2">6-18</p>
+              <p className="text-sm sm:text-lg opacity-90">Age Range</p>
             </div>
             <div>
-              <p className="text-5xl font-bold mb-2">3</p>
-              <p className="text-lg opacity-90">Cohorts Completed</p>
+              <p className="text-3xl sm:text-5xl font-bold mb-2">3</p>
+              <p className="text-sm sm:text-lg opacity-90">Cohorts Completed</p>
             </div>
           </div>
         </div>
@@ -233,7 +233,7 @@ export default function AboutPage() {
       {/* CTA Section */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Join Our Community</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Join Our Community</h2>
           <p className="text-xl text-gray-600 mb-8">
             Inspiring the next generation of innovators — empowering young minds to build the future, one line of code at a time
           </p>

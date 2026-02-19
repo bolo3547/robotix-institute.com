@@ -45,7 +45,7 @@ export default function HeroSection() {
     <>
       {/* Hero */}
       <section className="bg-gradient-to-br from-brand-600 via-brand-700 to-accent-700 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 py-16 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div>
@@ -56,7 +56,7 @@ export default function HeroSection() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-bold text-white leading-[1.1] mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold text-white leading-[1.1] mb-6">
                 Pioneering Tomorrow
                 <span className="block text-accent-300 mt-2">One Line of Code at a Time</span>
               </h1>
@@ -174,7 +174,7 @@ export default function HeroSection() {
 
       {/* Benefits */}
       <section className="bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Why Parents Choose Us</h2>
             <p className="text-gray-600">Building confident, capable young minds.</p>

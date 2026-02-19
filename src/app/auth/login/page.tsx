@@ -60,7 +60,7 @@ export default function LoginPage() {
         className="w-full max-w-md"
       >
         {/* Main Login Card */}
-        <div className="bg-white rounded-2xl shadow-card border border-gray-200 p-8">
+        <div className="bg-white rounded-2xl shadow-card border border-gray-200 p-5 sm:p-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-brand-50 mb-4">
               <span className="text-xl">🤖</span>

@@ -57,6 +57,19 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Notify admin (email)
+    try {
+      await fetch(process.env.ADMIN_NOTIFY_URL ?? '', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'join_team',
+          application: body,
+        }),
+      });
+    } catch (e) {
+      // Ignore notification errors
+    }
     return NextResponse.json(
       { message: 'Application submitted successfully' },
       { status: 201 }

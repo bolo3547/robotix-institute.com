@@ -84,7 +84,7 @@ export default function SchedulePage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-500/20 text-accent-400 rounded-full text-sm font-medium mb-4">
             <Calendar className="w-4 h-4" /> Scheduling
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Schedule & Book Classes</h1>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Schedule &amp; Book Classes</h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Browse available class slots, book trial sessions, and manage your schedule.
           </p>

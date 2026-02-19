@@ -86,7 +86,7 @@ export default function TestimonialsPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
+            className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
           >
             Success Stories
           </motion.h1>
@@ -104,7 +104,7 @@ export default function TestimonialsPage() {
       {/* Stats Section */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
@@ -112,7 +112,7 @@ export default function TestimonialsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <p className="text-4xl font-bold text-gray-900 mb-2">{stat.label}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">{stat.label}</p>
                 <p className="text-gray-600">{stat.description}</p>
               </motion.div>
             ))}
@@ -185,7 +185,7 @@ export default function TestimonialsPage() {
       {/* Trust Indicators */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-12">Why Parents Trust Us</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12">Why Parents Trust Us</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="text-5xl mb-4">🛡️</div>
@@ -215,7 +215,7 @@ export default function TestimonialsPage() {
       {/* Testimonial Categories */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">What Students Say</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">What Students Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card variant="kid">
               <CardContent>
@@ -260,7 +260,7 @@ export default function TestimonialsPage() {
       {/* CTA Section */}
       <section className="py-16 px-4 bg-brand-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Write Your Success Story?</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Write Your Success Story?</h2>
           <p className="text-xl mb-8 opacity-90">
             Join thousands of satisfied families and transform your child's future
           </p>

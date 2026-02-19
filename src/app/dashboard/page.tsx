@@ -85,7 +85,7 @@ export default function DashboardPage() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
             {greeting}, {userName}! 🚀
           </h2>
           <p className="text-lg text-white/60 max-w-2xl mx-auto">
@@ -141,7 +141,7 @@ export default function DashboardPage() {
             whileHover={{ y: -8 }}
           >
             <Link href="/dashboard/parent" className="block h-full">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl hover:border-blue-400/50 transition-all duration-300 p-8 h-full group cursor-pointer">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl hover:border-blue-400/50 transition-all duration-300 p-5 sm:p-8 h-full group cursor-pointer">
                 {/* Gradient Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
@@ -207,7 +207,7 @@ export default function DashboardPage() {
             whileHover={{ y: -8 }}
           >
             <Link href="/dashboard/instructor" className="block h-full">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl hover:border-purple-400/50 transition-all duration-300 p-8 h-full group cursor-pointer">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl hover:border-purple-400/50 transition-all duration-300 p-5 sm:p-8 h-full group cursor-pointer">
                 {/* Gradient Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
@@ -273,7 +273,7 @@ export default function DashboardPage() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-24 max-w-5xl mx-auto"
         >
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-12">
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-6 sm:p-8 md:p-12">
             <div className="relative z-10">
               <h3 className="text-2xl font-bold text-white mb-12 text-center">Why ROBOTIX?</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

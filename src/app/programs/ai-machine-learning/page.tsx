@@ -50,7 +50,7 @@ export default function AIMLPage() {
             transition={{ duration: 0.6 }}
           >
             <div className="text-5xl mb-4">🧠</div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">AI & Machine Learning</h1>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4">AI &amp; Machine Learning</h1>
             <p className="text-xl opacity-90 mb-6">
               Explore AI concepts, build intelligent projects, and discover how machine learning is shaping the future — at BongoHive, Lusaka
             </p>

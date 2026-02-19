@@ -52,6 +52,19 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Notify admin (email)
+    try {
+      await fetch(process.env.ADMIN_NOTIFY_URL ?? '', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'signup',
+          user: { id: user.id, name: user.name, email: user.email, role: user.role },
+        }),
+      });
+    } catch (e) {
+      // Ignore notification errors
+    }
     return NextResponse.json(
       { message: 'Account created successfully', userId: user.id },
       { status: 201 }

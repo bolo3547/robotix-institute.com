@@ -97,7 +97,7 @@ export default function ProgramsPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
+            className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
           >
             Our Programs
           </motion.h1>
@@ -184,7 +184,7 @@ export default function ProgramsPage() {
       {/* Why Choose Section */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Why Choose Our Programs?</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-900">Why Choose Our Programs?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <Users className="w-12 h-12 mx-auto mb-4 text-brand-500" />
@@ -214,7 +214,7 @@ export default function ProgramsPage() {
       {/* CTA Section */}
       <section className="py-16 px-4 bg-accent-500 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Join Cohort 3?</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Join Cohort 3?</h2>
           <p className="text-xl mb-8 opacity-90">
             Contact us to enrol your child and discover their potential in robotics and coding
           </p>

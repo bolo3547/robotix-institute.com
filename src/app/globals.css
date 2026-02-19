@@ -65,7 +65,7 @@
     color: rgb(var(--color-text-primary));
     font-family: 'Nunito', sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-    @apply antialiased transition-colors duration-300;
+    @apply antialiased transition-colors duration-300 overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -135,7 +135,7 @@
 
 @layer components {
   .container {
-    @apply max-w-6xl mx-auto px-6;
+    @apply max-w-6xl mx-auto px-4 sm:px-6;
   }
 }
 

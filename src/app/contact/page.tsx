@@ -105,7 +105,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
+            className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
           >
             Get In Touch
           </motion.h1>
@@ -157,7 +157,7 @@ export default function ContactPage() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="bg-white rounded-2xl p-8 border border-gray-200"
+              className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 border border-gray-200"
             >
               <h2 className="text-3xl font-bold mb-6 text-gray-900">Send us a Message</h2>
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -296,7 +296,7 @@ export default function ContactPage() {
       {/* CTA Section */}
       <section className="py-16 px-4 bg-accent-500 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 opacity-90">
             Book your free trial class today with no commitment
           </p>

@@ -52,7 +52,7 @@ export default function EventsPage() {
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-6xl font-bold text-gray-900 mb-4"
+            className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-4"
           >
             Events &amp; Workshops
           </motion.h1>
@@ -158,7 +158,7 @@ export default function EventsPage() {
         <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Don&apos;t Miss Out</h2>
           <p className="text-gray-600 mb-6">Get notified about new events and early-bird discounts.</p>
-          <form className="flex gap-2 max-w-md mx-auto" onSubmit={(e) => { e.preventDefault(); const input = e.currentTarget.querySelector('input'); if (input && input.value) { alert("You'll be notified about upcoming events!"); input.value = ''; } }}>
+          <form className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto" onSubmit={(e) => { e.preventDefault(); const input = e.currentTarget.querySelector('input'); if (input && input.value) { alert("You'll be notified about upcoming events!"); input.value = ''; } }}>
             <input
               type="email"
               placeholder="Your email"

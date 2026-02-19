@@ -29,6 +29,15 @@ export async function middleware(request: NextRequest) {
     '/request-quote',
     '/what-you-get',
     '/design-system',
+    '/enroll',
+    '/join-team',
+    '/signup',
+    '/playground',
+    '/leaderboard',
+    '/community',
+    '/schedule',
+    '/certificates',
+    '/portfolio',
   ];
 
   // Check if the current path matches a public route

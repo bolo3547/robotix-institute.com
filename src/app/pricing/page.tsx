@@ -134,7 +134,7 @@ export default function PricingPage() {
             <span className="inline-block bg-brand-50 text-brand-600 text-sm font-semibold px-4 py-2 rounded-full mb-4">
               Transparent Pricing
             </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Invest in Your Child&apos;s Future
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">

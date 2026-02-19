@@ -78,6 +78,7 @@ export default function Header() {
 
   const navLinks = [
     { label: 'Programs', href: '/programs' },
+    { label: 'Enroll', href: '/enroll' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Blog', href: '/blog' },
     { label: 'About', href: '/about' },
@@ -89,6 +90,7 @@ export default function Header() {
     { label: 'Events', href: '/events' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Instructors', href: '/instructors' },
+    { label: 'Join Our Team', href: '/join-team' },
     { label: 'Referral', href: '/referral' },
   ];
 
@@ -111,7 +113,7 @@ export default function Header() {
         ? 'bg-slate-900/95 border-slate-700' 
         : 'bg-white/95 border-gray-200'
     }`}>
-      <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image 
@@ -267,10 +269,10 @@ export default function Header() {
                 Log in
               </Link>
               <Link
-                href="/auth/signup"
+                href="/enroll"
                 className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-lg transition-colors"
               >
-                Get Started
+                Enroll Now
               </Link>
             </>
           )}
@@ -385,11 +387,11 @@ export default function Header() {
                   Log in
                 </Link>
                 <Link
-                  href="/auth/signup"
+                  href="/enroll"
                   className="block px-3 py-2.5 text-center font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-lg transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Get Started
+                  Enroll Now
                 </Link>
               </>
             )}

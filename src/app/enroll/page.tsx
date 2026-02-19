@@ -181,7 +181,7 @@ export default function EnrollPage() {
             <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold">📚 2025/2026 Cohort</span>
             <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-semibold">✅ Open for Enrollment</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 mb-3">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 mb-3">
             Enroll Your Child 🎓
           </h1>
           <p className="text-indigo-200 text-lg max-w-xl mx-auto">

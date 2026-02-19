@@ -140,7 +140,7 @@ export default function BlogPage() {
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-6xl font-bold text-gray-900 mb-4"
+            className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-4"
           >
             Blog &amp; Resources
           </motion.h1>
@@ -196,8 +196,8 @@ export default function BlogPage() {
                   Featured
                 </div>
               </div>
-              <div className="p-8 flex flex-col justify-center">
-                <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+              <div className="p-4 sm:p-6 md:p-8 flex flex-col justify-center">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-gray-500 mb-3">
                   <span className="bg-gray-50 px-2 py-1 rounded text-gray-600">{featuredPost.category}</span>
                   <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {featuredPost.date}</span>
                   <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {featuredPost.readTime}</span>
@@ -258,7 +258,7 @@ export default function BlogPage() {
         <div className="max-w-2xl mx-auto bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Never Miss an Update</h2>
           <p className="text-white/80 mb-6">Subscribe to our newsletter for the latest STEM tips and news.</p>
-          <form className="flex gap-2 max-w-md mx-auto" onSubmit={(e) => { e.preventDefault(); const input = e.currentTarget.querySelector('input'); if (input && input.value) { alert("Thank you for subscribing! We'll keep you updated."); input.value = ''; } }}>
+          <form className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto" onSubmit={(e) => { e.preventDefault(); const input = e.currentTarget.querySelector('input'); if (input && input.value) { alert("Thank you for subscribing! We'll keep you updated."); input.value = ''; } }}>
             <input
               type="email"
               placeholder="Your email address"

@@ -545,7 +545,7 @@ function CertificateCard({ cert, onView, index }: { cert: Certificate; onView: (
       </div>
 
       {/* Mini Certificate Preview */}
-      <div className="relative p-7 text-center" style={{ background: `linear-gradient(135deg, ${P.deep}40, ${P.brand}15, ${P.amethyst}10)`, borderBottom: `1px solid ${P.royal}15` }}>
+      <div className="relative p-4 sm:p-7 text-center" style={{ background: `linear-gradient(135deg, ${P.deep}40, ${P.brand}15, ${P.amethyst}10)`, borderBottom: `1px solid ${P.royal}15` }}>
         {/* Grade chip */}
         <div className="absolute top-3 right-3 z-10">
           <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${grade.chipBg} ${grade.chipText} border ${grade.chipBorder} backdrop-blur-sm`}>
@@ -860,7 +860,7 @@ function CertificateModal({ cert, onClose }: { cert: Certificate; onClose: () =>
                 </div>
 
                 <div className="flex justify-center -mt-2 sm:-mt-4">
-                  <PurpleSeal grade={cert.grade} size={80} />
+                  <PurpleSeal grade={cert.grade} size={60} />
                 </div>
 
                 <div className="text-center">

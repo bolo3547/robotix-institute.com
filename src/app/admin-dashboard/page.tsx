@@ -43,7 +43,7 @@ export default function AdminDashboard() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-start"
+          className="flex flex-col sm:flex-row justify-between items-start gap-4"
         >
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-6"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6"
         >
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
