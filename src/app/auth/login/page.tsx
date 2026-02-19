@@ -23,13 +23,15 @@ export default function LoginPage() {
 
     try {
       const result = await signIn('credentials', {
-        email,
+        email: email.trim().toLowerCase(),
         password,
         redirect: false,
       });
 
       if (result?.error) {
-        setError('Invalid email or password. Please try again.');
+        setError(result.error === 'CredentialsSignin'
+          ? 'Invalid email or password. Please try again.'
+          : result.error);
       } else if (result?.ok) {
         // Get session to determine role-based redirect
         const session = await getSession();

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { authOptions } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
 // GET - List community posts (public)
 export async function GET(req: NextRequest) {
@@ -54,7 +53,7 @@ export async function GET(req: NextRequest) {
 // POST - Create a new community post (requires auth)
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'You must be signed in to create a post' }, { status: 401 });
     }
@@ -98,7 +97,7 @@ export async function POST(req: NextRequest) {
 // PUT - Update a post (author or admin only)
 export async function PUT(req: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -149,7 +148,7 @@ export async function PUT(req: NextRequest) {
 // DELETE - Delete a post (author or admin only)
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
