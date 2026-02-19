@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
-import { mockUsers } from '@/lib/mockDb';
+import prisma from '@/lib/prisma';
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -18,7 +18,9 @@ const handler = NextAuth({
           throw new Error('Invalid credentials');
         }
 
-        const user = mockUsers[credentials.email];
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
         if (!user) {
           throw new Error('No user found with this email');
@@ -35,7 +37,7 @@ const handler = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
-          image: user.avatar || null,
+          image: user.image || null,
         };
       },
     }),
@@ -43,7 +45,7 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = mockUsers[user.email!]?.role || 'student';
+        token.role = (user as any).role || 'student';
         token.id = user.id;
       }
       return token;

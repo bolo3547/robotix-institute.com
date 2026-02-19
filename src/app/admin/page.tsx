@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays } from 'lucide-react';
 
 const adminSections = [
   {
@@ -21,6 +21,22 @@ const adminSections = [
     href: '/admin/promotions',
     color: 'from-yellow-500 to-orange-500',
     count: 'Run Ads',
+  },
+  {
+    icon: ImageIcon,
+    title: 'Photo Gallery',
+    description: 'Upload & manage gallery photos',
+    href: '/admin/photos',
+    color: 'from-cyan-500 to-cyan-600',
+    count: 'Manage',
+  },
+  {
+    icon: CalendarDays,
+    title: 'Events',
+    description: 'Create & manage events and workshops',
+    href: '/admin/events',
+    color: 'from-rose-500 to-rose-600',
+    count: 'Manage',
   },
   {
     icon: BookOpen,
@@ -259,13 +275,22 @@ export default function AdminDashboard() {
                   + Add Team Member
                 </motion.button>
               </Link>
-              <Link href="/admin/content">
+              <Link href="/admin/photos">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-pink-400 to-pink-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-600 text-white text-sm font-medium hover:shadow-lg transition-all"
                 >
-                  View All Content
+                  + Add Photo
+                </motion.button>
+              </Link>
+              <Link href="/admin/events">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-rose-400 to-rose-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                >
+                  + Add Event
                 </motion.button>
               </Link>
             </div>

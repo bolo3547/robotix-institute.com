@@ -1,129 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ExternalLink, Heart, Award } from 'lucide-react';
 
-const categories = ['All', 'Robotics', 'Python', 'Web Apps', 'AI Projects', 'Games'];
+interface Photo {
+  id: string;
+  title: string;
+  description: string | null;
+  url: string;
+  category: string;
+  createdAt: string;
+}
 
-const projects = [
-  {
-    id: 1,
-    title: 'Line-Following Robot',
-    student: 'Mwila Chanda, Age 12',
-    program: 'Advanced Robotics',
-    category: 'Robotics',
-    description: 'An autonomous line-following robot built with Arduino and IR sensors. Won 2nd place at the Zambia Robotics Challenge.',
-    image: '/robotix1.jpg',
-    featured: true,
-    likes: 145,
-    award: 'Competition Winner',
-  },
-  {
-    id: 2,
-    title: 'Weather Dashboard App',
-    student: 'Natasha Banda, Age 15',
-    program: 'Python Programming',
-    category: 'Python',
-    description: 'A real-time weather dashboard using Python and OpenWeatherMap API with data visualization charts.',
-    image: '/ai-learning.jpg',
-    featured: false,
-    likes: 89,
-    award: null,
-  },
-  {
-    id: 3,
-    title: 'School Management Portal',
-    student: 'Joseph Tembo, Age 17',
-    program: 'Web Development',
-    category: 'Web Apps',
-    description: 'A full-stack school management web app with student records, attendance tracking, and grade management.',
-    image: '/students2.jpg',
-    featured: true,
-    likes: 203,
-    award: 'Best Project 2025',
-  },
-  {
-    id: 4,
-    title: 'Obstacle Avoidance Drone',
-    student: 'Chileshe Mulenga, Age 14',
-    program: 'Advanced Robotics',
-    category: 'Robotics',
-    description: 'A drone programmed to navigate obstacle courses autonomously using ultrasonic sensors.',
-    image: '/robotix3.jpg',
-    featured: false,
-    likes: 167,
-    award: null,
-  },
-  {
-    id: 5,
-    title: 'Crop Disease Detector',
-    student: 'Grace Mumba, Age 16',
-    program: 'AI & Machine Learning',
-    category: 'AI Projects',
-    description: 'An ML model that identifies crop diseases from plant leaf images. Built to help Zambian farmers.',
-    image: '/digital-divide.jpg',
-    featured: true,
-    likes: 312,
-    award: 'Innovation Award',
-  },
-  {
-    id: 6,
-    title: 'Space Adventure Game',
-    student: 'David Kasonde, Age 10',
-    program: 'Coding Basics',
-    category: 'Games',
-    description: 'A Scratch-based space shooter game with multiple levels, power-ups, and a high score system.',
-    image: '/team1.jpg',
-    featured: false,
-    likes: 78,
-    award: null,
-  },
-  {
-    id: 7,
-    title: 'Smart Irrigation System',
-    student: 'Chipo Lungu, Age 13',
-    program: 'Robotics Foundations',
-    category: 'Robotics',
-    description: 'An Arduino-based system that monitors soil moisture and automatically waters plants when needed.',
-    image: '/robotix1.jpg',
-    featured: false,
-    likes: 134,
-    award: 'STEM Fair Winner',
-  },
-  {
-    id: 8,
-    title: 'Bemba Translation App',
-    student: 'Bwalya Mwape, Age 16',
-    program: 'AI & Machine Learning',
-    category: 'AI Projects',
-    description: 'An NLP-powered translation tool that translates between English and Bemba language.',
-    image: '/ai-learning.jpg',
-    featured: false,
-    likes: 198,
-    award: null,
-  },
-  {
-    id: 9,
-    title: 'E-Commerce Store',
-    student: 'Luyando Sakala, Age 17',
-    program: 'Web Development',
-    category: 'Web Apps',
-    description: 'A fully functional e-commerce store with product listings, cart, and mobile money payment integration.',
-    image: '/students2.jpg',
-    featured: false,
-    likes: 156,
-    award: null,
-  },
-];
+const categories = ['All', 'general', 'robotics', 'events', 'students', 'projects'];
 
 export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState('All');
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/photos')
+      .then(res => res.json())
+      .then(data => setPhotos(data))
+      .catch(err => console.error('Failed to load gallery:', err))
+      .finally(() => setLoading(false));
+  }, []);
 
   const filtered = activeCategory === 'All'
-    ? projects
-    : projects.filter((p) => p.category === activeCategory);
+    ? photos
+    : photos.filter((p) => p.category === activeCategory);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -150,7 +58,7 @@ export default function GalleryPage() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors capitalize ${
                 activeCategory === cat
                   ? 'bg-accent-500 text-white'
                   : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100'
@@ -162,46 +70,48 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* Projects Grid */}
+      {/* Photos Grid */}
       <section className="px-4 pb-20">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((project, i) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-gray-300 shadow-sm transition-colors group"
-            >
-              <div className="relative h-48">
-                <Image src={project.image} alt={project.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                {project.award && (
-                  <div className="absolute top-3 left-3 bg-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                    <Award className="w-3 h-3" /> {project.award}
+        <div className="max-w-6xl mx-auto">
+          {loading ? (
+            <div className="text-center py-20 text-gray-400">Loading gallery...</div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20 text-gray-400">
+              <p className="text-lg mb-2">No photos yet</p>
+              <p className="text-sm">Check back soon for updates!</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((photo, i) => (
+                <motion.div
+                  key={photo.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-gray-300 shadow-sm transition-colors group"
+                >
+                  <div className="relative h-48">
+                    <Image src={photo.url} alt={photo.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <div className="absolute top-3 right-3 bg-brand-500/80 text-white text-xs font-bold px-3 py-1 rounded-full capitalize">
+                      {photo.category}
+                    </div>
                   </div>
-                )}
-                {project.featured && (
-                  <div className="absolute top-3 right-3 bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    Featured
+                  <div className="p-5">
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">{photo.title}</h3>
+                    {photo.description && (
+                      <p className="text-sm text-gray-600 mb-3">{photo.description}</p>
+                    )}
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                      <span className="text-xs text-gray-400">{new Date(photo.createdAt).toLocaleDateString()}</span>
+                      <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-400 transition-colors">
+                        <Heart className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                )}
-              </div>
-              <div className="p-5">
-                <div className="text-xs text-accent-400 font-medium mb-1">{project.program}</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">{project.title}</h3>
-                <p className="text-sm text-gray-500 mb-3">by {project.student}</p>
-                <p className="text-sm text-gray-600 mb-4">{project.description}</p>
-                <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                  <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-400 transition-colors">
-                    <Heart className="w-4 h-4" /> {project.likes}
-                  </button>
-                  <button className="flex items-center gap-1 text-sm text-accent-400 hover:text-accent-300 transition-colors">
-                    <ExternalLink className="w-4 h-4" /> View Project
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

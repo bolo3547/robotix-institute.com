@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
-import { mockUsers, addUser } from '@/lib/mockDb';
+import prisma from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, password, role, childAge, qualifications } = body;
+    const { name, email, password, role } = body;
 
     // Validate required fields
     if (!name || !email || !password || !role) {
@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    if (mockUsers[email]) {
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
       return NextResponse.json(
         { error: 'An account with this email already exists' },
         { status: 409 }
@@ -41,24 +42,18 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hash(password, 10);
 
-    // Create new user
-    const newUser = {
-      id: `${role}-${Date.now()}`,
-      email,
-      name,
-      role,
-      password: hashedPassword,
-      phone: phone || '',
-      ...(role === 'parent' ? { childAge: childAge || '', children: [] } : {}),
-      ...(role === 'instructor' ? { qualifications: qualifications || '', bio: '' } : {}),
-      ...(role === 'student' ? { grade: '', enrolledPrograms: [] } : {}),
-      createdAt: new Date().toISOString(),
-    };
-
-    addUser(newUser);
+    // Create new user in database
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name,
+        role,
+        password: hashedPassword,
+      },
+    });
 
     return NextResponse.json(
-      { message: 'Account created successfully', userId: newUser.id },
+      { message: 'Account created successfully', userId: user.id },
       { status: 201 }
     );
   } catch (error) {
