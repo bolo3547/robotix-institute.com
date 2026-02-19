@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import prisma from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const type = formData.get('type') as string; // 'logo' | 'favicon' | 'banner' | 'general'
+    const type = formData.get('type') as string; // 'logo' | 'favicon' | 'banner' | 'gallery' | 'general'
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -33,11 +34,31 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Determine upload directory
+    // For logo/favicon: store as base64 data URL in database (persists on Vercel)
+    if (type === 'logo' || type === 'favicon') {
+      const base64 = buffer.toString('base64');
+      const dataUrl = `data:${file.type};base64,${base64}`;
+
+      await prisma.siteSetting.upsert({
+        where: { key: type === 'logo' ? 'logoUrl' : 'faviconUrl' },
+        update: { value: dataUrl },
+        create: { key: type === 'logo' ? 'logoUrl' : 'faviconUrl', value: dataUrl },
+      });
+
+      return NextResponse.json({
+        success: true,
+        url: dataUrl,
+        filename: file.name,
+        size: file.size,
+        type: file.type,
+        stored: 'database',
+      });
+    }
+
+    // For other files: store on filesystem (works locally, ephemeral on Vercel)
     const uploadDir = path.join(process.cwd(), 'public', 'images', 'uploads');
     await mkdir(uploadDir, { recursive: true });
 
-    // Generate filename with type prefix and timestamp
     const ext = path.extname(file.name) || '.png';
     const filename = `${type || 'general'}-${Date.now()}${ext}`;
     const filepath = path.join(uploadDir, filename);
@@ -52,6 +73,7 @@ export async function POST(request: NextRequest) {
       filename,
       size: file.size,
       type: file.type,
+      stored: 'filesystem',
     });
   } catch (error) {
     console.error('Upload error:', error);

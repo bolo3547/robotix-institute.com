@@ -9,14 +9,44 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
   password  String
   name      String
-  role      String   @default("parent") // parent | student | instructor | admin
+  role      String    @default("parent") // parent | student | instructor | admin
   image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  payments  Payment[]
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  description   String
+  amount        Float
+  currency      String   @default("ZMW")
+  status        String   @default("pending") // pending | paid | overdue | cancelled
+  method        String?  // mobile_money | bank_transfer | card | cash
+  reference     String?  // payment reference / transaction ID
+  receiptNumber String?  @unique
+  paidAt        DateTime?
+  dueDate       DateTime?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  @@index([key])
 }
 
 model Photo {
@@ -44,4 +74,14 @@ model Event {
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model PageContent {
+  id        String   @id @default(cuid())
+  pageId    String   @unique // homepage, about, programs, testimonials, contact, what-you-get
+  content   String   @db.Text // JSON string with all sections
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pageId])
 }

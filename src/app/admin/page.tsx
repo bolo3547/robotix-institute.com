@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload } from 'lucide-react';
 
 const adminSections = [
   {
@@ -21,6 +21,22 @@ const adminSections = [
     href: '/admin/promotions',
     color: 'from-yellow-500 to-orange-500',
     count: 'Run Ads',
+  },
+  {
+    icon: CreditCard,
+    title: 'Payments',
+    description: 'Track & update parent payments, issue receipts',
+    href: '/admin/payments',
+    color: 'from-indigo-500 to-indigo-600',
+    count: 'Manage',
+  },
+  {
+    icon: Upload,
+    title: 'Website Logo',
+    description: 'Upload & change the site logo',
+    href: '/admin/logo',
+    color: 'from-teal-500 to-teal-600',
+    count: 'Upload',
   },
   {
     icon: ImageIcon,
@@ -291,6 +307,24 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-rose-400 to-rose-600 text-white text-sm font-medium hover:shadow-lg transition-all"
                 >
                   + Add Event
+                </motion.button>
+              </Link>
+              <Link href="/admin/payments">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-400 to-indigo-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                >
+                  + Add Payment
+                </motion.button>
+              </Link>
+              <Link href="/admin/logo">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-teal-400 to-teal-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                >
+                  Upload Logo
                 </motion.button>
               </Link>
             </div>

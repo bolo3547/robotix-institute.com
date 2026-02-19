@@ -23,8 +23,9 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState('/logo.svg');
 
-  // Load custom logo from admin settings
+  // Load custom logo from database, then listen for local changes
   useEffect(() => {
+    // 1. First check localStorage for instant display
     try {
       const stored = localStorage.getItem('robotix-site-settings');
       if (stored) {
@@ -37,7 +38,18 @@ export default function Header() {
       // Keep default logo
     }
 
-    // Listen for settings changes from admin
+    // 2. Then fetch from database (source of truth)
+    fetch('/api/settings/logo')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.logoUrl && data.logoUrl !== '/logo.svg') {
+          setLogoUrl(data.logoUrl);
+          localStorage.setItem('robotix-site-settings', JSON.stringify({ logoUrl: data.logoUrl }));
+        }
+      })
+      .catch(() => {});
+
+    // 3. Listen for settings changes from admin (same-tab updates)
     const handleSettingsChange = () => {
       try {
         const stored = localStorage.getItem('robotix-site-settings');
