@@ -1,6 +1,7 @@
 // ============================================================
 // GET /api/cyber/admin — Admin stats & student data
 // ============================================================
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 

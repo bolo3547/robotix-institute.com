@@ -2,6 +2,7 @@
 // GET /api/cyber/progress?userId=... — Get user progress
 // POST /api/cyber/progress — Submit/update challenge progress
 // ============================================================
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';

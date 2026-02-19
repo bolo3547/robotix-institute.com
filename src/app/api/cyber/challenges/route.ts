@@ -2,6 +2,7 @@
 // GET /api/cyber/challenges — List all active challenges
 // POST /api/cyber/challenges — (admin) create a challenge
 // ============================================================
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 

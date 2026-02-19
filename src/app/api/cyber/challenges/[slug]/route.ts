@@ -1,6 +1,7 @@
 // ============================================================
 // GET /api/cyber/challenges/[slug] — Get challenge by slug
 // ============================================================
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 

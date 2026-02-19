@@ -1,6 +1,7 @@
 // ============================================================
 // GET /api/cyber/stats?userId=... — Get student stats
 // ============================================================
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';

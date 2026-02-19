@@ -1,6 +1,7 @@
 // ============================================================
 // GET /api/cyber/leaderboard — Global leaderboard
 // ============================================================
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 

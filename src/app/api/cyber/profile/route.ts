@@ -2,6 +2,7 @@
 // GET /api/cyber/profile — Get current user's cyber profile
 // POST /api/cyber/profile — Create/init cyber profile for current user
 // ============================================================
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
