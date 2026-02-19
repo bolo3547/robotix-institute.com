@@ -21,6 +21,10 @@ model User {
   payments    Payment[]
   enrollments Enrollment[]
   progress    StudentProgress[]
+  communityPosts    CommunityPost[]
+  communityComments CommunityComment[]
+  postLikes         CommunityPostLike[]
+  commentLikes      CommunityCommentLike[]
   // For parents linking to children
   children    User[]         @relation("ParentChild")
   parent      User?          @relation("ParentChild", fields: [parentId], references: [id])
@@ -157,4 +161,67 @@ model StudentProgress {
   @@index([userId])
   @@index([enrollmentId])
   @@unique([enrollmentId, week])
+}
+
+model CommunityPost {
+  id        String             @id @default(cuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String             @db.Text
+  category  String             @default("general") // general | help | showcase | events | feedback
+  tags      String?            // comma-separated tags
+  image     String?
+  pinned    Boolean            @default(false)
+  published Boolean            @default(true)
+  comments  CommunityComment[]
+  likes     CommunityPostLike[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([category])
+  @@index([published])
+  @@index([createdAt])
+}
+
+model CommunityComment {
+  id        String               @id @default(cuid())
+  postId    String
+  post      CommunityPost        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String               @db.Text
+  likes     CommunityCommentLike[]
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@index([postId])
+  @@index([userId])
+}
+
+model CommunityPostLike {
+  id        String        @id @default(cuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+model CommunityCommentLike {
+  id        String           @id @default(cuid())
+  commentId String
+  comment   CommunityComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
 }
