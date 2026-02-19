@@ -38,6 +38,7 @@ export async function middleware(request: NextRequest) {
     '/schedule',
     '/certificates',
     '/portfolio',
+    '/cyber',
   ];
 
   // Check if the current path matches a public route

@@ -25,6 +25,12 @@ model User {
   communityComments CommunityComment[]
   postLikes         CommunityPostLike[]
   commentLikes      CommunityCommentLike[]
+  // Cybersecurity Training Platform
+  cyberProfile      CyberProfile?
+  cyberProgress     CyberChallengeProgress[]
+  cyberBadges       CyberUserBadge[]
+  cyberActivities   CyberActivity[]
+  applications      Application[]
   // For parents linking to children
   children    User[]         @relation("ParentChild")
   parent      User?          @relation("ParentChild", fields: [parentId], references: [id])
@@ -224,4 +230,168 @@ model CommunityCommentLike {
   @@unique([commentId, userId])
   @@index([commentId])
   @@index([userId])
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Cybersecurity Training Platform Models
+// ═══════════════════════════════════════════════════════════════
+
+model CyberChallenge {
+  id              String   @id
+  title           String
+  slug            String   @unique
+  description     String   @db.Text
+  objective       String   @db.Text
+  difficulty      String   // beginner | intermediate | advanced
+  category        String
+  estimatedTime   Int      // minutes
+  points          Int
+  displayOrder    Int
+  tags            String   @db.Text // JSON array
+  prerequisiteIds String   @db.Text // JSON array
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  progress CyberChallengeProgress[]
+
+  @@index([slug])
+  @@index([difficulty])
+}
+
+model CyberProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xp            Int      @default(0)
+  level         Int      @default(1)
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  lastActiveAt  DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([xp])
+}
+
+model CyberChallengeProgress {
+  id          String          @id @default(cuid())
+  challengeId String
+  challenge   CyberChallenge  @relation(fields: [challengeId], references: [id])
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      String          @default("available") // locked | available | in-progress | completed
+  score       Int             @default(0)
+  maxScore    Int             @default(0)
+  startedAt   DateTime?
+  completedAt DateTime?
+  attempts    Int             @default(0)
+  flagsFound  Int             @default(0)
+  totalFlags  Int             @default(0)
+  timeSpent   Int             @default(0) // seconds
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@unique([challengeId, userId])
+  @@index([userId])
+  @@index([challengeId])
+}
+
+model CyberBadge {
+  id          String           @id
+  name        String
+  description String
+  icon        String
+  rarity      String           // common | uncommon | rare | epic | legendary
+  createdAt   DateTime         @default(now())
+
+  userBadges CyberUserBadge[]
+}
+
+model CyberUserBadge {
+  id       String     @id @default(cuid())
+  badgeId  String
+  badge    CyberBadge @relation(fields: [badgeId], references: [id])
+  userId   String
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  earnedAt DateTime   @default(now())
+
+  @@unique([badgeId, userId])
+  @@index([userId])
+}
+
+model CyberActivity {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String   // challenge_started | challenge_completed | badge_earned | level_up | login
+  description String
+  metadata    String?  @db.Text // JSON
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ── Enrollment Application (parent submits, admin reviews, acceptance letter sent) ──
+
+model Application {
+  id                String   @id @default(cuid())
+  
+  // Parent / guardian
+  parentId          String
+  parent            User     @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  parentPhone       String?
+  parentRelation    String?
+  parentAddress     String?
+  parentCity        String?
+  parentAltPhone    String?
+  
+  // Student info
+  studentFirstName  String
+  studentLastName   String
+  studentDOB        String
+  studentGender     String?
+  studentGrade      String?
+  previousExperience String?
+  learningGoals     String?  @db.Text
+  
+  // Program
+  program           String
+  preferredSchedule String?
+  
+  // Medical / Emergency
+  medicalConditions String?  @db.Text
+  allergies         String?
+  medications       String?
+  emergencyName     String
+  emergencyPhone    String
+  emergencyRelation String?
+  
+  // Consent & extras
+  howHeard          String?
+  specialNeeds      String?  @db.Text
+  photoConsent      Boolean  @default(false)
+  paymentMethod     String?
+  
+  // Review workflow
+  status            String   @default("pending") // pending | under_review | accepted | rejected | waitlisted
+  reviewedBy        String?  // admin user id
+  reviewedAt        DateTime?
+  adminNotes        String?  @db.Text
+  rejectionReason   String?  @db.Text
+  
+  // Link to enrollment once accepted
+  enrollmentId      String?  @unique
+  
+  // Acceptance letter sent
+  acceptanceLetterSentAt DateTime?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([status])
+  @@index([program])
+  @@index([createdAt])
 }

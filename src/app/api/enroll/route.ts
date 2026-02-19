@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import {
+  sendApplicationConfirmation,
+  sendAdminNewApplicationNotification,
+} from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,7 +54,6 @@ export async function POST(request: NextRequest) {
     let parentUser = await prisma.user.findUnique({ where: { email: parentEmail } });
 
     if (!parentUser) {
-      // Create parent user with a temporary password (they can use signup/reset later)
       const { hash } = await import('bcryptjs');
       const tempPassword = await hash(`robotix_${Date.now()}`, 10);
       
@@ -65,75 +68,80 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create student user linked to parent
-    const { hash: hashFn } = await import('bcryptjs');
-    const studentTempPassword = await hashFn(`student_${Date.now()}`, 10);
-
-    const studentUser = await prisma.user.create({
+    // Create a PENDING application (admin will review & accept/reject)
+    const application = await prisma.application.create({
       data: {
-        email: `${studentFirstName.toLowerCase()}.${studentLastName.toLowerCase()}.${Date.now()}@student.robotix`,
-        name: `${studentFirstName} ${studentLastName}`,
-        password: studentTempPassword,
-        role: 'student',
         parentId: parentUser.id,
-      },
-    });
+        parentPhone: parentPhone,
+        parentRelation: parentRelation,
+        parentAddress: parentAddress || null,
+        parentCity: parentCity || null,
+        parentAltPhone: parentAltPhone || null,
 
-    // Create enrollment
-    const enrollment = await prisma.enrollment.create({
-      data: {
-        userId: studentUser.id,
+        studentFirstName,
+        studentLastName,
+        studentDOB,
+        studentGender: studentGender || null,
+        studentGrade: studentGrade || null,
+        previousExperience: previousExperience || null,
+        learningGoals: learningGoals || null,
+
         program: programName,
-        level: ['robotics_foundations', 'coding_basics', 'digital_skills'].includes(program) ? 'beginner' 
-          : program === 'python' ? 'intermediate' : 'advanced',
-        status: 'active',
-        notes: JSON.stringify({
-          preferredSchedule,
-          studentDOB, studentGender, studentGrade, previousExperience, learningGoals,
-          parentRelation, parentAltPhone, parentAddress, parentCity,
-          medicalConditions, allergies, medications,
-          emergencyName, emergencyPhone, emergencyRelation,
-          howHeard, specialNeeds, photoConsent, paymentMethod,
-          enrolledAt: new Date().toISOString(),
-        }),
+        preferredSchedule: preferredSchedule || null,
+
+        medicalConditions: medicalConditions || null,
+        allergies: allergies || null,
+        medications: medications || null,
+        emergencyName,
+        emergencyPhone,
+        emergencyRelation: emergencyRelation || null,
+
+        howHeard: howHeard || null,
+        specialNeeds: specialNeeds || null,
+        photoConsent: !!photoConsent,
+        paymentMethod: paymentMethod || null,
+
+        status: 'pending',
       },
     });
 
-    // Notify admin (email)
+    // Send confirmation email to parent & notify admin
     try {
-      await fetch(process.env.ADMIN_NOTIFY_URL ?? '', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'enroll',
-          enrollment: {
-            enrollmentId: enrollment.id,
-            studentId: studentUser.id,
-            parentId: parentUser.id,
-            program: programName,
-            student: { studentFirstName, studentLastName, studentDOB, studentGender, studentGrade },
-            parent: { parentFirstName, parentLastName, parentEmail, parentPhone, parentRelation },
-            emergency: { emergencyName, emergencyPhone, emergencyRelation },
-            notes: enrollment.notes,
-          },
-        }),
+      await sendApplicationConfirmation({
+        parentName: parentUser.name || `${parentFirstName} ${parentLastName}`,
+        parentEmail: parentUser.email,
+        studentName: `${studentFirstName} ${studentLastName}`,
+        program: programName,
       });
     } catch (e) {
-      // Ignore notification errors
+      console.error('Confirmation email error:', e);
     }
+
+    try {
+      await sendAdminNewApplicationNotification({
+        applicationId: application.id,
+        studentName: `${studentFirstName} ${studentLastName}`,
+        program: programName,
+        parentName: parentUser.name || `${parentFirstName} ${parentLastName}`,
+        parentEmail: parentUser.email,
+      });
+    } catch (e) {
+      console.error('Admin notification email error:', e);
+    }
+
     return NextResponse.json(
       { 
-        message: 'Enrollment submitted successfully',
-        enrollmentId: enrollment.id,
-        studentId: studentUser.id,
+        message: 'Application submitted successfully! You will receive an acceptance letter once reviewed.',
+        applicationId: application.id,
         parentId: parentUser.id,
+        status: 'pending',
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Enrollment error:', error);
+    console.error('Enrollment application error:', error);
     return NextResponse.json(
-      { error: 'Failed to process enrollment' },
+      { error: 'Failed to submit application' },
       { status: 500 }
     );
   }

@@ -3,9 +3,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase, ClipboardList } from 'lucide-react';
 
 const adminSections = [
+  {
+    icon: ClipboardList,
+    title: 'Enrollment Applications',
+    description: 'Review parent sign-up forms & send acceptance letters',
+    href: '/admin/enrollment-applications',
+    color: 'from-violet-500 to-purple-600',
+    count: 'Review',
+  },
   {
     icon: UserPlus,
     title: 'Sign Ups',
