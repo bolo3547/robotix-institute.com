@@ -51,7 +51,7 @@ export default function PasswordStrengthLab() {
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [_tested, setTested] = useState(0);
+  const [, setTested] = useState(0);
 
   const result = password ? analyzePassword(password) : null;
 

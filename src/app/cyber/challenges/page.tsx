@@ -21,7 +21,7 @@ export default function ChallengesPage() {
   const [search, setSearch] = useState('');
   const [filterDiff, setFilterDiff] = useState<Difficulty | 'all'>('all');
   const [progress, setProgress] = useState<ChallengeProgress[]>([]);
-  const [_loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     getUserProgress()
