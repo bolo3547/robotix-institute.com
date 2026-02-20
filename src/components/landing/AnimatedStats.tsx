@@ -12,10 +12,12 @@ interface StatItem {
 function useCountUp(end: number, duration: number = 2000, startCounting: boolean = false) {
   const [count, setCount] = useState(0);
   const frameRef = useRef<number>();
+  const hasRun = useRef(false);
 
   useEffect(() => {
-    if (!startCounting) return;
-    
+    if (!startCounting || hasRun.current) return;
+    hasRun.current = true;
+
     let startTime: number;
     const animate = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
@@ -25,6 +27,8 @@ function useCountUp(end: number, duration: number = 2000, startCounting: boolean
       setCount(Math.floor(eased * end));
       if (progress < 1) {
         frameRef.current = requestAnimationFrame(animate);
+      } else {
+        setCount(end); // Ensure final value is exact
       }
     };
     frameRef.current = requestAnimationFrame(animate);
@@ -38,16 +42,16 @@ function useCountUp(end: number, duration: number = 2000, startCounting: boolean
 
 function StatCounter({ item, inView }: { item: StatItem; inView: boolean }) {
   const count = useCountUp(item.value, 2200, inView);
-  
+
   return (
     <div className="text-center group">
-      <div className="w-16 h-16 mx-auto mb-4 bg-brand-100 rounded-2xl flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform duration-300">
+      <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-brand-100 rounded-2xl flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform duration-300">
         {item.icon}
       </div>
-      <div className="text-4xl md:text-5xl font-bold text-brand-700 mb-1 tabular-nums">
-        {inView ? count.toLocaleString() : '0'}{item.suffix}
+      <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-brand-700 mb-1 tabular-nums">
+        {count.toLocaleString()}{item.suffix}
       </div>
-      <div className="text-sm text-gray-600 font-medium">{item.label}</div>
+      <div className="text-xs sm:text-sm text-gray-600 font-medium">{item.label}</div>
     </div>
   );
 }
@@ -107,11 +111,23 @@ export default function AnimatedStats() {
           observer.disconnect();
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.05, rootMargin: '0px 0px -50px 0px' }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+
+    // Fallback: if observer didn't fire after 4s (e.g. section already in viewport on load)
+    const fallback = setTimeout(() => {
+      setInView((prev) => {
+        if (!prev) return true;
+        return prev;
+      });
+    }, 4000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallback);
+    };
   }, []);
 
   return (

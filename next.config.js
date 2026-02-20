@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // output: 'standalone', // Uncomment for Docker/self-hosted; Vercel handles this automatically
   reactStrictMode: true,
   swcMinify: true,
   typescript: {

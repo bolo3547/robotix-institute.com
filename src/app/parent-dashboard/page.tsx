@@ -2,9 +2,8 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Clock, Award, BookOpen, TrendingUp } from 'lucide-react';
 import ParentDashboardLayout from '@/components/dashboard/parent/ParentDashboardLayout';
 import ChildProfile from '@/components/dashboard/parent/ChildProfile';
@@ -13,6 +12,9 @@ import AttendanceRecords from '@/components/dashboard/parent/AttendanceRecords';
 import InstructorFeedback from '@/components/dashboard/parent/InstructorFeedback';
 import PaymentHistory from '@/components/dashboard/parent/PaymentHistory';
 import Notifications from '@/components/dashboard/parent/Notifications';
+
+// Lazy-load heavy Recharts components (saves ~120KB on initial load)
+const DashboardCharts = lazy(() => import('@/components/dashboard/parent/DashboardCharts'));
 
 interface PaymentData {
   id: string;
@@ -213,8 +215,6 @@ export default function ParentDashboard() {
       }))
   ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
-
   return (
     <ParentDashboardLayout>
       <div className="space-y-8">
@@ -284,48 +284,20 @@ export default function ParentDashboard() {
         {/* Progress Tracking */}
         <ProgressTracking skills={skillProgress} />
 
-        {/* Charts Section */}
+        {/* Charts Section — lazy loaded */}
         {attendanceData.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Attendance Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
-            >
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Attendance Trend</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={attendanceData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="attended" fill="#3b82f6" name="Attended" />
-                  <Bar dataKey="total" fill="#e5e7eb" name="Total" />
-                </BarChart>
-              </ResponsiveContainer>
-            </motion.div>
-
-            {/* Skills Distribution */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
-            >
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Skills Distribution</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie data={skillProgress} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
-                    {skillProgress.map((_entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </motion.div>
-          </div>
+          <Suspense fallback={
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100 h-[380px] flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
+              </div>
+              <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100 h-[380px] flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-purple-400 border-t-transparent rounded-full animate-spin" />
+              </div>
+            </div>
+          }>
+            <DashboardCharts attendanceData={attendanceData} skillProgress={skillProgress} />
+          </Suspense>
         )}
 
         {/* Attendance Records */}

@@ -321,6 +321,8 @@ export default function PaymentHistory({ payments }: PaymentHistoryProps) {
                   <p className="text-white/80 text-xs">{receiptData.organization.phone}</p>
                 </div>
                 <button
+                  type="button"
+                  title="Close receipt"
                   onClick={() => setReceiptData(null)}
                   className="p-1 rounded-lg hover:bg-white/20 transition-colors"
                 >

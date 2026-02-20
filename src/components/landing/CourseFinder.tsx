@@ -21,7 +21,7 @@ const courses = [
     ageLabel: 'Ages 6-9',
     level: 'Beginner',
     duration: '2 hrs/week',
-    price: 'Contact Us',
+    price: '2,500',
     color: 'bg-pink-50 border-pink-200',
     iconBg: 'bg-pink-100 text-pink-600',
     emoji: '🧩',
@@ -35,7 +35,7 @@ const courses = [
     ageLabel: 'Ages 10-12',
     level: 'Beginner-Intermediate',
     duration: '2 hrs/week',
-    price: 'Contact Us',
+    price: '2,500',
     color: 'bg-blue-50 border-blue-200',
     iconBg: 'bg-blue-100 text-blue-600',
     emoji: '🤖',
@@ -49,7 +49,7 @@ const courses = [
     ageLabel: 'Ages 13-15',
     level: 'Intermediate',
     duration: '2 hrs/week',
-    price: 'Contact Us',
+    price: '3,000',
     color: 'bg-amber-50 border-amber-200',
     iconBg: 'bg-amber-100 text-amber-600',
     emoji: '🚀',
@@ -63,7 +63,7 @@ const courses = [
     ageLabel: 'Ages 16-18',
     level: 'Advanced',
     duration: '2 hrs/week',
-    price: 'Contact Us',
+    price: '3,500',
     color: 'bg-purple-50 border-purple-200',
     iconBg: 'bg-purple-100 text-purple-600',
     emoji: '💻',
@@ -77,7 +77,7 @@ const courses = [
     ageLabel: 'Ages 6-18',
     level: 'All Levels',
     duration: 'Weekend sessions',
-    price: 'Contact Us',
+    price: '3,500',
     color: 'bg-green-50 border-green-200',
     iconBg: 'bg-green-100 text-green-600',
     emoji: '☀️',
@@ -91,7 +91,7 @@ const courses = [
     ageLabel: 'Ages 6-18',
     level: 'All Levels',
     duration: 'After school',
-    price: 'Contact Us',
+    price: '2,500',
     color: 'bg-teal-50 border-teal-200',
     iconBg: 'bg-teal-100 text-teal-600',
     emoji: '🏫',
@@ -139,7 +139,7 @@ export default function CourseFinder() {
           {filteredCourses.map((course) => (
             <div
               key={course.id}
-              className={`rounded-xl border p-6 transition-all hover:shadow-md ${course.color}`}
+              className={`card-3d rounded-xl border p-6 transition-all ${course.color}`}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -174,8 +174,8 @@ export default function CourseFinder() {
               {/* Footer */}
               <div className="flex items-center justify-between pt-4 border-t border-black/5">
                 <div>
-                  <span className="text-xl font-bold text-gray-900">{course.price}</span>
-                  {course.price !== 'Free' && <span className="text-sm text-gray-500"> ZMW/mo</span>}
+                  <span className="text-lg font-bold text-gray-900">ZMW {course.price}</span>
+                  <span className="text-sm text-gray-500">/mo</span>
                 </div>
                 <Link
                   href="/auth/signup"

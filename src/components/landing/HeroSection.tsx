@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import HeroClient from './HeroClient';
 
 const benefits = [
   {
@@ -44,28 +45,36 @@ export default function HeroSection() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-brand-600 via-brand-700 to-accent-700 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-24">
+      <section className="relative bg-gradient-to-br from-brand-600 via-brand-700 to-accent-700 overflow-hidden">
+        {/* Floating background shapes */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          <div className="float-slow absolute top-10 left-[10%] w-72 h-72 rounded-full bg-accent-500/10 blur-3xl" />
+          <div className="float-medium absolute top-[40%] right-[5%] w-96 h-96 rounded-full bg-blue-400/10 blur-3xl" />
+          <div className="float-fast absolute bottom-10 left-[30%] w-48 h-48 rounded-full bg-pink-400/10 blur-2xl" />
+          <div className="float-slow absolute top-[20%] right-[30%] w-20 h-20 rounded-full bg-amber-300/20 blur-xl" />
+          <div className="float-medium absolute bottom-[20%] left-[5%] w-32 h-32 rounded-full bg-emerald-400/10 blur-2xl" />
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 opacity-[0.03] dot-grid" />
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 lg:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div>
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 text-white text-sm font-medium rounded-full mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 text-white text-sm font-medium rounded-full mb-6 glass glow-pulse">
                 <span className="w-2 h-2 bg-accent-400 rounded-full animate-pulse"></span>
                 Zambia&apos;s Leading STEM Education
               </div>
 
-              {/* Headline */}
+              {/* Headline with animated gradient text */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold text-white leading-[1.1] mb-6">
                 Pioneering Tomorrow
-                <span className="block text-accent-300 mt-2">One Line of Code at a Time</span>
+                <span className="block mt-2 gradient-text-animate">One Line of Code at a Time</span>
               </h1>
 
-              {/* Subheadline */}
-              <p className="text-lg text-brand-100 leading-relaxed mb-8 max-w-xl">
-                Empowering tomorrow&apos;s innovators with hands-on robotics and creative coding education.
-                Coding &amp; Robotics programs for children and teens aged 6-18, in partnership with BongoHive.
-              </p>
+              {/* Rotating words — client component */}
+              <HeroClient />
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 mb-10">
@@ -184,7 +193,7 @@ export default function HeroSection() {
             {benefits.map((benefit) => (
               <div
                 key={benefit.title}
-                className="bg-white p-6 rounded-xl border border-gray-200 hover:border-brand-300 hover:shadow-md transition-all group"
+                className="card-3d bg-white p-6 rounded-xl border border-gray-200 hover:border-brand-300 transition-all group cursor-default"
               >
                 <div className="w-10 h-10 bg-brand-50 text-brand-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   {benefit.icon}

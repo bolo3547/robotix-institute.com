@@ -24,6 +24,15 @@ export default function Header() {
   const { isDark } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState('/logo.svg');
+  const [scrolled, setScrolled] = useState(false);
+
+  // Track scroll position for glassmorphism effect
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Load custom logo from database, then listen for local changes
   useEffect(() => {
@@ -108,10 +117,14 @@ export default function Header() {
   ];
 
   return (
-    <header className={`sticky top-0 z-50 backdrop-blur-sm border-b shadow-sm ${
-      isDark 
-        ? 'bg-slate-900/95 border-slate-700' 
-        : 'bg-white/95 border-gray-200'
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${
+      scrolled
+        ? isDark
+          ? 'bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50 shadow-lg shadow-black/10'
+          : 'bg-white/70 backdrop-blur-xl border-b border-gray-200/50 shadow-lg shadow-black/[0.03]'
+        : isDark
+          ? 'bg-transparent border-b border-transparent'
+          : 'bg-transparent border-b border-transparent'
     }`}>
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
