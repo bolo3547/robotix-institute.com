@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { requireAdmin } from '@/lib/adminAuth';
 
 const SETTINGS_FILE = path.join(process.cwd(), 'data', 'site-settings.json');
 
@@ -77,6 +78,9 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const updates = await request.json();
     const current = await getSettings();

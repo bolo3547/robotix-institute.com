@@ -42,25 +42,10 @@ export async function POST(request: Request) {
   }
 }
 
-// GET — check if NEXTAUTH_SECRET is set (debugging helper)
+// GET — health check (no sensitive info exposed)
 export async function GET() {
-  const hasSecret = !!process.env.NEXTAUTH_SECRET;
-  const hasUrl = !!process.env.NEXTAUTH_URL;
-  const hasDb = !!process.env.POSTGRES_PRISMA_URL;
-
-  let userCount = 0;
-  let adminCount = 0;
-  try {
-    userCount = await prisma.user.count();
-    adminCount = await prisma.user.count({ where: { role: 'admin' } });
-  } catch (e) {}
-
   return NextResponse.json({
-    env: {
-      NEXTAUTH_SECRET: hasSecret ? 'SET' : 'MISSING',
-      NEXTAUTH_URL: hasUrl ? 'SET' : 'MISSING',
-      POSTGRES_PRISMA_URL: hasDb ? 'SET' : 'MISSING',
-    },
-    users: { total: userCount, admins: adminCount },
+    status: 'ok',
+    message: 'Seed admin endpoint is available. Use POST with seedKey to create admin.',
   });
 }

@@ -1,17 +1,20 @@
+import dynamic from 'next/dynamic';
 import HeroSection from '@/components/landing/HeroSection';
 import PartnersLogoBar from '@/components/landing/PartnersLogoBar';
 import AnimatedStats from '@/components/landing/AnimatedStats';
-import LearningJourney from '@/components/landing/LearningJourney';
-import CourseFinder from '@/components/landing/CourseFinder';
-import ComparisonSection from '@/components/landing/ComparisonSection';
-import LiveClassDemo from '@/components/landing/LiveClassDemo';
-import StudentSpotlight from '@/components/landing/StudentSpotlight';
-import OutcomesSection from '@/components/landing/OutcomesSection';
-import BrochureDownload from '@/components/landing/BrochureDownload';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
-import CTASection from '@/components/landing/CTASection';
-import VideoShowcase from '@/components/landing/VideoShowcase';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+
+// Lazy-load below-fold sections for faster initial page load
+const LearningJourney = dynamic(() => import('@/components/landing/LearningJourney'));
+const CourseFinder = dynamic(() => import('@/components/landing/CourseFinder'));
+const ComparisonSection = dynamic(() => import('@/components/landing/ComparisonSection'));
+const LiveClassDemo = dynamic(() => import('@/components/landing/LiveClassDemo'));
+const StudentSpotlight = dynamic(() => import('@/components/landing/StudentSpotlight'));
+const OutcomesSection = dynamic(() => import('@/components/landing/OutcomesSection'));
+const BrochureDownload = dynamic(() => import('@/components/landing/BrochureDownload'));
+const TestimonialsSection = dynamic(() => import('@/components/landing/TestimonialsSection'));
+const CTASection = dynamic(() => import('@/components/landing/CTASection'));
+const VideoShowcase = dynamic(() => import('@/components/landing/VideoShowcase'));
 
 export default function HomePage() {
   return (

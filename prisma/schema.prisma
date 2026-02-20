@@ -37,6 +37,9 @@ model User {
   certificates      Certificate[]
   // Notifications
   notifications     Notification[]
+  // Chat
+  chatMembers       ChatMember[]
+  chatMessages      ChatMessage[]
   // For parents linking to children
   children    User[]         @relation("ParentChild")
   parent      User?          @relation("ParentChild", fields: [parentId], references: [id])
@@ -591,4 +594,58 @@ model Photo {
 
   @@index([published])
   @@index([category])
+}
+
+// ─── Chat & Messaging ───────────────────────────────────────────
+
+model ChatChannel {
+  id          String        @id @default(cuid())
+  name        String        // Channel name or DM label
+  description String?
+  type        String        @default("group") // direct | group | team | announcement
+  avatar      String?       // Channel icon/image URL
+  createdBy   String?       // userId who created
+  isPrivate   Boolean       @default(false)
+  archived    Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  members     ChatMember[]
+  messages    ChatMessage[]
+
+  @@index([type])
+  @@index([archived])
+}
+
+model ChatMember {
+  id         String      @id @default(cuid())
+  channelId  String
+  channel    ChatChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       String      @default("member") // member | admin | owner
+  muted      Boolean     @default(false)
+  lastReadAt DateTime    @default(now())
+  joinedAt   DateTime    @default(now())
+
+  @@unique([channelId, userId])
+  @@index([userId])
+  @@index([channelId])
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  channelId String
+  channel   ChatChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content   String      @db.Text
+  type      String      @default("text") // text | image | file | system
+  fileUrl   String?
+  edited    Boolean     @default(false)
+  deleted   Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([channelId, createdAt])
+  @@index([senderId])
 }

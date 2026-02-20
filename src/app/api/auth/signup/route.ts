@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import prisma from '@/lib/prisma';
+import { authLimiter } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
+  const rateLimited = authLimiter.check(request, 5);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { name, email, password, role } = body;

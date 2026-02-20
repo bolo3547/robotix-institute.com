@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/adminAuth';
+import { formLimiter } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
+  const rateLimited = formLimiter.check(request, 5);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { name, email, phone, program, message } = body;
@@ -36,7 +41,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const submissions = await prisma.contactSubmission.findMany({
       orderBy: { createdAt: 'desc' },

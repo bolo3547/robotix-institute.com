@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -25,6 +25,48 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState('/logo.svg');
   const [scrolled, setScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const platformRef = useRef<HTMLDivElement>(null);
+  const moreRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  const toggleDropdown = useCallback((name: string) => {
+    setOpenDropdown((prev) => (prev === name ? null : name));
+  }, []);
+
+  const closeAllDropdowns = useCallback(() => {
+    setOpenDropdown(null);
+  }, []);
+
+  // Close dropdowns on outside click or Escape key
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        platformRef.current && !platformRef.current.contains(target) &&
+        moreRef.current && !moreRef.current.contains(target) &&
+        profileRef.current && !profileRef.current.contains(target)
+      ) {
+        closeAllDropdowns();
+      }
+    };
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeAllDropdowns();
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [closeAllDropdowns]);
+
+  // Close dropdowns on route change
+  useEffect(() => {
+    closeAllDropdowns();
+    setMobileMenuOpen(false);
+  }, [pathname, closeAllDropdowns]);
 
   // Track scroll position for glassmorphism effect
   useEffect(() => {
@@ -164,21 +206,30 @@ export default function Header() {
         </div>
 
         {/* Platform dropdown */}
-        <div className="hidden md:flex items-center relative group">
-          <button className={`px-4 py-2 text-sm rounded-lg transition-colors font-medium ${
+        <div className="hidden md:flex items-center relative" ref={platformRef}>
+          <button
+            onClick={() => toggleDropdown('platform')}
+            aria-expanded={openDropdown === 'platform'}
+            aria-haspopup="true"
+            aria-controls="platform-menu"
+            className={`px-4 py-2 text-sm rounded-lg transition-colors font-medium ${
             isDark 
               ? 'text-accent-400 hover:text-accent-300 hover:bg-slate-800' 
               : 'text-accent-600 hover:text-accent-700 hover:bg-accent-50'
           }`}>
             Platform ▾
           </button>
-          <div className={`absolute top-full right-0 mt-1 w-48 border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 ${
-            isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
-          }`}>
+          <div
+            id="platform-menu"
+            role="menu"
+            className={`absolute top-full right-0 mt-1 w-48 border rounded-xl shadow-xl transition-all z-50 ${
+            openDropdown === 'platform' ? 'opacity-100 visible' : 'opacity-0 invisible'
+          } ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
             {platformLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                role="menuitem"
                 className={`block px-4 py-2.5 text-sm first:rounded-t-xl last:rounded-b-xl transition-colors ${
                   isDark 
                     ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-700' 
@@ -192,21 +243,30 @@ export default function Header() {
         </div>
 
         {/* More dropdown */}
-        <div className="hidden md:flex items-center relative group">
-          <button className={`px-4 py-2 text-sm rounded-lg transition-colors ${
+        <div className="hidden md:flex items-center relative" ref={moreRef}>
+          <button
+            onClick={() => toggleDropdown('more')}
+            aria-expanded={openDropdown === 'more'}
+            aria-haspopup="true"
+            aria-controls="more-menu"
+            className={`px-4 py-2 text-sm rounded-lg transition-colors ${
             isDark 
               ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-800' 
               : 'text-gray-700 hover:text-brand-600 hover:bg-brand-50'
           }`}>
             More ▾
           </button>
-          <div className={`absolute top-full right-0 mt-1 w-44 border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 ${
-            isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
-          }`}>
+          <div
+            id="more-menu"
+            role="menu"
+            className={`absolute top-full right-0 mt-1 w-44 border rounded-xl shadow-xl transition-all z-50 ${
+            openDropdown === 'more' ? 'opacity-100 visible' : 'opacity-0 invisible'
+          } ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
             {moreLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                role="menuitem"
                 className={`block px-4 py-2.5 text-sm first:rounded-t-xl last:rounded-b-xl transition-colors ${
                   isDark 
                     ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-700' 
@@ -235,8 +295,13 @@ export default function Header() {
               >
                 Dashboard
               </Link>
-              <div className="relative group">
-                <button className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => toggleDropdown('profile')}
+                  aria-expanded={openDropdown === 'profile'}
+                  aria-haspopup="true"
+                  aria-controls="profile-menu"
+                  className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isDark ? 'text-slate-300 hover:bg-slate-800' : 'text-gray-700 hover:bg-brand-50'
                 }`}>
                   <span className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white text-xs font-bold">
@@ -244,9 +309,12 @@ export default function Header() {
                   </span>
                   <span className="max-w-[100px] truncate">{session.user.name?.split(' ')[0]}</span>
                 </button>
-                <div className={`absolute top-full right-0 mt-1 w-48 border rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 ${
-                  isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'
-                }`}>
+                <div
+                  id="profile-menu"
+                  role="menu"
+                  className={`absolute top-full right-0 mt-1 w-48 border rounded-xl shadow-xl transition-all z-50 ${
+                  openDropdown === 'profile' ? 'opacity-100 visible' : 'opacity-0 invisible'
+                } ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
                   <div className={`px-4 py-3 border-b ${
                     isDark ? 'border-slate-700' : 'border-gray-100'
                   }`}>
@@ -255,6 +323,7 @@ export default function Header() {
                   </div>
                   <Link
                     href={getDashboardPath((session.user as any).role)}
+                    role="menuitem"
                     className={`block px-4 py-2.5 text-sm transition-colors ${
                       isDark ? 'text-slate-300 hover:text-brand-400 hover:bg-slate-700' : 'text-gray-600 hover:text-brand-600 hover:bg-brand-50'
                     }`}
@@ -262,6 +331,7 @@ export default function Header() {
                     My Dashboard
                   </Link>
                   <button
+                    role="menuitem"
                     onClick={() => signOut({ callbackUrl: '/' })}
                     className={`block w-full text-left px-4 py-2.5 text-sm rounded-b-xl transition-colors ${
                       isDark ? 'text-red-400 hover:bg-slate-700' : 'text-red-600 hover:bg-red-50'
@@ -297,6 +367,7 @@ export default function Header() {
           className={`md:hidden p-2 -mr-2 transition-colors ${isDark ? 'text-slate-300 hover:text-brand-400' : 'text-gray-600 hover:text-brand-600'}`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
+          aria-expanded={mobileMenuOpen}
         >
           {mobileMenuOpen ? (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,19 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { QuotationRequest } from '@/types';
+import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/adminAuth';
 
-// Quotation requests storage
-const quotationRequests: QuotationRequest[] = [];
+// GET - Fetch all quotation requests (admin only)
+export async function GET(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
 
-// GET - Fetch all quotation requests
-export async function GET() {
-  return NextResponse.json({
-    success: true,
-    data: quotationRequests,
-    count: quotationRequests.length,
-  });
+  try {
+    const requests = await prisma.quoteRequest.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return NextResponse.json({
+      success: true,
+      data: requests,
+      count: requests.length,
+    });
+  } catch (error) {
+    console.error('Error fetching quotation requests:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch quotation requests' },
+      { status: 500 }
+    );
+  }
 }
 
-// POST - Create a new quotation request
+// POST - Create a new quotation request (public)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -28,27 +40,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the quotation request
-    const newRequest: QuotationRequest = {
-      id: `QR-${Date.now()}`,
-      parentName,
-      parentEmail,
-      parentPhone,
-      childName,
-      childAge,
-      programs,
-      preferredSchedule: preferredSchedule || undefined,
-      message: message || undefined,
-      createdAt: new Date(),
-      status: 'pending',
-    };
-
-    quotationRequests.unshift(newRequest);
-
-    // In a real app, you would:
-    // 1. Save to database
-    // 2. Send confirmation email to parent
-    // 3. Send notification to admin
+    // Create the quotation request in the database
+    const newRequest = await prisma.quoteRequest.create({
+      data: {
+        name: parentName,
+        email: parentEmail,
+        phone: parentPhone,
+        organization: childName, // store child info in organization field
+        programInterest: Array.isArray(programs) ? programs.join(', ') : programs,
+        numberOfStudents: childAge ? parseInt(String(childAge), 10) : null,
+        message: [
+          preferredSchedule ? `Preferred schedule: ${preferredSchedule}` : '',
+          message || '',
+        ].filter(Boolean).join('\n'),
+        status: 'pending',
+      },
+    });
 
     return NextResponse.json({
       success: true,
@@ -65,8 +72,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE - Delete a quotation request
+// DELETE - Delete a quotation request (admin only)
 export async function DELETE(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -78,15 +88,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const index = quotationRequests.findIndex(r => r.id === id);
-    if (index === -1) {
-      return NextResponse.json(
-        { success: false, error: 'Request not found' },
-        { status: 404 }
-      );
-    }
-
-    quotationRequests.splice(index, 1);
+    await prisma.quoteRequest.delete({ where: { id } });
 
     return NextResponse.json({
       success: true,
@@ -102,8 +104,11 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-// PATCH - Update a quotation request status
+// PATCH - Update a quotation request status (admin only)
 export async function PATCH(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { id, status } = body;
@@ -115,19 +120,14 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const requestIndex = quotationRequests.findIndex(r => r.id === id);
-    if (requestIndex === -1) {
-      return NextResponse.json(
-        { success: false, error: 'Request not found' },
-        { status: 404 }
-      );
-    }
-
-    quotationRequests[requestIndex].status = status;
+    const updated = await prisma.quoteRequest.update({
+      where: { id },
+      data: { status },
+    });
 
     return NextResponse.json({
       success: true,
-      data: quotationRequests[requestIndex],
+      data: updated,
       message: 'Request updated successfully',
     });
 

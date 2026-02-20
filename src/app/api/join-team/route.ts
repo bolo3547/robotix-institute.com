@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/adminAuth';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      position, fullName, email, phone, location, dateOfBirth, gender,
+      position, fullName, email, phone, location,
       education, experience, skills, hasTeachingExp, yearsExperience,
       linkedIn, portfolio, whyJoin, availability, startDate, hearAbout, additionalInfo,
     } = body;
@@ -23,55 +24,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'You must tell us why you want to join' }, { status: 400 });
     }
 
-    // Store as a PageContent entry with pageId "join-team-applications"
-    // We'll append to existing content or create new
-    const key = `join_team_${Date.now()}`;
-    
-    await prisma.siteSetting.create({
+    // Store using the proper TeamApplication model
+    const application = await prisma.teamApplication.create({
       data: {
-        key,
-        value: JSON.stringify({
-          type: 'join_team_application',
-          position,
-          fullName,
-          email,
-          phone,
-          location,
-          dateOfBirth,
-          gender,
-          education,
-          experience,
-          skills,
-          hasTeachingExp,
-          yearsExperience,
-          linkedIn,
-          portfolio,
-          whyJoin,
-          availability,
-          startDate,
-          hearAbout,
-          additionalInfo,
-          submittedAt: new Date().toISOString(),
-          status: 'pending',
-        }),
+        name: fullName,
+        email,
+        phone: phone || null,
+        position,
+        experience: [
+          experience ? `Experience: ${experience}` : '',
+          skills ? `Skills: ${skills}` : '',
+          hasTeachingExp ? `Teaching exp: ${hasTeachingExp}, ${yearsExperience || 0} years` : '',
+          education ? `Education: ${education}` : '',
+          availability ? `Availability: ${availability}` : '',
+          startDate ? `Start date: ${startDate}` : '',
+          hearAbout ? `Heard about us: ${hearAbout}` : '',
+        ].filter(Boolean).join('\n'),
+        linkedIn: linkedIn || null,
+        coverLetter: [
+          whyJoin ? `Why join: ${whyJoin}` : '',
+          additionalInfo ? `Additional info: ${additionalInfo}` : '',
+        ].filter(Boolean).join('\n'),
+        status: 'pending',
       },
     });
 
-    // Notify admin (email)
-    try {
-      await fetch(process.env.ADMIN_NOTIFY_URL ?? '', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'join_team',
-          application: body,
-        }),
-      });
-    } catch (e) {
-      // Ignore notification errors
-    }
     return NextResponse.json(
-      { message: 'Application submitted successfully' },
+      { message: 'Application submitted successfully', id: application.id },
       { status: 201 }
     );
   } catch (error) {
@@ -83,20 +62,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
-    const applications = await prisma.siteSetting.findMany({
-      where: { key: { startsWith: 'join_team_' } },
-      orderBy: { id: 'desc' },
+    const applications = await prisma.teamApplication.findMany({
+      orderBy: { createdAt: 'desc' },
     });
 
-    const parsed = applications.map(a => ({
-      id: a.id,
-      key: a.key,
-      ...JSON.parse(a.value),
-    }));
-
-    return NextResponse.json(parsed);
+    return NextResponse.json(applications);
   } catch (error) {
     console.error('Get applications error:', error);
     return NextResponse.json({ error: 'Failed to fetch applications' }, { status: 500 });

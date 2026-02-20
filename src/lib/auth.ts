@@ -34,13 +34,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          throw new Error('No user found with this email');
+          throw new Error('Invalid email or password');
         }
 
         const passwordMatch = await compare(credentials.password, user.password);
 
         if (!passwordMatch) {
-          throw new Error('Incorrect password');
+          throw new Error('Invalid email or password');
         }
 
         return {
