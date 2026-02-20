@@ -14,11 +14,11 @@ export default function InstructorDashboardLayout({ children }: InstructorDashbo
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
-    { label: 'Dashboard', href: '/instructor-dashboard', icon: Home },
-    { label: 'Classes', href: '/instructor-dashboard/classes', icon: BookOpen },
-    { label: 'Students', href: '/instructor-dashboard/students', icon: Users },
-    { label: 'Analytics', href: '/instructor-dashboard/analytics', icon: BarChart3 },
-    { label: 'Settings', href: '/instructor-dashboard/settings', icon: Settings },
+    { label: 'Dashboard', href: '/dashboard/instructor', icon: Home },
+    { label: 'Classes', href: '/dashboard/instructor/classes', icon: BookOpen },
+    { label: 'Students', href: '/dashboard/instructor/students', icon: Users },
+    { label: 'Analytics', href: '/dashboard/instructor/analytics', icon: BarChart3 },
+    { label: 'Settings', href: '/dashboard/instructor/settings', icon: Settings },
   ];
 
   return (
@@ -33,6 +33,8 @@ export default function InstructorDashboardLayout({ children }: InstructorDashbo
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
+            aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+            aria-expanded={sidebarOpen}
           >
             {sidebarOpen ? <X /> : <Menu />}
           </button>

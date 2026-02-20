@@ -118,8 +118,8 @@ export default function SignUpPage() {
 
       if (result?.ok) {
         router.push(
-          form.role === 'parent' ? '/parent-dashboard'
-          : form.role === 'instructor' ? '/instructor-dashboard'
+          form.role === 'parent' ? '/dashboard/parent'
+          : form.role === 'instructor' ? '/dashboard/instructor'
           : '/dashboard'
         );
       } else {

@@ -68,10 +68,10 @@ export default function UserManagement() {
                 </td>
                 <td className="py-3 px-4">
                   <div className="flex gap-2">
-                    <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-blue-400 transition">
+                    <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-blue-400 transition" aria-label={`Edit user ${user.name}`}>
                       <Edit2 className="w-4 h-4" />
                     </button>
-                    <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-red-400 transition">
+                    <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-red-400 transition" aria-label={`Delete user ${user.name}`}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>

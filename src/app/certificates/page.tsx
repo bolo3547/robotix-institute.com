@@ -381,10 +381,10 @@ function CertificateCard({ cert, onView, index }: {
           <span className="text-gray-500">{date}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <button type="button" title="View certificate" className="p-2 rounded-lg bg-gray-100 hover:bg-purple-50 text-gray-500 hover:text-purple-600 transition-colors">
+          <button type="button" title="View certificate" aria-label="View certificate" className="p-2 rounded-lg bg-gray-100 hover:bg-purple-50 text-gray-500 hover:text-purple-600 transition-colors">
             <Eye className="w-3.5 h-3.5" />
           </button>
-          <button type="button" title="Download certificate" className="p-2 rounded-lg bg-gray-100 hover:bg-purple-50 text-gray-500 hover:text-purple-600 transition-colors">
+          <button type="button" title="Download certificate" aria-label="Download certificate" className="p-2 rounded-lg bg-gray-100 hover:bg-purple-50 text-gray-500 hover:text-purple-600 transition-colors">
             <Download className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -526,6 +526,7 @@ function CertificateModal({
         <button
           onClick={onClose}
           className="absolute -top-2 -right-2 z-20 w-9 h-9 rounded-full flex items-center justify-center text-white shadow-xl bg-gray-800 hover:bg-gray-700 transition-colors"
+          aria-label="Close certificate preview"
         >
           <X className="w-4 h-4" />
         </button>
@@ -699,6 +700,7 @@ export default function CertificatesPage() {
               placeholder="Search student, program, or certificate number..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
+              aria-label="Search certificates"
               className="w-full pl-10 pr-4 py-3 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white border border-gray-200 shadow-sm"
             />
           </div>
@@ -707,6 +709,7 @@ export default function CertificatesPage() {
             <select
               value={filterGrade}
               onChange={e => setFilterGrade(e.target.value)}
+              aria-label="Filter by grade"
               className="px-4 py-3 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white border border-gray-200 shadow-sm"
             >
               <option value="all">All Grades</option>

@@ -20,13 +20,13 @@ export default function DashboardPage() {
     else setGreeting('Good evening');
   }, []);
 
-  // Auto-redirect role-specific users
+  // Auto-redirect role-specific users to consolidated sub-routes
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
       const role = (session.user as any).role;
-      if (role === 'admin') router.push('/admin');
-      else if (role === 'parent') router.push('/parent-dashboard');
-      else if (role === 'instructor') router.push('/instructor-dashboard');
+      if (role === 'admin') router.push('/dashboard/admin');
+      else if (role === 'parent') router.push('/dashboard/parent');
+      else if (role === 'instructor') router.push('/dashboard/instructor');
       // students stay on this page — it's their dashboard
     }
   }, [status, session, router]);

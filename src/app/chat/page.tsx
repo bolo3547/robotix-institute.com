@@ -994,6 +994,7 @@ export default function ChatPage() {
                       onClick={() => setShowAddMembers(true)}
                       className={`p-2 rounded-lg transition-colors ${hoverBg} ${textMuted}`}
                       title="Add members"
+                      aria-label="Add members"
                     >
                       <UserPlus size={18} />
                     </button>
@@ -1002,6 +1003,7 @@ export default function ChatPage() {
                     onClick={() => setShowChannelInfo(!showChannelInfo)}
                     className={`p-2 rounded-lg transition-colors ${hoverBg} ${textMuted}`}
                     title="Channel info"
+                    aria-label="Toggle channel info"
                   >
                     <Settings size={18} />
                   </button>

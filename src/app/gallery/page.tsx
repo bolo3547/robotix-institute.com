@@ -103,7 +103,7 @@ export default function GalleryPage() {
                     )}
                     <div className="flex items-center justify-between pt-3 border-t border-gray-200">
                       <span className="text-xs text-gray-400">{new Date(photo.createdAt).toLocaleDateString()}</span>
-                      <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-400 transition-colors">
+                      <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-400 transition-colors" aria-label="Like photo">
                         <Heart className="w-4 h-4" />
                       </button>
                     </div>

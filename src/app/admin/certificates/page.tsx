@@ -168,7 +168,7 @@ function CertificateForm({
               <p className="text-xs text-gray-500">Fill in student details to generate a certificate</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close certificate form">
             <X className="w-5 h-5 text-gray-400" />
           </button>
         </div>
@@ -322,7 +322,7 @@ function CertificateForm({
               {skills.map(s => (
                 <span key={s} className="inline-flex items-center gap-1 px-3 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-full border border-purple-200">
                   {s}
-                  <button onClick={() => removeSkill(s)} className="ml-0.5 hover:text-red-500"><X className="w-3 h-3" /></button>
+                  <button onClick={() => removeSkill(s)} className="ml-0.5 hover:text-red-500" aria-label={`Remove skill ${s}`}><X className="w-3 h-3" /></button>
                 </span>
               ))}
               {skills.length === 0 && <p className="text-xs text-gray-400 italic">No skills added yet</p>}
@@ -522,7 +522,7 @@ export default function AdminCertificatesPage() {
       <div className="bg-white border-b sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/admin" className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <Link href="/admin" className="p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Back to admin dashboard">
               <ArrowLeft className="w-5 h-5 text-gray-500" />
             </Link>
             <div>
@@ -570,6 +570,7 @@ export default function AdminCertificatesPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by name, program or certificate #..."
+              aria-label="Search certificates"
               className="w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
           </div>
@@ -577,6 +578,7 @@ export default function AdminCertificatesPage() {
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
+              aria-label="Filter by status"
               className="appearance-none pl-4 pr-10 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
             >
               <option value="all">All Status</option>
@@ -648,6 +650,7 @@ export default function AdminCertificatesPage() {
                       onClick={() => setPreviewCert(cert)}
                       className="px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors flex items-center gap-1.5"
                       title="Preview"
+                      aria-label="Preview certificate"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
@@ -655,6 +658,7 @@ export default function AdminCertificatesPage() {
                       onClick={() => { setEditCert(cert); setShowForm(true); }}
                       className="px-3 py-2 rounded-lg text-sm font-medium bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors flex items-center gap-1.5"
                       title="Edit"
+                      aria-label="Edit certificate"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
@@ -676,6 +680,7 @@ export default function AdminCertificatesPage() {
                       disabled={isLoading}
                       className="px-3 py-2 rounded-lg text-sm font-medium bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
                       title="Delete"
+                      aria-label="Delete certificate"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -718,7 +723,7 @@ export default function AdminCertificatesPage() {
             >
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-white font-semibold flex items-center gap-2"><Eye className="w-4 h-4" /> Preview</h3>
-                <button onClick={() => setPreviewCert(null)} className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white">
+                <button onClick={() => setPreviewCert(null)} className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white" aria-label="Close preview">
                   <X className="w-4 h-4" />
                 </button>
               </div>

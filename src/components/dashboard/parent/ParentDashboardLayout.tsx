@@ -14,11 +14,11 @@ export default function ParentDashboardLayout({ children }: ParentDashboardLayou
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
-    { label: 'Dashboard', href: '/parent-dashboard', icon: Home },
-    { label: 'Child Progress', href: '/parent-dashboard/progress', icon: BarChart3 },
-    { label: 'Instructor Feedback', href: '/parent-dashboard/feedback', icon: FileText },
-    { label: 'Payments', href: '/parent-dashboard/payments', icon: Users },
-    { label: 'Settings', href: '/parent-dashboard/settings', icon: Settings },
+    { label: 'Dashboard', href: '/dashboard/parent', icon: Home },
+    { label: 'Child Progress', href: '/dashboard/parent/progress', icon: BarChart3 },
+    { label: 'Instructor Feedback', href: '/dashboard/parent/feedback', icon: FileText },
+    { label: 'Payments', href: '/dashboard/parent/payments', icon: Users },
+    { label: 'Settings', href: '/dashboard/parent/settings', icon: Settings },
   ];
 
   return (

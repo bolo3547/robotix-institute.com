@@ -14,12 +14,12 @@ export default function AdminDashboardLayout({ children }: AdminDashboardLayoutP
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
-    { label: 'Dashboard', href: '/admin-dashboard', icon: Home },
-    { label: 'Users', href: '/admin-dashboard/users', icon: Users },
-    { label: 'Courses', href: '/admin-dashboard/courses', icon: BarChart3 },
-    { label: 'Payments', href: '/admin-dashboard/payments', icon: DollarSign },
-    { label: 'Moderation', href: '/admin-dashboard/moderation', icon: Shield },
-    { label: 'Settings', href: '/admin-dashboard/settings', icon: Settings },
+    { label: 'Dashboard', href: '/dashboard/admin', icon: Home },
+    { label: 'Users', href: '/dashboard/admin/users', icon: Users },
+    { label: 'Courses', href: '/dashboard/admin/courses', icon: BarChart3 },
+    { label: 'Payments', href: '/dashboard/admin/payments', icon: DollarSign },
+    { label: 'Moderation', href: '/dashboard/admin/moderation', icon: Shield },
+    { label: 'Settings', href: '/dashboard/admin/settings', icon: Settings },
   ];
 
   return (
@@ -34,6 +34,8 @@ export default function AdminDashboardLayout({ children }: AdminDashboardLayoutP
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="md:hidden p-2 hover:bg-gray-700 rounded-lg text-gray-300"
+            aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+            aria-expanded={sidebarOpen}
           >
             {sidebarOpen ? <X /> : <Menu />}
           </button>

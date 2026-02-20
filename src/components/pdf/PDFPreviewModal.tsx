@@ -118,6 +118,7 @@ export default function PDFPreviewModal({
             <button 
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+              aria-label="Close preview"
             >
               <X className="w-5 h-5" />
             </button>

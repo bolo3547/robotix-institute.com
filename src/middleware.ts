@@ -84,16 +84,21 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Role-based access for dashboard routes
-  if (pathname.startsWith('/admin-dashboard') && token.role !== 'admin') {
+  // Role-based access for dashboard routes (consolidated under /dashboard/*)
+  if (pathname.startsWith('/dashboard/admin') && token.role !== 'admin') {
     return NextResponse.redirect(new URL('/auth/unauthorized', request.url));
   }
-  if (pathname.startsWith('/instructor-dashboard') && token.role !== 'instructor') {
+  if (pathname.startsWith('/dashboard/instructor') && token.role !== 'instructor') {
     return NextResponse.redirect(new URL('/auth/unauthorized', request.url));
   }
-  if (pathname.startsWith('/parent-dashboard') && token.role !== 'parent') {
+  if (pathname.startsWith('/dashboard/parent') && token.role !== 'parent') {
     return NextResponse.redirect(new URL('/auth/unauthorized', request.url));
   }
+
+  // Legacy routes — allow through (they redirect client-side)
+  // /admin-dashboard → /dashboard/admin
+  // /parent-dashboard → /dashboard/parent
+  // /instructor-dashboard → /dashboard/instructor
 
   return NextResponse.next();
 }

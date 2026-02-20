@@ -156,7 +156,7 @@ export default function ParentProgressPage() {
       <section className="pt-32 pb-8 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
-            <Link href="/parent-dashboard" className="p-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
+            <Link href="/dashboard/parent" className="p-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <div>

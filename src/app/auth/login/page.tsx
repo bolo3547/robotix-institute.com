@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const callbackUrl = searchParams.get('callbackUrl') || '/parent-dashboard';
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,11 +38,11 @@ export default function LoginPage() {
         const userRole = (session?.user as any)?.role;
 
         if (userRole === 'admin') {
-          router.push('/admin');
+          router.push('/dashboard/admin');
         } else if (userRole === 'instructor') {
-          router.push('/instructor-dashboard');
+          router.push('/dashboard/instructor');
         } else if (userRole === 'parent') {
-          router.push('/parent-dashboard');
+          router.push('/dashboard/parent');
         } else {
           router.push(callbackUrl || '/dashboard');
         }

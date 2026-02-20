@@ -173,12 +173,19 @@ export default function ParentDashboard() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              className="p-2 sm:p-2.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
             >
-              <Settings className="w-5 h-5 text-white/70" />
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-white/70" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 sm:p-2.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-white/70" />
             </motion.button>
             <Link href="/auth/login">
-              <Button variant="ghost" className="text-white/70 hover:text-white text-sm">Sign Out</Button>
+              <Button variant="ghost" className="text-white/70 hover:text-white text-xs sm:text-sm">Sign Out</Button>
             </Link>
           </div>
         </div>
@@ -300,14 +307,14 @@ export default function ParentDashboard() {
                       >
                         <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-6 hover:border-white/40 transition-all duration-300 ${selectedCourse === enrollment.id ? 'ring-2 ring-white/30' : ''}`}>
                           {/* Header */}
-                          <div className="flex items-start justify-between mb-6">
-                            <div className="flex items-start gap-4 flex-1">
-                              <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${getLevelColor(enrollment.level)} flex items-center justify-center text-2xl shadow-lg group-hover:shadow-xl transition-shadow`}>
+                          <div className="flex items-start justify-between mb-4 sm:mb-6">
+                            <div className="flex items-start gap-3 sm:gap-4 flex-1">
+                              <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-lg bg-gradient-to-br ${getLevelColor(enrollment.level)} flex items-center justify-center text-lg sm:text-2xl shadow-lg group-hover:shadow-xl transition-shadow`}>
                                 {getProgramEmoji(enrollment.program)}
                               </div>
                               <div>
-                                <h4 className="text-lg font-bold text-white">{enrollment.program}</h4>
-                                <div className="flex items-center gap-2 mt-2">
+                                <h4 className="text-sm sm:text-lg font-bold text-white">{enrollment.program}</h4>
+                                <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
                                   <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(enrollment.status)}`}>
                                     {enrollment.status}
                                   </span>

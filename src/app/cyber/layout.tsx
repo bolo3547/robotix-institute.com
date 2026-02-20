@@ -88,6 +88,7 @@ export default function CyberLayout({ children }: { children: React.ReactNode })
           <button
             onClick={() => setSidebarOpen(false)}
             className="ml-auto lg:hidden p-1 hover:bg-gray-800 rounded"
+            aria-label="Close sidebar"
           >
             <X className="w-5 h-5 text-gray-400" />
           </button>
@@ -152,6 +153,7 @@ export default function CyberLayout({ children }: { children: React.ReactNode })
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 hover:bg-gray-800 rounded-lg"
+            aria-label="Open sidebar"
           >
             <Menu className="w-5 h-5 text-gray-400" />
           </button>

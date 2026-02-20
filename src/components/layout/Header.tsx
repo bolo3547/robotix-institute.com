@@ -11,9 +11,9 @@ import { useTheme } from '@/hooks/useTheme';
 
 function getDashboardPath(role?: string) {
   switch (role) {
-    case 'admin': return '/admin';
-    case 'parent': return '/parent-dashboard';
-    case 'instructor': return '/instructor-dashboard';
+    case 'admin': return '/dashboard/admin';
+    case 'parent': return '/dashboard/parent';
+    case 'instructor': return '/dashboard/instructor';
     default: return '/dashboard';
   }
 }
