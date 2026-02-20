@@ -50,25 +50,35 @@ export default function ParentProgressPage() {
   useEffect(() => {
     const loadProgress = async () => {
       try {
-        // Try fetching from the parent progress API
-        const res = await fetch('/api/progress');
+        // Fetch from parent progress API (auto-detects children from session)
+        const res = await fetch('/api/parent/progress');
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data)) {
-            setChildren(data);
-            if (data.length > 0) {
-              setSelectedChild(data[0].id);
-              if (data[0].enrollments?.length > 0) {
-                setSelectedEnrollment(data[0].enrollments[0].id);
-              }
+          if (data.enrollments && data.enrollments.length > 0) {
+            // Transform enrollments into child-centric structure
+            const childUser = data.enrollments[0]?.user;
+            const childData: ChildData = {
+              id: childUser?.id || 'unknown',
+              name: childUser?.name || null,
+              email: childUser?.email || '',
+              enrollments: data.enrollments.map((e: any) => ({
+                id: e.id,
+                program: e.program,
+                level: e.level,
+                status: e.status,
+                startDate: e.startDate,
+                endDate: e.endDate,
+                progress: e.progress || [],
+              })),
+              payments: data.enrollments.flatMap((e: any) => e.payments || []),
+            };
+            setChildren([childData]);
+            setSelectedChild(childData.id);
+            if (childData.enrollments.length > 0) {
+              setSelectedEnrollment(childData.enrollments[0].id);
             }
-          } else if (data.enrollments) {
-            // Single child data
-            setChildren([data]);
-            setSelectedChild(data.id);
-            if (data.enrollments?.length > 0) {
-              setSelectedEnrollment(data.enrollments[0].id);
-            }
+          } else {
+            setChildren([]);
           }
         } else {
           setError('Please log in to view your child\'s progress.');
@@ -146,7 +156,7 @@ export default function ParentProgressPage() {
       <section className="pt-32 pb-8 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
-            <Link href="/dashboard" className="p-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
+            <Link href="/parent-dashboard" className="p-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <div>

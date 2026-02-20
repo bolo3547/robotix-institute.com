@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
@@ -10,60 +11,64 @@ import {
   Download, Calendar, Activity, ChevronRight
 } from 'lucide-react';
 
-const classes = [
-  {
-    id: 1,
-    name: 'Robotics Foundations',
-    level: 'Beginner',
-    students: 12,
-    nextClass: 'Tomorrow at 2:00 PM',
-    status: 'Active',
-    color: 'from-blue-400 to-blue-600',
-  },
-  {
-    id: 2,
-    name: 'Advanced Robotics',
-    level: 'Advanced',
-    students: 8,
-    nextClass: 'Tomorrow at 4:00 PM',
-    status: 'Active',
-    color: 'from-purple-400 to-purple-600',
-  },
-  {
-    id: 3,
-    name: 'Python for Kids',
-    level: 'Intermediate',
-    students: 10,
-    nextClass: 'Friday at 3:00 PM',
-    status: 'Active',
-    color: 'from-emerald-400 to-emerald-600',
-  },
-];
+interface ClassItem {
+  id: number;
+  name: string;
+  level: string;
+  students: number;
+  schedule: string;
+  progress: number;
+}
 
-const students = [
-  { id: 1, name: 'Zainab Chanda', course: 'Robotics Foundations', progress: 68, status: 'On Track', icon: '✓' },
-  { id: 2, name: 'Lwamba Mwale', course: 'Advanced Robotics', progress: 45, status: 'On Track', icon: '✓' },
-  { id: 3, name: 'Grace Banda', course: 'Python for Kids', progress: 82, status: 'Exceeding', icon: '⭐' },
-  { id: 4, name: 'David Kafwimbi', course: 'Robotics Foundations', progress: 52, status: 'Needs Support', icon: '⚠️' },
-];
-
-const recentActivity = [
-  { student: 'Zainab', action: 'Completed Lesson 7: Motors & Movement', time: '2 hours ago', type: 'completion' },
-  { student: 'Grace', action: 'Achieved "Code Starter" Badge', time: '4 hours ago', type: 'achievement' },
-  { student: 'Lwamba', action: 'Submitted Project: Line-Following Bot', time: '1 day ago', type: 'submission' },
-  { student: 'David', action: 'Started Lesson 5: Sensors', time: '1 day ago', type: 'start' },
-];
-
-const stats = [
-  { label: 'Total Classes', value: '3', icon: BookOpen, color: 'text-blue-400' },
-  { label: 'Total Students', value: '30', icon: Users, color: 'text-purple-400' },
-  { label: 'Avg Performance', value: '87%', icon: TrendingUp, color: 'text-emerald-400' },
-  { label: 'Pending Messages', value: '5', icon: MessageSquare, color: 'text-orange-400' },
-];
+interface StudentItem {
+  id: number;
+  name: string;
+  class: string;
+  progress: number;
+  attendance: string;
+  status: string;
+}
 
 export default function InstructorDashboard() {
-  const [instructorName] = useState('Thomas Kafwimbi');
+  const { data: session, status: authStatus } = useSession();
+  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [students, setStudents] = useState<StudentItem[]>([]);
+  const [apiStats, setApiStats] = useState({ activeClasses: 0, totalStudents: 0, avgProgress: 0, totalAssignments: 0 });
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await fetch('/api/instructor/dashboard');
+      if (res.ok) {
+        const data = await res.json();
+        setClasses(data.classes || []);
+        setStudents(data.students || []);
+        setApiStats(data.stats || { activeClasses: 0, totalStudents: 0, avgProgress: 0, totalAssignments: 0 });
+      }
+    } catch (err) {
+      console.error('Failed to fetch instructor data:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authStatus === 'authenticated') {
+      fetchData();
+    } else if (authStatus === 'unauthenticated') {
+      setLoading(false);
+    }
+  }, [authStatus, fetchData]);
+
+  const instructorName = session?.user?.name || 'Instructor';
+
+  const stats = [
+    { label: 'Total Classes', value: String(apiStats.activeClasses), icon: BookOpen, color: 'text-blue-400' },
+    { label: 'Total Students', value: String(apiStats.totalStudents), icon: Users, color: 'text-purple-400' },
+    { label: 'Avg Progress', value: `${apiStats.avgProgress}%`, icon: TrendingUp, color: 'text-emerald-400' },
+    { label: 'Assignments', value: String(apiStats.totalAssignments), icon: MessageSquare, color: 'text-orange-400' },
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -128,6 +133,19 @@ export default function InstructorDashboard() {
 
       {/* Main Content */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
+              className="w-12 h-12 border-4 border-purple-400/30 border-t-purple-400 rounded-full"
+            />
+          </div>
+        )}
+
+        {!loading && (
+          <>
         {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -191,7 +209,10 @@ export default function InstructorDashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {classes.map((classItem) => (
+            {classes.map((classItem, idx) => {
+              const colors = ['from-blue-400 to-blue-600', 'from-purple-400 to-purple-600', 'from-emerald-400 to-emerald-600', 'from-orange-400 to-orange-600'];
+              const emojis = ['🤖', '⚡', '💻', '🎮'];
+              return (
               <motion.div
                 key={classItem.id}
                 variants={itemVariants}
@@ -202,13 +223,13 @@ export default function InstructorDashboard() {
                 <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-6 hover:border-white/40 transition-all duration-300 ${selectedClass === classItem.id ? 'ring-2 ring-white/30' : ''}`}>
                   {/* Header */}
                   <div className="mb-6">
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${classItem.color} flex items-center justify-center text-lg shadow-lg group-hover:shadow-xl transition-shadow mb-4`}>
-                      {classItem.id === 1 ? '🤖' : classItem.id === 2 ? '⚡' : '💻'}
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colors[idx % colors.length]} flex items-center justify-center text-lg shadow-lg group-hover:shadow-xl transition-shadow mb-4`}>
+                      {emojis[idx % emojis.length]}
                     </div>
                     <h4 className="text-lg font-bold text-white">{classItem.name}</h4>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/70">{classItem.level}</span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-400/20 text-emerald-300">{classItem.status}</span>
+                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-400/20 text-emerald-300">Active</span>
                     </div>
                   </div>
 
@@ -219,8 +240,8 @@ export default function InstructorDashboard() {
                       <span>{classItem.students} students</span>
                     </div>
                     <div className="flex items-center gap-2 text-white/70 text-sm">
-                      <Calendar className="w-4 h-4" />
-                      <span>{classItem.nextClass}</span>
+                      <TrendingUp className="w-4 h-4" />
+                      <span>{classItem.progress}% avg progress</span>
                     </div>
                   </div>
 
@@ -231,7 +252,8 @@ export default function InstructorDashboard() {
                   </div>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
 
@@ -250,7 +272,10 @@ export default function InstructorDashboard() {
           </div>
 
           <div className="space-y-3">
-            {students.map((student, idx) => (
+            {students.map((student, idx) => {
+              const statusLabel = student.status === 'excellent' ? 'Exceeding' : student.status === 'needs_help' ? 'Needs Support' : 'On Track';
+              const statusIcon = student.status === 'excellent' ? '⭐' : student.status === 'needs_help' ? '⚠️' : '✓';
+              return (
               <motion.div
                 key={idx}
                 variants={itemVariants}
@@ -260,10 +285,10 @@ export default function InstructorDashboard() {
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-lg">{student.icon}</span>
+                      <span className="text-lg">{statusIcon}</span>
                       <div>
                         <p className="text-white font-semibold">{student.name}</p>
-                        <p className="text-white/60 text-sm">{student.course}</p>
+                        <p className="text-white/60 text-sm">{student.class}</p>
                       </div>
                     </div>
                   </div>
@@ -280,16 +305,17 @@ export default function InstructorDashboard() {
                       <span className="text-white/70 text-sm w-12 text-right">{student.progress}%</span>
                     </div>
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      student.status === 'Exceeding' ? 'bg-emerald-400/20 text-emerald-300' :
-                      student.status === 'Needs Support' ? 'bg-orange-400/20 text-orange-300' :
+                      statusLabel === 'Exceeding' ? 'bg-emerald-400/20 text-emerald-300' :
+                      statusLabel === 'Needs Support' ? 'bg-orange-400/20 text-orange-300' :
                       'bg-blue-400/20 text-blue-300'
                     }`}>
-                      {student.status}
+                      {statusLabel}
                     </span>
                   </div>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
 
@@ -302,47 +328,39 @@ export default function InstructorDashboard() {
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-white">Recent Activity</h3>
-              <p className="text-white/60 text-sm mt-1">Latest updates from your students</p>
+              <h3 className="text-2xl font-bold text-white">Quick Overview</h3>
+              <p className="text-white/60 text-sm mt-1">Summary of class performance</p>
             </div>
           </div>
 
           <div className="space-y-2">
-            {recentActivity.map((activity, idx) => {
-              const isCompletion = activity.type === 'completion';
-              const isAchievement = activity.type === 'achievement';
-              const isSubmission = activity.type === 'submission';
-
-              return (
+            {classes.length === 0 ? (
+              <div className="text-center py-8 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-white/60">No classes found. Student enrollments will appear here.</p>
+              </div>
+            ) : (
+              classes.map((cls, idx) => (
                 <motion.div
                   key={idx}
                   variants={itemVariants}
                   className="relative overflow-hidden rounded-lg bg-gradient-to-r from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-4 hover:border-white/40 transition-all duration-300"
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      isCompletion ? 'bg-emerald-400/20' :
-                      isAchievement ? 'bg-yellow-400/20' :
-                      isSubmission ? 'bg-blue-400/20' :
-                      'bg-purple-400/20'
-                    }`}>
-                      {isCompletion ? <CheckCircle className="w-5 h-5 text-emerald-400" /> :
-                       isAchievement ? <Award className="w-5 h-5 text-yellow-400" /> :
-                       isSubmission ? <BookOpen className="w-5 h-5 text-blue-400" /> :
-                       <Activity className="w-5 h-5 text-purple-400" />}
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-blue-400/20">
+                      <BookOpen className="w-5 h-5 text-blue-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-white text-sm">
-                        <span className="font-semibold">{activity.student}</span>
-                        {' '}
-                        {activity.action}
+                        <span className="font-semibold">{cls.name}</span>
+                        {' — '}
+                        {cls.students} students, {cls.progress}% avg progress
                       </p>
-                      <p className="text-white/60 text-xs mt-1">{activity.time}</p>
+                      <p className="text-white/60 text-xs mt-1">{cls.level}</p>
                     </div>
                   </div>
                 </motion.div>
-              );
-            })}
+              ))
+            )}
           </div>
         </motion.div>
 
@@ -398,6 +416,8 @@ export default function InstructorDashboard() {
             </div>
           </motion.button>
         </motion.div>
+          </>
+        )}
       </div>
 
       {/* Footer */}

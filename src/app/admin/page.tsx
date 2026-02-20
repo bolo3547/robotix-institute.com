@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase, ClipboardList } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase, ClipboardList, MessageCircle } from 'lucide-react';
+
+const INSTITUTE_WA = '260956355117';
 
 const adminSections = [
   {
@@ -375,10 +377,30 @@ export default function AdminDashboard() {
                   Upload Logo
                 </motion.button>
               </Link>
+              <a href={`https://wa.me/${INSTITUTE_WA}`} target="_blank" rel="noopener noreferrer">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-green-400 to-green-600 text-white text-sm font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <MessageCircle className="w-4 h-4" /> WhatsApp
+                </motion.button>
+              </a>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href={`https://wa.me/${INSTITUTE_WA}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-green-500 text-white font-semibold shadow-lg hover:bg-green-600 hover:shadow-xl transition-all group"
+      >
+        <MessageCircle className="w-5 h-5" />
+        <span className="hidden sm:inline">WhatsApp</span>
+      </a>
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 mt-20 py-8 text-center text-white/50 text-sm">

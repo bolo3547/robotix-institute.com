@@ -6,8 +6,15 @@ import Link from 'next/link';
 import {
   ArrowLeft, Search, Filter, CheckCircle2, XCircle, Clock, Eye, Send,
   ChevronDown, ChevronUp, User, Phone, MapPin, Heart, AlertTriangle,
-  GraduationCap, Calendar, FileText, Mail, RefreshCw, Loader2, ClipboardList,
+  GraduationCap, Calendar, FileText, Mail, RefreshCw, Loader2, ClipboardList, MessageCircle,
 } from 'lucide-react';
+
+const INSTITUTE_WA = '260956355117';
+
+function waLink(phone: string | null | undefined, message: string) {
+  const num = (phone || INSTITUTE_WA).replace(/[^0-9]/g, '');
+  return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+}
 
 /* ───── Types ───── */
 interface Application {
@@ -336,6 +343,18 @@ export default function EnrollmentApplicationsPage() {
                             <InfoRow icon={User} label="Relation" value={app.parentRelation} />
                             <InfoRow icon={MapPin} label="Address" value={app.parentAddress} />
                             <InfoRow icon={MapPin} label="City" value={app.parentCity} />
+                            {/* WhatsApp parent button */}
+                            {app.parentPhone && (
+                              <a
+                                href={waLink(app.parentPhone, `Hi ${app.parent.name}, this is ROBOTIX Institute regarding ${app.studentFirstName}'s enrollment application for ${app.program}. `)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-semibold hover:bg-green-600 transition shadow-sm"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5" />
+                                WhatsApp Parent
+                              </a>
+                            )}
                           </div>
 
                           {/* Program & Medical */}
@@ -388,6 +407,17 @@ export default function EnrollmentApplicationsPage() {
 
                         {/* Action bar */}
                         <div className="px-5 pb-5 pt-2 flex flex-wrap gap-2">
+                          {/* WhatsApp quick action — always visible */}
+                          {app.parentPhone && (
+                            <a
+                              href={waLink(app.parentPhone, `Hi ${app.parent.name}, this is ROBOTIX Institute. We're writing regarding ${app.studentFirstName} ${app.studentLastName}'s enrollment application for ${app.program}. `)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-4 py-2 text-sm font-medium rounded-lg bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 transition flex items-center gap-1.5"
+                            >
+                              <MessageCircle className="w-4 h-4" /> WhatsApp
+                            </a>
+                          )}
                           {app.status === 'pending' && (
                             <>
                               <button

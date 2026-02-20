@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
@@ -42,6 +43,7 @@ interface SummaryData {
 }
 
 export default function ParentDashboard() {
+  const { data: session, status: authStatus } = useSession();
   const [enrollments, setEnrollments] = useState<EnrollmentData[]>([]);
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,13 +51,17 @@ export default function ParentDashboard() {
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (authStatus === 'authenticated') {
+      fetchData();
+    } else if (authStatus === 'unauthenticated') {
+      setLoading(false);
+    }
+  }, [authStatus]);
 
   const fetchData = async () => {
     try {
-      // In production, userId comes from auth session; demo user for now
-      const res = await fetch('/api/parent/progress?userId=demo-student-1');
+      // Use parent progress API - it auto-detects children from session
+      const res = await fetch('/api/parent/progress');
       if (res.ok) {
         const data = await res.json();
         setEnrollments(data.enrollments || []);

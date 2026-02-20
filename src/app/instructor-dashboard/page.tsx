@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Users, BookOpen, CheckCircle, TrendingUp, Plus } from 'lucide-react';
 import InstructorDashboardLayout from '@/components/dashboard/instructor/InstructorDashboardLayout';
@@ -10,9 +10,38 @@ import ClassList from '@/components/dashboard/instructor/ClassList';
 import StudentList from '@/components/dashboard/instructor/StudentList';
 import PerformanceAnalytics from '@/components/dashboard/instructor/PerformanceAnalytics';
 
+interface ClassData {
+  id: number;
+  name: string;
+  level: string;
+  students: number;
+  schedule: string;
+  progress: number;
+}
+
+interface StudentData {
+  id: number;
+  name: string;
+  class: string;
+  progress: number;
+  attendance: string;
+  status: 'excellent' | 'good' | 'needs_help';
+}
+
+interface DashboardStats {
+  activeClasses: number;
+  totalStudents: number;
+  avgProgress: number;
+  totalAssignments: number;
+}
+
 export default function InstructorDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [classes, setClasses] = useState<ClassData[]>([]);
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [stats, setStats] = useState<DashboardStats>({ activeClasses: 0, totalStudents: 0, avgProgress: 0, totalAssignments: 0 });
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -20,47 +49,44 @@ export default function InstructorDashboard() {
     }
   }, [status, router]);
 
-  if (status === 'loading') {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  const fetchDashboard = useCallback(async () => {
+    try {
+      const res = await fetch('/api/instructor/dashboard');
+      if (res.ok) {
+        const data = await res.json();
+        setClasses(data.classes || []);
+        setStudents(data.students || []);
+        setStats(data.stats || { activeClasses: 0, totalStudents: 0, avgProgress: 0, totalAssignments: 0 });
+      }
+    } catch (err) {
+      console.error('Failed to fetch instructor dashboard:', err);
+    } finally {
+      setDataLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchDashboard();
+    }
+  }, [status, fetchDashboard]);
+
+  if (status === 'loading' || (status === 'authenticated' && dataLoading)) {
+    return (
+      <InstructorDashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading dashboard...</p>
+          </div>
+        </div>
+      </InstructorDashboardLayout>
+    );
   }
 
   if ((session?.user as any)?.role !== 'instructor') {
     return <div className="flex items-center justify-center min-h-screen">Unauthorized</div>;
   }
-
-  const classes = [
-    {
-      id: 1,
-      name: 'Robotics Beginner - Batch A',
-      level: 'Beginner',
-      students: 15,
-      schedule: 'Mon, Wed, Fri - 3:00 PM',
-      progress: 65,
-    },
-    {
-      id: 2,
-      name: 'Coding Basics - Batch B',
-      level: 'Beginner',
-      students: 12,
-      schedule: 'Tue, Thu - 4:00 PM',
-      progress: 72,
-    },
-    {
-      id: 3,
-      name: 'Advanced Robotics - Batch C',
-      level: 'Intermediate',
-      students: 10,
-      schedule: 'Sat - 10:00 AM',
-      progress: 58,
-    },
-  ];
-
-  const students = [
-    { id: 1, name: 'Emma', class: 'Robotics Beginner', progress: 85, attendance: '95%', status: 'excellent' as const },
-    { id: 2, name: 'John', class: 'Robotics Beginner', progress: 72, attendance: '90%', status: 'good' as const },
-    { id: 3, name: 'Sarah', class: 'Coding Basics', progress: 68, attendance: '85%', status: 'good' as const },
-    { id: 4, name: 'Mike', class: 'Coding Basics', progress: 45, attendance: '70%', status: 'needs_help' as const },
-  ];
 
   return (
     <InstructorDashboardLayout>
@@ -91,7 +117,7 @@ export default function InstructorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Active Classes</p>
-                <p className="text-3xl font-bold text-blue-600 mt-2">{classes.length}</p>
+                <p className="text-3xl font-bold text-blue-600 mt-2">{stats.activeClasses}</p>
               </div>
               <BookOpen className="w-8 h-8 text-blue-400" />
             </div>
@@ -101,7 +127,7 @@ export default function InstructorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Total Students</p>
-                <p className="text-3xl font-bold text-purple-600 mt-2">{classes.reduce((sum, c) => sum + c.students, 0)}</p>
+                <p className="text-3xl font-bold text-purple-600 mt-2">{stats.totalStudents}</p>
               </div>
               <Users className="w-8 h-8 text-purple-400" />
             </div>
@@ -111,7 +137,7 @@ export default function InstructorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Avg. Progress</p>
-                <p className="text-3xl font-bold text-green-600 mt-2">{Math.round(classes.reduce((sum, c) => sum + c.progress, 0) / classes.length)}%</p>
+                <p className="text-3xl font-bold text-green-600 mt-2">{stats.avgProgress}%</p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-400" />
             </div>
@@ -121,7 +147,7 @@ export default function InstructorDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Assignments</p>
-                <p className="text-3xl font-bold text-orange-600 mt-2">12</p>
+                <p className="text-3xl font-bold text-orange-600 mt-2">{stats.totalAssignments}</p>
               </div>
               <CheckCircle className="w-8 h-8 text-orange-400" />
             </div>

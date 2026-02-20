@@ -59,8 +59,8 @@ export default function ParentProgressPage() {
 
   const fetchProgress = async () => {
     try {
-      // In production, userId would come from session; using demo user
-      const res = await fetch('/api/parent/progress?userId=demo-student-1');
+      // Uses parent progress API - auto-detects children from session
+      const res = await fetch('/api/parent/progress');
       if (res.ok) {
         const data = await res.json();
         setEnrollments(data.enrollments || []);

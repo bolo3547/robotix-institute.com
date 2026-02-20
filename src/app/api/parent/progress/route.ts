@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
-const prisma = new PrismaClient();
-
-// GET - Parent views child's progress (by userId query param)
+// GET - Parent views child's progress (by userId query param, or auto-detect children)
 export async function GET(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
+    let userId = searchParams.get('userId');
+
+    // If no explicit userId, try to find the parent's children from session
+    if (!userId && session?.user) {
+      const parentUser = await prisma.user.findUnique({
+        where: { id: (session.user as any).id },
+        include: { children: { select: { id: true } } },
+      });
+      if (parentUser?.children?.length) {
+        userId = parentUser.children[0].id;
+      }
+    }
 
     if (!userId) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });

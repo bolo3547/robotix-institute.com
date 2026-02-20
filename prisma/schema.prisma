@@ -31,6 +31,10 @@ model User {
   cyberBadges       CyberUserBadge[]
   cyberActivities   CyberActivity[]
   applications      Application[]
+  // Portfolio
+  portfolio         Portfolio?
+  portfolioProjects PortfolioProject[]
+  certificates      Certificate[]
   // For parents linking to children
   children    User[]         @relation("ParentChild")
   parent      User?          @relation("ParentChild", fields: [parentId], references: [id])
@@ -394,4 +398,66 @@ model Application {
   @@index([status])
   @@index([program])
   @@index([createdAt])
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Student Portfolio & Certificates
+// ═══════════════════════════════════════════════════════════════
+
+model Portfolio {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio         String?  @db.Text
+  avatar      String   @default("👦🏾")
+  location    String?
+  isPublic    Boolean  @default(true)
+  totalXp     Int      @default(0)
+  level       Int      @default(1)
+  daysStreak  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublic])
+  @@index([totalXp])
+}
+
+model PortfolioProject {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  description   String   @db.Text
+  tags          String   @db.Text // JSON array
+  programName   String
+  mediaEmoji    String   @default("📁")
+  mediaUrl      String?  // optional file/image URL
+  downloadUrl   String?  // downloadable file URL
+  sourceCode    String?  @db.Text // source code content
+  likes         Int      @default(0)
+  featured      Boolean  @default(false)
+  isPublic      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([featured])
+  @@index([createdAt])
+}
+
+model Certificate {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseName   String
+  grade        String   // distinction | merit | pass
+  issueDate    DateTime
+  certNumber   String   @unique // e.g. CERT-2026-0001
+  description  String?  @db.Text
+  skills       String?  @db.Text // JSON array of skills
+  instructorName String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([certNumber])
 }

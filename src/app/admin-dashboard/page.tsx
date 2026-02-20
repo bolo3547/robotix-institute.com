@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, DollarSign, AlertCircle, Plus } from 'lucide-react';
 import AdminDashboardLayout from '@/components/dashboard/admin/AdminDashboardLayout';
@@ -11,9 +11,18 @@ import FinancialOverview from '@/components/dashboard/admin/FinancialOverview';
 import SystemHealth from '@/components/dashboard/admin/SystemHealth';
 import RecentActivity from '@/components/dashboard/admin/RecentActivity';
 
+interface AdminStats {
+  totalUsers: number;
+  totalStudents: number;
+  revenueDisplay: string;
+  pendingPayments: number;
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [dashStats, setDashStats] = useState<AdminStats>({ totalUsers: 0, totalStudents: 0, revenueDisplay: '0', pendingPayments: 0 });
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -21,8 +30,37 @@ export default function AdminDashboard() {
     }
   }, [status, router]);
 
-  if (status === 'loading') {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  const fetchDashboard = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/dashboard');
+      if (res.ok) {
+        const data = await res.json();
+        setDashStats(data.stats || { totalUsers: 0, totalStudents: 0, revenueDisplay: '0', pendingPayments: 0 });
+      }
+    } catch (err) {
+      console.error('Failed to fetch admin dashboard:', err);
+    } finally {
+      setDataLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchDashboard();
+    }
+  }, [status, fetchDashboard]);
+
+  if (status === 'loading' || (status === 'authenticated' && dataLoading)) {
+    return (
+      <AdminDashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Loading dashboard...</p>
+          </div>
+        </div>
+      </AdminDashboardLayout>
+    );
   }
 
   if ((session?.user as any)?.role !== 'admin') {
@@ -30,10 +68,10 @@ export default function AdminDashboard() {
   }
 
   const stats = [
-    { label: 'Total Users', value: 247, change: '+12%', icon: Users, color: 'blue' },
-    { label: 'Active Students', value: 156, change: '+8%', icon: TrendingUp, color: 'green' },
-    { label: 'Revenue (ZMW)', value: '2.3M', change: '+23%', icon: DollarSign, color: 'purple' },
-    { label: 'System Issues', value: 2, change: '-1', icon: AlertCircle, color: 'red' },
+    { label: 'Total Users', value: dashStats.totalUsers, change: '', icon: Users, color: 'blue' },
+    { label: 'Active Students', value: dashStats.totalStudents, change: '', icon: TrendingUp, color: 'green' },
+    { label: 'Revenue (ZMW)', value: dashStats.revenueDisplay, change: '', icon: DollarSign, color: 'purple' },
+    { label: 'Pending Payments', value: dashStats.pendingPayments, change: '', icon: AlertCircle, color: 'red' },
   ];
 
   return (
