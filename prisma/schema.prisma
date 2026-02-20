@@ -461,3 +461,22 @@ model Certificate {
   @@index([userId])
   @@index([certNumber])
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Partner / Trusted Organization Logos
+// ═══════════════════════════════════════════════════════════════
+
+model Partner {
+  id          String   @id @default(cuid())
+  name        String
+  subtitle    String?  // e.g. "Technology & Innovation Hub"
+  logoUrl     String?  // base64 data URL or /images/uploads path
+  websiteUrl  String?  // optional link
+  displayOrder Int     @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active])
+  @@index([displayOrder])
+}

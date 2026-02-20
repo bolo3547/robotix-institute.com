@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase, ClipboardList, MessageCircle } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase, ClipboardList, MessageCircle, Building2 } from 'lucide-react';
 
 const INSTITUTE_WA = '260956355117';
 
@@ -87,6 +87,14 @@ const adminSections = [
     href: '/admin/logo',
     color: 'from-teal-500 to-teal-600',
     count: 'Upload',
+  },
+  {
+    icon: Building2,
+    title: 'Trusted Partners',
+    description: 'Manage partner logos on the homepage',
+    href: '/admin/partners',
+    color: 'from-blue-500 to-indigo-600',
+    count: 'Manage',
   },
   {
     icon: ImageIcon,
