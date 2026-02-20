@@ -150,6 +150,7 @@ export default function Header() {
     { label: 'Playground', href: '/playground' },
     { label: 'Leaderboard', href: '/leaderboard' },
     { label: 'Community', href: '/community' },
+    { label: 'Messages', href: '/chat' },
     { label: 'Schedule', href: '/schedule' },
     { label: 'Timetable', href: '/timetable' },
     { label: 'Certificates', href: '/certificates' },

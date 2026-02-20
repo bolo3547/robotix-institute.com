@@ -30,7 +30,7 @@ export async function GET(
   }
 
   // Check membership
-  const isMember = channel.members.some((m) => m.userId === user.id);
+  const isMember = channel.members.some((m: any) => m.userId === user.id);
   if (!isMember) {
     return NextResponse.json({ error: 'Not a member' }, { status: 403 });
   }
@@ -43,7 +43,7 @@ export async function GET(
     avatar: channel.avatar,
     isPrivate: channel.isPrivate,
     createdBy: channel.createdBy,
-    members: channel.members.map((m) => ({
+    members: channel.members.map((m: any) => ({
       id: m.userId,
       name: m.user.name,
       image: m.user.image,

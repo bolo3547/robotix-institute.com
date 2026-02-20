@@ -32,39 +32,49 @@ export async function GET(request: NextRequest) {
     orderBy: { channel: { updatedAt: 'desc' } },
   });
 
-  const channels = memberships.map((m) => {
+  const channels = memberships.map((m: any) => {
     const ch = m.channel;
     const lastMessage = ch.messages[0] || null;
-    const unreadCount = 0; // We'll compute this client-side or later
+    const displayName =
+      ch.type === 'direct'
+        ? ch.members.find((mem: any) => mem.userId !== user.id)?.user.name || 'Direct Message'
+        : ch.name;
     return {
       id: ch.id,
-      name: ch.type === 'direct'
-        ? ch.members.find((mem) => mem.userId !== user.id)?.user.name || ch.name
-        : ch.name,
+      name: ch.name,
+      displayName,
       description: ch.description,
       type: ch.type,
       avatar: ch.avatar,
       isPrivate: ch.isPrivate,
       archived: ch.archived,
-      members: ch.members.map((mem) => ({
-        id: mem.userId,
-        name: mem.user.name,
-        image: mem.user.image,
-        role: mem.user.role,
-        chatRole: mem.role,
+      members: ch.members.map((mem: any) => ({
+        id: mem.id,
+        role: mem.role,
+        user: {
+          id: mem.userId,
+          name: mem.user.name,
+          email: mem.user.email,
+          image: mem.user.image,
+          role: mem.user.role,
+        },
+        joinedAt: mem.joinedAt,
       })),
-      memberCount: ch.members.length,
+      _count: { members: ch.members.length },
       lastMessage: lastMessage
         ? {
+            id: lastMessage.id,
             content: lastMessage.content,
-            senderName: lastMessage.sender.name,
+            type: lastMessage.type,
+            sender: lastMessage.sender
+              ? { id: lastMessage.sender.id, name: lastMessage.sender.name }
+              : null,
+            senderId: lastMessage.senderId,
             createdAt: lastMessage.createdAt,
           }
         : null,
-      myRole: m.role,
-      muted: m.muted,
-      lastReadAt: m.lastReadAt,
       createdAt: ch.createdAt,
+      updatedAt: ch.updatedAt,
     };
   });
 

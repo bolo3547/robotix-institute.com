@@ -38,7 +38,7 @@ export async function GET(
     ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     include: {
       sender: {
-        select: { id: true, name: true, image: true, role: true },
+        select: { id: true, name: true, email: true, image: true, role: true },
       },
     },
   });
@@ -94,7 +94,7 @@ export async function POST(
     },
     include: {
       sender: {
-        select: { id: true, name: true, image: true, role: true },
+        select: { id: true, name: true, email: true, image: true, role: true },
       },
     },
   });

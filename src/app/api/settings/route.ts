@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { requireAdmin } from '@/lib/adminAuth';
+import { auditLog, getClientIp } from '@/lib/auditLog';
+import { getToken } from 'next-auth/jwt';
 
 const SETTINGS_FILE = path.join(process.cwd(), 'data', 'site-settings.json');
 
@@ -92,6 +94,16 @@ export async function PUT(request: NextRequest) {
     if (updates.banner) merged.banner = { ...current.banner, ...updates.banner };
 
     await saveSettings(merged);
+
+    // Audit log
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    await auditLog({
+      action: 'UPDATE_SETTINGS',
+      userId: token?.id as string,
+      ip: getClientIp(request.headers),
+      details: { updatedKeys: Object.keys(updates) },
+    });
+
     return NextResponse.json({ success: true, settings: merged });
   } catch (error) {
     console.error('Settings save error:', error);
