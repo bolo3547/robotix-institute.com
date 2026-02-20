@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/adminAuth';
+import { sendQuoteRequestConfirmation, sendAdminNewQuoteNotification } from '@/lib/email';
 
 // GET - Fetch all quotation requests (admin only)
 export async function GET(request: NextRequest) {
@@ -55,6 +56,30 @@ export async function POST(request: NextRequest) {
         ].filter(Boolean).join('\n'),
         status: 'pending',
       },
+    });
+
+    // Send confirmation email to parent and notification to admin (non-blocking)
+    const programList = Array.isArray(programs) ? programs.join(', ') : programs;
+
+    Promise.allSettled([
+      sendQuoteRequestConfirmation({
+        parentName,
+        parentEmail,
+        childName: childName || 'your child',
+        programs: programList,
+      }),
+      sendAdminNewQuoteNotification({
+        requestId: newRequest.id,
+        parentName,
+        parentEmail,
+        parentPhone: parentPhone || '',
+        childName: childName || '',
+        childAge: childAge ? parseInt(String(childAge), 10) : 0,
+        programs: programList,
+        message: message || undefined,
+      }),
+    ]).catch((err) => {
+      console.error('Error sending quotation notification emails:', err);
     });
 
     return NextResponse.json({

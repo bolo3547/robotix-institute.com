@@ -225,3 +225,210 @@ export async function sendApplicationConfirmation(data: {
     html: baseLayout('Application Received', body),
   });
 }
+
+/* ───────────────── Quotation Email Functions ───────────────── */
+
+/** Send confirmation to parent when they submit a quotation request */
+export async function sendQuoteRequestConfirmation(data: {
+  parentName: string;
+  parentEmail: string;
+  childName: string;
+  programs: string;
+}) {
+  const body = `
+    <p style="color:#18181b;font-size:15px;line-height:1.6">Dear <strong>${data.parentName}</strong>,</p>
+    <p style="color:#18181b;font-size:15px;line-height:1.6">
+      Thank you for requesting a quotation for <strong>${data.childName}</strong> at ROBOTIX Institute!
+      We have received your request and our team is now preparing a customised quote.
+    </p>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:20px;margin:20px 0;text-align:center">
+      <div style="font-size:36px;margin-bottom:8px">📝</div>
+      <h3 style="margin:0 0 4px;color:#1e40af;font-size:17px">Quotation Request Received</h3>
+      <p style="margin:0;color:#1d4ed8;font-size:13px">You'll receive a detailed PDF quotation within 24 hours</p>
+    </div>
+
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:20px 0">
+      <table style="width:100%;font-size:14px;color:#18181b">
+        <tr><td style="padding:4px 0;font-weight:600;width:140px">Child&rsquo;s Name:</td><td>${data.childName}</td></tr>
+        <tr><td style="padding:4px 0;font-weight:600">Programs:</td><td>${data.programs}</td></tr>
+      </table>
+    </div>
+
+    <h3 style="color:#18181b;font-size:16px;margin:24px 0 12px">What happens next?</h3>
+    <ol style="color:#3f3f46;font-size:14px;line-height:1.8;padding-left:20px">
+      <li>Our team reviews your requirements</li>
+      <li>We prepare a personalised quotation with pricing details</li>
+      <li>You&rsquo;ll receive a professional PDF quotation via email</li>
+      <li>We may call to discuss your child&rsquo;s specific needs</li>
+    </ol>
+
+    <p style="color:#18181b;font-size:15px;line-height:1.6;margin-top:20px">
+      If you have any questions in the meantime, please don&rsquo;t hesitate to
+      <a href="${SITE}/contact" style="color:#7c3aed">contact us</a> or call us at <strong>+260 956 355 117</strong>.
+    </p>
+
+    <p style="color:#18181b;font-size:15px;margin-top:24px">
+      Warm regards,<br>
+      <strong>The ROBOTIX Institute Team</strong>
+    </p>`;
+
+  await transporter.sendMail({
+    from: FROM,
+    to: data.parentEmail,
+    subject: `📝 Quotation Request Received — ${data.childName} at ROBOTIX Institute`,
+    html: baseLayout('Quotation Request Received', body),
+  });
+}
+
+/** Notify admin when a new quotation request is submitted */
+export async function sendAdminNewQuoteNotification(data: {
+  requestId: string;
+  parentName: string;
+  parentEmail: string;
+  parentPhone: string;
+  childName: string;
+  childAge: number;
+  programs: string;
+  message?: string;
+}) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
+  if (!adminEmail) return;
+
+  const body = `
+    <p style="color:#18181b;font-size:15px;line-height:1.6">A new quotation request has been submitted and is waiting for your review.</p>
+    <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:16px;margin:20px 0">
+      <table style="width:100%;font-size:14px;color:#18181b">
+        <tr><td style="padding:4px 0;font-weight:600;width:140px">Parent:</td><td>${data.parentName}</td></tr>
+        <tr><td style="padding:4px 0;font-weight:600">Email:</td><td><a href="mailto:${data.parentEmail}" style="color:#7c3aed">${data.parentEmail}</a></td></tr>
+        <tr><td style="padding:4px 0;font-weight:600">Phone:</td><td>${data.parentPhone}</td></tr>
+        <tr><td style="padding:4px 0;font-weight:600">Child:</td><td>${data.childName} (Age: ${data.childAge})</td></tr>
+        <tr><td style="padding:4px 0;font-weight:600">Programs:</td><td>${data.programs}</td></tr>
+        ${data.message ? `<tr><td style="padding:4px 0;font-weight:600;vertical-align:top">Message:</td><td>${data.message}</td></tr>` : ''}
+      </table>
+    </div>
+    <div style="text-align:center;margin:24px 0">
+      <a href="${SITE}/admin/quotations" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">Review &amp; Create Quotation</a>
+    </div>
+    <p style="color:#71717a;font-size:13px;margin-top:16px">Request ID: ${data.requestId}</p>`;
+
+  await transporter.sendMail({
+    from: FROM,
+    to: adminEmail,
+    subject: `💰 New Quotation Request: ${data.parentName} — ${data.programs}`,
+    html: baseLayout('New Quotation Request', body),
+  });
+}
+
+/** Send a completed quotation to the parent (with optional PDF attachment) */
+export async function sendQuotationToParent(data: {
+  parentName: string;
+  parentEmail: string;
+  childName: string;
+  quotationNumber: string;
+  items: { programName: string; pricePerMonth: number; duration: string }[];
+  subtotal: number;
+  discount?: number;
+  discountReason?: string;
+  total: number;
+  currency: string;
+  validUntil: Date;
+  notes?: string;
+  pdfBuffer?: Buffer;
+}) {
+  const itemRows = data.items.map(item => `
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #e4e4e7;font-size:14px;color:#18181b">${item.programName}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e4e4e7;font-size:14px;color:#18181b">${item.duration}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e4e4e7;font-size:14px;color:#18181b;text-align:right">${data.currency} ${item.pricePerMonth.toLocaleString()}</td>
+    </tr>`).join('');
+
+  const body = `
+    <p style="color:#18181b;font-size:15px;line-height:1.6">Dear <strong>${data.parentName}</strong>,</p>
+    <p style="color:#18181b;font-size:15px;line-height:1.6">
+      Thank you for your interest in ROBOTIX Institute! Please find below the quotation 
+      for <strong>${data.childName}</strong>&rsquo;s programs.
+    </p>
+
+    <div style="background:linear-gradient(135deg,#ede9fe,#e0e7ff);border:1px solid #c4b5fd;border-radius:12px;padding:20px;margin:20px 0;text-align:center">
+      <div style="font-size:36px;margin-bottom:8px">📄</div>
+      <h3 style="margin:0 0 4px;color:#5b21b6;font-size:17px">Quotation ${data.quotationNumber}</h3>
+      <p style="margin:0;color:#6d28d9;font-size:13px">Valid until ${new Date(data.validUntil).toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+    </div>
+
+    <!-- Pricing Table -->
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;border:1px solid #e4e4e7;border-radius:8px;overflow:hidden">
+      <thead>
+        <tr style="background:#f4f4f5">
+          <th style="padding:10px 12px;text-align:left;font-size:13px;font-weight:600;color:#71717a;border-bottom:1px solid #e4e4e7">Program</th>
+          <th style="padding:10px 12px;text-align:left;font-size:13px;font-weight:600;color:#71717a;border-bottom:1px solid #e4e4e7">Duration</th>
+          <th style="padding:10px 12px;text-align:right;font-size:13px;font-weight:600;color:#71717a;border-bottom:1px solid #e4e4e7">Price/Month</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemRows}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="padding:8px 12px;font-size:14px;font-weight:600;color:#18181b;border-bottom:1px solid #e4e4e7">Subtotal</td>
+          <td style="padding:8px 12px;text-align:right;font-size:14px;font-weight:600;color:#18181b;border-bottom:1px solid #e4e4e7">${data.currency} ${data.subtotal.toLocaleString()}</td>
+        </tr>
+        ${data.discount ? `
+        <tr>
+          <td colspan="2" style="padding:8px 12px;font-size:14px;color:#16a34a;border-bottom:1px solid #e4e4e7">Discount${data.discountReason ? ` (${data.discountReason})` : ''}</td>
+          <td style="padding:8px 12px;text-align:right;font-size:14px;color:#16a34a;border-bottom:1px solid #e4e4e7">-${data.currency} ${data.discount.toLocaleString()}</td>
+        </tr>` : ''}
+        <tr style="background:#f0fdf4">
+          <td colspan="2" style="padding:10px 12px;font-size:16px;font-weight:700;color:#15803d">Total/Month</td>
+          <td style="padding:10px 12px;text-align:right;font-size:16px;font-weight:700;color:#15803d">${data.currency} ${data.total.toLocaleString()}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    ${data.notes ? `
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:16px;margin:16px 0">
+      <p style="margin:0 0 4px;font-weight:600;color:#0369a1;font-size:13px">Notes:</p>
+      <p style="margin:0;color:#0c4a6e;font-size:14px;line-height:1.5">${data.notes}</p>
+    </div>` : ''}
+
+    <h3 style="color:#18181b;font-size:16px;margin:24px 0 12px">Next Steps:</h3>
+    <ol style="color:#3f3f46;font-size:14px;line-height:1.8;padding-left:20px">
+      <li>Review the quotation details above</li>
+      <li>Reply to this email or call us at <strong>+260 956 355 117</strong> to confirm</li>
+      <li>Complete enrollment at <a href="${SITE}/enroll" style="color:#7c3aed">${SITE.replace('https://', '')}/enroll</a></li>
+    </ol>
+
+    <div style="text-align:center;margin:24px 0">
+      <a href="${SITE}/enroll" style="display:inline-block;background:#7c3aed;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px">Enroll Now</a>
+    </div>
+
+    <p style="color:#18181b;font-size:15px;line-height:1.6;margin-top:20px">
+      This quotation is valid until <strong>${new Date(data.validUntil).toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' })}</strong>.
+      If you have any questions, please don&rsquo;t hesitate to contact us.
+    </p>
+
+    <p style="color:#18181b;font-size:15px;margin-top:24px">
+      Warm regards,<br>
+      <strong>The ROBOTIX Institute Team</strong>
+    </p>`;
+
+  const mailOptions: nodemailer.SendMailOptions = {
+    from: FROM,
+    to: data.parentEmail,
+    subject: `📄 Your Quotation ${data.quotationNumber} — ROBOTIX Institute`,
+    html: baseLayout(`Quotation ${data.quotationNumber}`, body),
+  };
+
+  // Attach PDF if provided
+  if (data.pdfBuffer) {
+    mailOptions.attachments = [
+      {
+        filename: `${data.quotationNumber}.pdf`,
+        content: data.pdfBuffer,
+        contentType: 'application/pdf',
+      },
+    ];
+  }
+
+  await transporter.sendMail(mailOptions);
+}

@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Award, Download, Share2, Search, Filter, Eye, X,
-  CheckCircle, Star, Shield, ExternalLink, Copy, Check,
+  CheckCircle, Star, Shield, ExternalLink, Copy, Check, Loader2,
 } from 'lucide-react';
+import html2canvas from 'html2canvas-pro';
+import { jsPDF } from 'jspdf';
 
 /* ─────────────────────────── PURPLE PALETTE ─────────────────────────── */
 /*
@@ -524,7 +526,7 @@ function CentralCrest() {
    CERTIFICATE CARD — Grid View
    ════════════════════════════════════════════════════════════ */
 
-function CertificateCard({ cert, onView, index }: { cert: Certificate; onView: () => void; index: number }) {
+function CertificateCard({ cert, onView, onDownload, index }: { cert: Certificate; onView: () => void; onDownload: () => void; index: number }) {
   const grade = gradeConfig[cert.grade];
 
   return (
@@ -607,6 +609,7 @@ function CertificateCard({ cert, onView, index }: { cert: Certificate; onView: (
             <Eye className="w-4 h-4" /> View
           </button>
           <button
+            onClick={onDownload}
             className="flex items-center justify-center px-3 py-2.5 rounded-xl transition-colors"
             style={{ background: `${P.brand}80`, color: P.white }}
             title="Download PDF"
@@ -632,9 +635,15 @@ function CertificateCard({ cert, onView, index }: { cert: Certificate; onView: (
    Swiss typography. Sacred white space.
    ════════════════════════════════════════════════════════════ */
 
-function CertificateModal({ cert, onClose }: { cert: Certificate; onClose: () => void }) {
+function CertificateModal({ cert, onClose, autoDownload = false, onAutoDownloadComplete }: {
+  cert: Certificate;
+  onClose: () => void;
+  autoDownload?: boolean;
+  onAutoDownloadComplete?: () => void;
+}) {
   const grade = gradeConfig[cert.grade];
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const certRef = useRef<HTMLDivElement>(null);
 
   const copyLink = () => {
@@ -642,6 +651,84 @@ function CertificateModal({ cert, onClose }: { cert: Certificate; onClose: () =>
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
+
+  const handleDownloadPDF = useCallback(async () => {
+    if (!certRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      // Capture at 3x scale for print-quality output
+      const canvas = await html2canvas(certRef.current, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        // Ensure full rendering of SVG layers
+        removeContainer: true,
+      });
+
+      // A4 landscape dimensions in mm
+      const pdfWidth = 297;
+      const pdfHeight = 210;
+
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4',
+        compress: true,
+      });
+
+      // Convert canvas to high-quality JPEG (0.98 quality)
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+      // Calculate dimensions to fit A4 landscape while preserving aspect ratio
+      const canvasAspect = canvas.width / canvas.height;
+      const pdfAspect = pdfWidth / pdfHeight;
+
+      let imgW = pdfWidth;
+      let imgH = pdfHeight;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      if (canvasAspect > pdfAspect) {
+        // Canvas is wider — fit to width, center vertically
+        imgH = pdfWidth / canvasAspect;
+        offsetY = (pdfHeight - imgH) / 2;
+      } else {
+        // Canvas is taller — fit to height, center horizontally
+        imgW = pdfHeight * canvasAspect;
+        offsetX = (pdfWidth - imgW) / 2;
+      }
+
+      pdf.addImage(imgData, 'JPEG', offsetX, offsetY, imgW, imgH);
+
+      // PDF metadata
+      pdf.setProperties({
+        title: `Certificate - ${cert.childName} - ${cert.programName}`,
+        subject: `Robotix Institute Certificate of Achievement`,
+        author: 'Robotix Institute Zambia',
+        creator: 'Robotix Institute Platform',
+      });
+
+      pdf.save(`${cert.certificateNumber}.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+    } finally {
+      setDownloading(false);
+    }
+  }, [cert, downloading]);
+
+  // Auto-download when opened from card download button
+  useEffect(() => {
+    if (autoDownload && certRef.current && !downloading) {
+      // Small delay to ensure the certificate is fully rendered
+      const timer = setTimeout(() => {
+        handleDownloadPDF();
+        onAutoDownloadComplete?.();
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [autoDownload]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formattedDate = new Date(cert.issueDate).toLocaleDateString('en-ZM', {
     year: 'numeric', month: 'long', day: 'numeric',
@@ -900,6 +987,16 @@ function CertificateModal({ cert, onClose }: { cert: Certificate; onClose: () =>
             <GuillocheStrip />
             <div className="h-3" style={{ background: grade.barGradient }} />
           </div>
+
+          {/* Download overlay */}
+          {downloading && (
+            <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl" style={{ background: `${P.white}D0`, backdropFilter: 'blur(2px)' }}>
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="w-10 h-10 animate-spin" style={{ color: P.brand }} />
+                <p className="text-sm font-semibold" style={{ color: P.brand }}>Generating PDF…</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ACTION BAR */}
@@ -920,8 +1017,14 @@ function CertificateModal({ cert, onClose }: { cert: Certificate; onClose: () =>
           </div>
 
           <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all active:scale-[0.97]" style={{ background: P.royal, color: P.white, border: `1px solid ${P.orchid}30` }}>
-              <Download className="w-4 h-4" /> PDF
+            <button
+              onClick={handleDownloadPDF}
+              disabled={downloading}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all active:scale-[0.97] disabled:opacity-60 disabled:cursor-wait"
+              style={{ background: P.royal, color: P.white, border: `1px solid ${P.orchid}30` }}
+            >
+              {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {downloading ? 'Generating…' : 'PDF'}
             </button>
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all active:scale-[0.97]" style={{ background: P.white, color: P.brand }}>
               <Share2 className="w-4 h-4" /> Share
@@ -983,6 +1086,7 @@ function StatsBar({ certificates }: { certificates: Certificate[] }) {
 
 export default function CertificatesPage() {
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
+  const [autoDownload, setAutoDownload] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterGrade, setFilterGrade] = useState<string>('all');
 
@@ -1054,7 +1158,16 @@ export default function CertificatesPage() {
         {/* Certificate Grid */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
           {filtered.map((cert, i) => (
-            <CertificateCard key={cert.id} cert={cert} index={i} onView={() => setSelectedCert(cert)} />
+            <CertificateCard
+              key={cert.id}
+              cert={cert}
+              index={i}
+              onView={() => setSelectedCert(cert)}
+              onDownload={() => {
+                setAutoDownload(true);
+                setSelectedCert(cert);
+              }}
+            />
           ))}
         </div>
 
@@ -1071,7 +1184,14 @@ export default function CertificatesPage() {
 
         {/* Certificate Modal */}
         <AnimatePresence>
-          {selectedCert && <CertificateModal cert={selectedCert} onClose={() => setSelectedCert(null)} />}
+          {selectedCert && (
+            <CertificateModal
+              cert={selectedCert}
+              onClose={() => { setSelectedCert(null); setAutoDownload(false); }}
+              autoDownload={autoDownload}
+              onAutoDownloadComplete={() => setAutoDownload(false)}
+            />
+          )}
         </AnimatePresence>
       </div>
     </div>

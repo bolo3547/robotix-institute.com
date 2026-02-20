@@ -175,7 +175,24 @@ export default function AdminQuotationsPage() {
       if (reqRes.ok) {
         const reqData = await reqRes.json();
         if (reqData.data?.length > 0) {
-          setRequests(reqData.data);
+          // Map Prisma QuoteRequest fields to QuotationRequest type
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const mapped: QuotationRequest[] = reqData.data.map((r: any) => ({
+            id: r.id,
+            parentName: r.name || r.parentName || '',
+            parentEmail: r.email || r.parentEmail || '',
+            parentPhone: r.phone || r.parentPhone || '',
+            childName: r.organization || r.childName || '',
+            childAge: r.numberOfStudents || r.childAge || 0,
+            programs: r.programInterest
+              ? r.programInterest.split(',').map((s: string) => s.trim())
+              : r.programs || [],
+            message: r.message || undefined,
+            preferredSchedule: undefined,
+            createdAt: new Date(r.createdAt),
+            status: r.status === 'pending' ? 'pending' : 'sent',
+          }));
+          setRequests(mapped);
         }
       }
 
@@ -254,24 +271,45 @@ export default function AdminQuotationsPage() {
     setShowPDFPreview(true);
   };
 
-  const handleSendFromPreview = () => {
+  const handleSendFromPreview = async () => {
     if (!previewQuotation || !selectedRequest) return;
 
-    const finalQuotation: Quotation = {
-      ...previewQuotation,
-      status: 'sent',
-      sentAt: new Date(),
-    };
+    setIsLoading(true);
+    try {
+      const finalQuotation: Quotation = {
+        ...previewQuotation,
+        status: 'sent',
+        sentAt: new Date(),
+      };
 
-    setQuotations(prev => [finalQuotation, ...prev]);
-    setRequests(prev => 
-      prev.map(r => r.id === selectedRequest.id ? { ...r, status: 'sent' as const } : r)
-    );
-    
-    setShowPDFPreview(false);
-    setPreviewQuotation(null);
-    setSelectedRequest(null);
-    resetForm();
+      // Send quotation via API — this emails the parent and updates DB
+      const res = await fetch('/api/admin/quotations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalQuotation),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to send quotation');
+      }
+
+      setQuotations(prev => [finalQuotation, ...prev]);
+      setRequests(prev =>
+        prev.map(r => r.id === selectedRequest.id ? { ...r, status: 'sent' as const } : r)
+      );
+
+      alert('Quotation sent successfully! The parent will receive it via email.');
+    } catch (error) {
+      console.error('Error sending quotation:', error);
+      alert('Failed to send quotation. Please try again.');
+    } finally {
+      setIsLoading(false);
+      setShowPDFPreview(false);
+      setPreviewQuotation(null);
+      setSelectedRequest(null);
+      resetForm();
+    }
   };
 
   const resetForm = () => {

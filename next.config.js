@@ -3,6 +3,10 @@ const nextConfig = {
   // output: 'standalone', // Uncomment for Docker/self-hosted; Vercel handles this automatically
   reactStrictMode: true,
   swcMinify: true,
+  transpilePackages: ['@react-pdf/renderer'],
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     remotePatterns: [
       {

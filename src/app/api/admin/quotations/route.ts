@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/adminAuth';
-import { Quotation} from '@/types';
-
-// Quotations storage
-const quotations: Quotation[] = [];
+import prisma from '@/lib/prisma';
+import { sendQuotationToParent } from '@/lib/email';
+import { Quotation } from '@/types';
 
 // Generate quotation number
 function generateQuotationNumber(): string {
@@ -13,90 +12,118 @@ function generateQuotationNumber(): string {
   return `ROBOTIX-${year}${month}-${random}`;
 }
 
-// GET - Fetch all quotations
-export async function GET() {
-  return NextResponse.json({
-    success: true,
-    data: quotations,
-    count: quotations.length,
-  });
-}
-
-// POST - Create a new quotation
-export async function POST(request: NextRequest) {
+// GET - Fetch all sent quotations (reads QuoteRequests with status != 'pending')
+export async function GET(request: NextRequest) {
   const authError = await requireAdmin(request);
   if (authError) return authError;
+
   try {
-    const body = await request.json();
-
-    const quotation: Quotation = {
-      id: `Q-${Date.now()}`,
-      quotationNumber: generateQuotationNumber(),
-      ...body,
-      status: 'sent',
-      sentAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    quotations.unshift(quotation);
-
-    // In a real app, you would:
-    // 1. Save to database
-    // 2. Generate PDF
-    // 3. Send email with PDF attachment to parent
+    const quotedRequests = await prisma.quoteRequest.findMany({
+      where: { status: { not: 'pending' } },
+      orderBy: { quotedAt: 'desc' },
+    });
 
     return NextResponse.json({
       success: true,
-      data: quotation,
-      message: 'Quotation created and sent successfully',
+      data: quotedRequests,
+      count: quotedRequests.length,
     });
-
   } catch (error) {
-    console.error('Error creating quotation:', error);
+    console.error('Error fetching quotations:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to create quotation' },
+      { success: false, error: 'Failed to fetch quotations' },
       { status: 500 }
     );
   }
 }
 
-// PATCH - Update quotation status
+// POST - Create & send a quotation to the parent
+export async function POST(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
+  try {
+    const body: Quotation = await request.json();
+
+    const quotationNumber = body.quotationNumber || generateQuotationNumber();
+
+    // Update the QuoteRequest in the database to mark it as quoted
+    if (body.requestId) {
+      await prisma.quoteRequest.update({
+        where: { id: body.requestId },
+        data: {
+          status: 'quoted',
+          quotedAmount: body.total,
+          quotedAt: new Date(),
+          adminNotes: body.notes || null,
+        },
+      });
+    }
+
+    // Send quotation email to the parent
+    await sendQuotationToParent({
+      parentName: body.parentName,
+      parentEmail: body.parentEmail,
+      childName: body.childName,
+      quotationNumber,
+      items: body.items.map((item) => ({
+        programName: item.programName,
+        pricePerMonth: item.pricePerMonth,
+        duration: item.duration,
+      })),
+      subtotal: body.subtotal,
+      discount: body.discount,
+      discountReason: body.discountReason,
+      total: body.total,
+      currency: body.currency || 'ZMW',
+      validUntil: body.validUntil,
+      notes: body.notes,
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: { ...body, quotationNumber, status: 'sent', sentAt: new Date() },
+      message: 'Quotation sent to parent successfully',
+    });
+  } catch (error) {
+    console.error('Error creating/sending quotation:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to create and send quotation' },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Update quotation request status
 export async function PATCH(request: NextRequest) {
   const authError = await requireAdmin(request);
   if (authError) return authError;
+
   try {
     const body = await request.json();
     const { id, status } = body;
 
     if (!id || !status) {
       return NextResponse.json(
-        { success: false, error: 'Quotation ID and status are required' },
+        { success: false, error: 'Request ID and status are required' },
         { status: 400 }
       );
     }
 
-    const quoteIndex = quotations.findIndex(q => q.id === id);
-    if (quoteIndex === -1) {
-      return NextResponse.json(
-        { success: false, error: 'Quotation not found' },
-        { status: 404 }
-      );
-    }
-
-    quotations[quoteIndex].status = status;
-    quotations[quoteIndex].updatedAt = new Date();
+    const updated = await prisma.quoteRequest.update({
+      where: { id },
+      data: { status },
+    });
 
     return NextResponse.json({
       success: true,
-      data: quotations[quoteIndex],
-      message: 'Quotation updated successfully',
+      data: updated,
+      message: 'Quotation status updated successfully',
     });
-
   } catch (error) {
-    console.error('Error updating quotation:', error);
+    console.error('Error updating quotation status:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update quotation' },
+      { success: false, error: 'Failed to update quotation status' },
       { status: 500 }
     );
   }
