@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getToken } from 'next-auth/jwt';
 import prisma from '@/lib/prisma';
 
 // GET - Parent views child's progress (by userId query param, or auto-detect children)
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     const { searchParams } = new URL(req.url);
     let userId = searchParams.get('userId');
 
-    // If no explicit userId, try to find the parent's children from session
-    if (!userId && session?.user) {
+    // If no explicit userId, try to find the parent's children from token
+    if (!userId && token?.sub) {
       const parentUser = await prisma.user.findUnique({
-        where: { id: (session.user as any).id },
+        where: { id: token.sub },
         include: { children: { select: { id: true } } },
       });
       if (parentUser?.children?.length) {

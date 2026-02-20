@@ -175,50 +175,50 @@ export default function AdminDashboard() {
 
       {/* Header */}
       <header className="relative z-10 border-b border-white/10 bg-white/5 backdrop-blur-xl sticky top-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4"
+            className="flex items-center gap-3"
           >
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-yellow-600 flex items-center justify-center text-lg shadow-lg">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-400 to-yellow-600 flex items-center justify-center text-base sm:text-lg shadow-lg">
               ⚙️
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white">ROBOTIX</h1>
-              <p className="text-white/60 text-xs">Admin Dashboard</p>
+              <h1 className="text-base sm:text-lg font-bold text-white">ROBOTIX</h1>
+              <p className="text-white/60 text-[10px] sm:text-xs">Admin Dashboard</p>
             </div>
           </motion.div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleLogout}
               disabled={isLoading}
-              className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-400 to-red-600 text-white text-sm font-medium hover:shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-red-400 to-red-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all disabled:opacity-50 flex items-center gap-1.5 sm:gap-2"
             >
-              <LogOut className="w-4 h-4" />
-              Logout
+              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Logout</span>
             </motion.button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="relative z-20 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
         {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-6 sm:mb-12"
         >
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-orange-600/20 to-yellow-600/20 border border-white/10 backdrop-blur-xl p-8">
+          <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-r from-orange-600/20 to-yellow-600/20 border border-white/10 backdrop-blur-xl p-5 sm:p-8">
             <div className="absolute inset-0 bg-gradient-to-r from-orange-400/10 to-yellow-400/10 opacity-50"></div>
             <div className="relative z-10">
-              <h2 className="text-4xl font-bold text-white mb-2">Admin Control Center 🎛️</h2>
-              <p className="text-white/70">Manage all aspects of the ROBOTIX platform</p>
+              <h2 className="text-2xl sm:text-4xl font-bold text-white mb-1 sm:mb-2">Admin Control Center 🎛️</h2>
+              <p className="text-white/70 text-sm sm:text-base">Manage all aspects of the ROBOTIX platform</p>
             </div>
           </div>
         </motion.div>
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
+          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-12"
         >
           {stats.map((stat, idx) => (
             <motion.div
@@ -237,14 +237,14 @@ export default function AdminDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-6 hover:border-white/40 transition-all duration-300">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-orange-400">
-                    <BarChart3 className="w-5 h-5" />
+              <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-4 sm:p-6 hover:border-white/40 transition-all duration-300">
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/10 flex items-center justify-center text-orange-400">
+                    <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                 </div>
-                <p className="text-white/70 text-sm font-medium mb-1">{stat.value}</p>
-                <p className="text-3xl font-bold text-white">{stat.label}</p>
+                <p className="text-white/70 text-xs sm:text-sm font-medium mb-0.5 sm:mb-1">{stat.value}</p>
+                <p className="text-xl sm:text-3xl font-bold text-white">{stat.label}</p>
               </div>
             </motion.div>
           ))}
@@ -255,14 +255,14 @@ export default function AdminDashboard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delayChildren: 0.3, staggerChildren: 0.1 }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
-          <div className="mb-6">
-            <h3 className="text-2xl font-bold text-white">Management Sections</h3>
-            <p className="text-white/60 text-sm mt-1">Control and manage platform content</p>
+          <div className="mb-4 sm:mb-6">
+            <h3 className="text-xl sm:text-2xl font-bold text-white">Management Sections</h3>
+            <p className="text-white/60 text-xs sm:text-sm mt-1">Control and manage platform content</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
             {adminSections.map((section, index) => {
               const Icon = section.icon;
               return (
@@ -275,20 +275,20 @@ export default function AdminDashboard() {
                   className="group"
                 >
                   <Link href={section.href} className="block h-full">
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-6 hover:border-white/40 transition-all duration-300 h-full">
-                      <div className="flex items-start justify-between mb-6">
-                        <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${section.color} flex items-center justify-center text-2xl shadow-lg group-hover:shadow-xl transition-shadow`}>
-                          <Icon className="w-7 h-7 text-white" />
+                    <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-4 sm:p-6 hover:border-white/40 transition-all duration-300 h-full">
+                      <div className="flex items-start justify-between mb-3 sm:mb-6">
+                        <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-lg bg-gradient-to-br ${section.color} flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
+                          <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                         </div>
-                        <span className="text-xs px-3 py-1 rounded-full bg-white/10 text-white/70">{section.count}</span>
+                        <span className="text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/10 text-white/70">{section.count}</span>
                       </div>
 
-                      <h4 className="text-xl font-bold text-white mb-2">{section.title}</h4>
-                      <p className="text-white/70 text-sm mb-4">{section.description}</p>
+                      <h4 className="text-base sm:text-xl font-bold text-white mb-1 sm:mb-2">{section.title}</h4>
+                      <p className="text-white/70 text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2">{section.description}</p>
 
-                      <div className="flex items-center gap-2 text-orange-400 font-semibold text-sm group-hover:gap-3 transition-all">
+                      <div className="flex items-center gap-2 text-orange-400 font-semibold text-xs sm:text-sm group-hover:gap-3 transition-all">
                         <span>Access</span>
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </div>
                     </div>
                   </Link>
@@ -305,74 +305,74 @@ export default function AdminDashboard() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mb-12"
         >
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-8">
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-                <Zap className="w-6 h-6 text-yellow-400" />
+          <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-4 sm:p-8">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-2xl font-bold text-white flex items-center gap-2">
+                <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
                 Quick Actions
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
               <Link href="/admin/programs?action=create">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
                 >
-                  + Add Program
+                  + Program
                 </motion.button>
               </Link>
               <Link href="/admin/testimonials?action=create">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-purple-400 to-purple-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-purple-400 to-purple-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
                 >
-                  + Add Testimonial
+                  + Testimonial
                 </motion.button>
               </Link>
               <Link href="/admin/team?action=create">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-emerald-400 to-emerald-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-emerald-400 to-emerald-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
                 >
-                  + Add Team Member
+                  + Team Member
                 </motion.button>
               </Link>
               <Link href="/admin/photos">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
                 >
-                  + Add Photo
+                  + Photo
                 </motion.button>
               </Link>
               <Link href="/admin/events">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-rose-400 to-rose-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-rose-400 to-rose-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
                 >
-                  + Add Event
+                  + Event
                 </motion.button>
               </Link>
               <Link href="/admin/payments">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-400 to-indigo-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-indigo-400 to-indigo-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
                 >
-                  + Add Payment
+                  + Payment
                 </motion.button>
               </Link>
               <Link href="/admin/logo">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-teal-400 to-teal-600 text-white text-sm font-medium hover:shadow-lg transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-teal-400 to-teal-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
                 >
                   Upload Logo
                 </motion.button>
@@ -381,9 +381,9 @@ export default function AdminDashboard() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-green-400 to-green-600 text-white text-sm font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-gradient-to-r from-green-400 to-green-600 text-white text-xs sm:text-sm font-medium hover:shadow-lg transition-all flex items-center justify-center gap-1.5 sm:gap-2"
                 >
-                  <MessageCircle className="w-4 h-4" /> WhatsApp
+                  <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> WhatsApp
                 </motion.button>
               </a>
             </div>
@@ -396,14 +396,14 @@ export default function AdminDashboard() {
         href={`https://wa.me/${INSTITUTE_WA}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-green-500 text-white font-semibold shadow-lg hover:bg-green-600 hover:shadow-xl transition-all group"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full bg-green-500 text-white font-semibold shadow-lg hover:bg-green-600 hover:shadow-xl transition-all text-sm"
       >
-        <MessageCircle className="w-5 h-5" />
+        <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
         <span className="hidden sm:inline">WhatsApp</span>
       </a>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 mt-20 py-8 text-center text-white/50 text-sm">
+      <footer className="relative z-10 border-t border-white/10 mt-10 sm:mt-20 py-6 sm:py-8 text-center text-white/50 text-xs sm:text-sm px-4">
         <p>© 2026 ROBOTIX Institute. Admin Dashboard - {new Date().toLocaleDateString()}</p>
       </footer>
     </div>

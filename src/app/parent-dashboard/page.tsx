@@ -35,6 +35,11 @@ interface ProgressEntry {
   score: number | null;
   attendance: string;
   homework: string;
+  homeworkGrade: string | null;
+  notes: string | null;
+  skills: string | null;
+  behavior: string | null;
+  createdAt: string;
 }
 
 interface EnrollmentEntry {
@@ -192,6 +197,22 @@ export default function ParentDashboard() {
         { id: 'demo-3', date: '2026-03-15', description: 'March Tuition', amount: 15000, status: 'pending' as const, receiptNumber: null, method: null, currency: 'ZMW' },
       ];
 
+  // Extract instructor feedback (notes) from all progress entries
+  const feedbackData = enrollments.flatMap(e =>
+    e.progress
+      .filter(p => p.notes && p.notes.trim() !== '')
+      .map((p, idx) => ({
+        id: `${e.id}-${p.week}-${idx}`,
+        program: e.program,
+        week: p.week,
+        topic: p.topic || `Week ${p.week}`,
+        notes: p.notes!,
+        score: p.score,
+        behavior: p.behavior || null,
+        date: p.createdAt || e.startDate,
+      }))
+  ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
   return (
@@ -204,8 +225,8 @@ export default function ParentDashboard() {
           className="flex justify-between items-start"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Welcome, {session?.user?.name}!</h1>
-            <p className="text-gray-600 mt-2">Monitor {childName}&apos;s learning journey</p>
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Welcome, {session?.user?.name}!</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Monitor {childName}&apos;s learning journey</p>
           </div>
           <Notifications />
         </motion.div>
@@ -214,45 +235,45 @@ export default function ParentDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-6"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6"
         >
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 sm:p-6 border border-blue-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Hours</p>
-                <p className="text-2xl font-bold text-blue-600 mt-2">{totalHours}h</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Total Hours</p>
+                <p className="text-lg sm:text-2xl font-bold text-blue-600 mt-1 sm:mt-2">{totalHours}h</p>
               </div>
-              <Clock className="w-8 h-8 text-blue-400" />
+              <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 sm:p-6 border border-purple-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Avg Score</p>
-                <p className="text-2xl font-bold text-purple-600 mt-2">{summary?.avgScore || 0}%</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Avg Score</p>
+                <p className="text-lg sm:text-2xl font-bold text-purple-600 mt-1 sm:mt-2">{summary?.avgScore || 0}%</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-purple-400" />
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 sm:p-6 border border-green-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Attendance</p>
-                <p className="text-2xl font-bold text-green-600 mt-2">{summary?.attendanceRate || 0}%</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Attendance</p>
+                <p className="text-lg sm:text-2xl font-bold text-green-600 mt-1 sm:mt-2">{summary?.attendanceRate || 0}%</p>
               </div>
-              <BookOpen className="w-8 h-8 text-green-400" />
+              <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 sm:p-6 border border-orange-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Programs</p>
-                <p className="text-2xl font-bold text-orange-600 mt-2">{summary?.totalEnrollments || 0}</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Programs</p>
+                <p className="text-lg sm:text-2xl font-bold text-orange-600 mt-1 sm:mt-2">{summary?.totalEnrollments || 0}</p>
               </div>
-              <Award className="w-8 h-8 text-orange-400" />
+              <Award className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
             </div>
           </div>
         </motion.div>
@@ -311,7 +332,7 @@ export default function ParentDashboard() {
         <AttendanceRecords attendance={attendanceData.length > 0 ? attendanceData : [{ week: 'No data', attended: 0, total: 0 }]} />
 
         {/* Instructor Feedback */}
-        <InstructorFeedback />
+        <InstructorFeedback feedback={feedbackData} />
 
         {/* Payment History */}
         <PaymentHistory payments={paymentHistoryData} />
