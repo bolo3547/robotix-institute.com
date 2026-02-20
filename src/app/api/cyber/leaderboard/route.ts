@@ -5,24 +5,6 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-const RANKS = [
-  { level: 1, name: 'Script Kiddie' },
-  { level: 3, name: 'Packet Sniffer' },
-  { level: 5, name: 'White Hat Jr' },
-  { level: 8, name: 'Pentester' },
-  { level: 12, name: 'Security Analyst' },
-  { level: 16, name: 'Exploit Dev' },
-  { level: 20, name: 'Cyber Sentinel' },
-  { level: 25, name: 'Zero-Day Hunter' },
-];
-
-function getRankName(level: number): string {
-  let rank = RANKS[0].name;
-  for (const r of RANKS) {
-    if (level >= r.level) rank = r.name;
-  }
-  return rank;
-}
 
 export async function GET() {
   try {

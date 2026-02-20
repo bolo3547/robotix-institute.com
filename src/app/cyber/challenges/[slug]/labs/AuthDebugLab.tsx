@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, Bug, CheckCircle, XCircle, Code, Eye, EyeOff } from 'lucide-react';
 
 interface AuthBug {

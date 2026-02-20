@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Shield, AlertTriangle, Code, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { Shield, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 
 const MOCK_COMMENTS = [
   { id: 1, user: 'alice', text: 'Great article on network security!', time: '2 min ago' },

@@ -32,7 +32,6 @@ export async function GET(
 
     // Generate a professional certificate document
     const border = '═'.repeat(60);
-    const thin = '─'.repeat(60);
     const certText = `
 ╔${border}╗
 ║                                                            ║

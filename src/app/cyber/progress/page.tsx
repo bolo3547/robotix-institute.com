@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Trophy, Target, Flame, Star, Award, TrendingUp, Clock, ChevronRight, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Target, Flame, Star, Award, TrendingUp, Clock, ChevronRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { getStudentStats, getUserProgress, getAllChallenges } from '@/lib/cyberService';
 import { XP_PER_LEVEL } from '@/types/cyber';

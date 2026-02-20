@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
-  ArrowRight, ArrowLeft, CheckCircle, GraduationCap, User, BookOpen,
-  Calendar, CreditCard, Heart, MapPin, Phone, Mail, Shield,
-  Users, Clock, Star, Award, FileText
+  ArrowRight, ArrowLeft, CheckCircle, GraduationCap, BookOpen,
+  Heart, MapPin, Phone, Mail, Shield,
+  Users, Star, Award, FileText
 } from 'lucide-react';
 
 const programs = [

@@ -412,7 +412,7 @@ export async function sendQuotationToParent(data: {
       <strong>The ROBOTIX Institute Team</strong>
     </p>`;
 
-  const mailOptions: nodemailer.SendMailOptions = {
+  const mailOptions: Record<string, unknown> = {
     from: FROM,
     to: data.parentEmail,
     subject: `📄 Your Quotation ${data.quotationNumber} — ROBOTIX Institute`,

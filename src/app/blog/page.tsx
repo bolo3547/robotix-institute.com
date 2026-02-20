@@ -191,7 +191,7 @@ export default function BlogPage() {
               className="grid md:grid-cols-2 gap-8 bg-white rounded-2xl overflow-hidden border border-gray-200"
             >
               <div className="relative h-64 md:h-full">
-                <Image src={featuredPost.image} alt={featuredPost.title} fill className="object-cover" />
+                <Image src={featuredPost.image || ''} alt={featuredPost.title} fill className="object-cover" />
                 <div className="absolute top-4 left-4 bg-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                   Featured
                 </div>
@@ -226,7 +226,7 @@ export default function BlogPage() {
                 className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-gray-300 transition-colors group"
               >
                 <div className="relative h-48">
-                  <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src={post.image || ''} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="p-5">
                   <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">

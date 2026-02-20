@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, Edit2, Eye, EyeOff, X, Calendar, MapPin, Star, StarOff } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Edit2, Eye, EyeOff, X, Calendar, MapPin, Star } from 'lucide-react';
 
 interface EventItem {
   id: string;

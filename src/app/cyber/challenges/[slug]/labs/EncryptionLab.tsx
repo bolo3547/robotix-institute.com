@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, ArrowRightLeft, Lock, Unlock } from 'lucide-react';
 
 function caesarCipher(text: string, shift: number, decrypt = false): string {

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
-  ArrowLeft, Save, Upload, Plus, Trash2, Eye, 
-  CheckCircle, AlertCircle, Loader2, ImageIcon,
+  ArrowLeft, Save, Upload, Trash2, Eye, 
+  CheckCircle, AlertCircle, Loader2,
   Type, FileText, Link as LinkIcon
 } from 'lucide-react';
 
@@ -224,7 +224,6 @@ interface FieldDef {
 
 export default function ContentEditorPage() {
   const params = useParams();
-  const router = useRouter();
   const pageId = params.id as string;
   const pageDef = pageDefinitions[pageId];
 

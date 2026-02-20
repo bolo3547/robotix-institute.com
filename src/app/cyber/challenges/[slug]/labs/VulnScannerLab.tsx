@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Shield, AlertTriangle, Search, Server, CheckCircle, XCircle, Loader } from 'lucide-react';
+import { useState } from 'react';
+import { Shield, AlertTriangle, Search, Server, CheckCircle, Loader } from 'lucide-react';
 
 interface ScanTarget {
   name: string;

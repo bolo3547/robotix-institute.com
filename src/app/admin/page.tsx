@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase, ClipboardList, MessageCircle, Building2 } from 'lucide-react';
+import { Settings, Users, BookOpen, MessageSquare, FileText, LogOut, ChevronRight, BarChart3, Zap, Receipt, Megaphone, Image as ImageIcon, CalendarDays, CreditCard, Upload, PenTool, GraduationCap, TrendingUp, UserPlus, Briefcase, ClipboardList, MessageCircle, Building2, Award } from 'lucide-react';
 
 const INSTITUTE_WA = '260956355117';
 
@@ -95,6 +95,14 @@ const adminSections = [
     href: '/admin/logo',
     color: 'from-teal-500 to-teal-600',
     count: 'Upload',
+  },
+  {
+    icon: Award,
+    title: 'Certificate Designer',
+    description: 'Create, design & publish student certificates',
+    href: '/admin/certificates',
+    color: 'from-purple-500 to-fuchsia-600',
+    count: 'Design',
   },
   {
     icon: Building2,

@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const {
       position, fullName, email, phone, location,
       education, experience, skills, hasTeachingExp, yearsExperience,
-      linkedIn, portfolio, whyJoin, availability, startDate, hearAbout, additionalInfo,
+      linkedIn, portfolio: _portfolio, whyJoin, availability, startDate, hearAbout, additionalInfo,
     } = body;
 
     // Validate required fields

@@ -179,7 +179,7 @@ export function getLevelFromXp(xp: number): number {
 }
 
 export function getRank(level: number): (typeof RANKS)[number] {
-  let rank = RANKS[0];
+  let rank: (typeof RANKS)[number] = RANKS[0];
   for (const r of RANKS) {
     if (level >= r.level) rank = r;
   }

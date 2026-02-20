@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Shield, Users, BarChart3, Settings, Trophy, Target, TrendingUp, Search, ChevronDown, Loader2, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, Users, BarChart3, Settings, Trophy, Target, TrendingUp, Search, ChevronDown, Loader2 } from 'lucide-react';
 import { getAdminData, type AdminData } from '@/lib/cyberService';
 import { getRank } from '@/types/cyber';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Shield,
@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   PlayCircle,
   ChevronRight,
-  Loader2,
 } from 'lucide-react';
 import { CHALLENGES, DIFFICULTY_CONFIG, CATEGORY_LABELS } from '@/constants/cyber';
 import { getUserProgress } from '@/lib/cyberService';
@@ -22,7 +21,7 @@ export default function ChallengesPage() {
   const [search, setSearch] = useState('');
   const [filterDiff, setFilterDiff] = useState<Difficulty | 'all'>('all');
   const [progress, setProgress] = useState<ChallengeProgress[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   useEffect(() => {
     getUserProgress()
@@ -41,9 +40,9 @@ export default function ChallengesPage() {
   });
 
   const groups: { label: string; difficulty: Difficulty; challenges: typeof CHALLENGES }[] = [
-    { label: '🟢 Beginner', difficulty: 'beginner', challenges: filtered.filter((c) => c.difficulty === 'beginner') },
-    { label: '🟡 Intermediate', difficulty: 'intermediate', challenges: filtered.filter((c) => c.difficulty === 'intermediate') },
-    { label: '🔴 Advanced', difficulty: 'advanced', challenges: filtered.filter((c) => c.difficulty === 'advanced') },
+    { label: '🟢 Beginner', difficulty: 'beginner' as Difficulty, challenges: filtered.filter((c) => c.difficulty === 'beginner') },
+    { label: '🟡 Intermediate', difficulty: 'intermediate' as Difficulty, challenges: filtered.filter((c) => c.difficulty === 'intermediate') },
+    { label: '🔴 Advanced', difficulty: 'advanced' as Difficulty, challenges: filtered.filter((c) => c.difficulty === 'advanced') },
   ].filter((g) => g.challenges.length > 0);
 
   function getStatus(id: string) {

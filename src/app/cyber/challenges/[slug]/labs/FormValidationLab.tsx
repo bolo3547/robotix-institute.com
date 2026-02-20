@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
 interface ValidationRule {
@@ -62,7 +62,7 @@ export default function FormValidationLab() {
   ]);
 
   const [submitted, setSubmitted] = useState(false);
-  const [attackResults, setAttackResults] = useState<{ input: string; field: string; blocked: boolean }[]>([]);
+  const [attackResults, setAttackResults] = useState<{ input: string; field: string; blocked: boolean; label: string }[]>([]);
   const [phase, setPhase] = useState<'build' | 'test'>('build');
   const [completed, setCompleted] = useState(false);
 

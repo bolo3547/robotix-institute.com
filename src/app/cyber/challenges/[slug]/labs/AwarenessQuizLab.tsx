@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, CheckCircle2, XCircle } from 'lucide-react';
 
 const QUIZ_QUESTIONS = [

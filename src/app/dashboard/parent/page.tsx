@@ -43,7 +43,7 @@ interface SummaryData {
 }
 
 export default function ParentDashboard() {
-  const { data: session, status: authStatus } = useSession();
+  const { status: authStatus } = useSession();
   const [enrollments, setEnrollments] = useState<EnrollmentData[]>([]);
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [loading, setLoading] = useState(true);

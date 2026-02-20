@@ -80,7 +80,7 @@ function parseSkills(skills: string): string[] {
 export default function PortfolioPage() {
   const [activeView, setActiveView] = useState<'portfolio' | 'explore'>('explore');
   const [portfolios, setPortfolios] = useState<PortfolioSummary[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [_selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [detail, setDetail] = useState<PortfolioDetail | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);

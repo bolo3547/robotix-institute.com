@@ -440,20 +440,28 @@ model PortfolioProject {
 }
 
 model Certificate {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseName   String
-  grade        String   // distinction | merit | pass
-  issueDate    DateTime
-  certNumber   String   @unique // e.g. CERT-2026-0001
-  description  String?  @db.Text
-  skills       String?  @db.Text // JSON array of skills
-  instructorName String?
-  createdAt    DateTime @default(now())
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  childName       String               // Student full name (displayed on certificate)
+  courseName      String               // Program name
+  grade           String               // distinction | merit | pass
+  issueDate       DateTime
+  certNumber      String   @unique     // e.g. RIZ-2026-RF-001
+  description     String?  @db.Text
+  skills          String?  @db.Text    // JSON array of skills
+  instructorName  String?
+  directorName    String   @default("Dr. Chileshe Mwale")
+  cohort          String?              // e.g. "January 2026"
+  completionHours Int      @default(0)
+  status          String   @default("draft") // draft | published
+  publishedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([userId])
   @@index([certNumber])
+  @@index([status])
 }
 
 // ═══════════════════════════════════════════════════════════════

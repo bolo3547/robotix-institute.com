@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Trophy, Medal, Crown, TrendingUp, Star, Flame, Loader2 } from 'lucide-react';
 import { getLeaderboard } from '@/lib/cyberService';
 import { getRank } from '@/types/cyber';
@@ -60,7 +60,7 @@ export default function LeaderboardPage() {
 
       {/* Top 3 Podium */}
       <div className="grid grid-cols-3 gap-3">
-        {leaderboard.slice(0, 3).map((entry, i) => {
+        {leaderboard.slice(0, 3).map((_entry, i) => {
           const reorder = [leaderboard[1], leaderboard[0], leaderboard[2]];
           const e = reorder[i];
           if (!e) return null;

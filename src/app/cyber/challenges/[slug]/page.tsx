@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
 import { notFound } from 'next/navigation';
 import { CHALLENGES, DIFFICULTY_CONFIG, CATEGORY_LABELS } from '@/constants/cyber';
-import { Shield, Clock, Zap, ArrowLeft, Target, BookOpen, Tag } from 'lucide-react';
+import { Shield, Clock, ArrowLeft, Target, BookOpen, Tag } from 'lucide-react';
 import Link from 'next/link';
 import PasswordStrengthLab from './labs/PasswordStrengthLab';
 import EncryptionLab from './labs/EncryptionLab';

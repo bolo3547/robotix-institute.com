@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Shield, AlertTriangle, Database, Play } from 'lucide-react';
+import { useState } from 'react';
+import { Shield, AlertTriangle, Play } from 'lucide-react';
 
 // Simulated "database"
 const MOCK_DB = [

@@ -69,7 +69,7 @@ export default function ParentDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [payments, setPayments] = useState<PaymentData[]>([]);
-  const [paymentsLoading, setPaymentsLoading] = useState(true);
+  const [_paymentsLoading, setPaymentsLoading] = useState(true);
   const [enrollments, setEnrollments] = useState<EnrollmentEntry[]>([]);
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [childName, setChildName] = useState('Your Child');

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Shield, Users, Lock, Unlock, AlertTriangle, CheckCircle, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { Shield, Users, Lock, AlertTriangle, CheckCircle, Settings } from 'lucide-react';
 
 type Permission = 'read' | 'write' | 'delete' | 'admin';
 type Role = 'guest' | 'student' | 'teacher' | 'admin';
@@ -18,21 +18,6 @@ interface Resource {
   type: string;
   owner: string;
 }
-
-interface AccessAttempt {
-  user: User;
-  resource: Resource;
-  permission: Permission;
-  granted: boolean;
-  expected: boolean;
-}
-
-const ROLE_HIERARCHY: Record<Role, Permission[]> = {
-  guest: ['read'],
-  student: ['read', 'write'],
-  teacher: ['read', 'write', 'delete'],
-  admin: ['read', 'write', 'delete', 'admin'],
-};
 
 const USERS: User[] = [
   { id: 'u1', name: 'Visitor', role: 'guest' },

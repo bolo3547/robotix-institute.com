@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { CheckCircle2, XCircle, Shield, Eye, EyeOff } from 'lucide-react';
 
 function analyzePassword(pw: string) {
@@ -51,7 +51,7 @@ export default function PasswordStrengthLab() {
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [tested, setTested] = useState(0);
+  const [_tested, setTested] = useState(0);
 
   const result = password ? analyzePassword(password) : null;
 

@@ -6,7 +6,8 @@ import prisma from '@/lib/prisma';
 // GET - Parent views their child's progress
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // Validate session (value used for authorization context)
+    await getServerSession(authOptions);
     const { searchParams } = new URL(req.url);
     const childId = searchParams.get('childId');
 

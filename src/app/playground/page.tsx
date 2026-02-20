@@ -1173,7 +1173,7 @@ function WhackAMoleGame() {
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
-      setMoles(prev => {
+      setMoles(_prev => {
         const next = Array(9).fill(false);
         const count = Math.min(3, 1 + Math.floor(score / 50));
         for (let i = 0; i < count; i++) {

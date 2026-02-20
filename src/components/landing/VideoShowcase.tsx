@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ExternalLink, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Play, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Video {
   id: string;
@@ -49,7 +49,6 @@ const videos: Video[] = [
 ];
 
 export default function VideoShowcase() {
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextVideo = () => {

@@ -7,8 +7,8 @@ import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import {
   Users, BookOpen, MessageSquare, Plus,
-  TrendingUp, Award, CheckCircle, Settings,
-  Download, Calendar, Activity, ChevronRight
+  TrendingUp, Settings,
+  Download, ChevronRight
 } from 'lucide-react';
 
 interface ClassItem {

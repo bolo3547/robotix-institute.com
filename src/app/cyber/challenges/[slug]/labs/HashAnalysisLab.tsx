@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, Hash, Zap, Eye } from 'lucide-react';
 
 // Simple hash implementations for educational purposes
@@ -13,7 +13,6 @@ function simpleHash(str: string, algo: string): string {
     hash = ((hash << 5) - hash + char * seed) | 0;
   }
 
-  const hex = Math.abs(hash).toString(16).padStart(8, '0');
   const repeat = algo === 'md5' ? 4 : algo === 'sha1' ? 5 : 8;
   let result = '';
   for (let i = 0; i < repeat; i++) {
