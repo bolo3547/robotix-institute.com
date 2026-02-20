@@ -1,4 +1,0 @@
-// This file has been removed.
-// Authentication is now handled entirely through NextAuth.
-// See src/lib/auth.ts for the NextAuth configuration.
-// See prisma/schema.prisma for the User model.

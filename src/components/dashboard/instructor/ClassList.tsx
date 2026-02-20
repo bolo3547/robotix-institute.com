@@ -21,11 +21,11 @@ export default function ClassList({ classes }: ClassListProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
+      className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-gray-100"
     >
-      <div className="flex items-center gap-3 mb-6">
-        <BookOpen className="w-6 h-6 text-blue-600" />
-        <h2 className="text-2xl font-bold text-gray-900">My Classes</h2>
+      <div className="flex items-center gap-3 mb-4 sm:mb-6">
+        <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+        <h2 className="text-lg sm:text-2xl font-bold text-gray-900">My Classes</h2>
       </div>
 
       <div className="space-y-4">
@@ -35,14 +35,14 @@ export default function ClassList({ classes }: ClassListProps) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-5 border border-gray-200 hover:shadow-lg transition cursor-pointer"
+            className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 sm:p-5 border border-gray-200 hover:shadow-lg transition cursor-pointer"
           >
-            <div className="flex justify-between items-start mb-3">
+            <div className="flex justify-between items-start mb-2 sm:mb-3">
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">{cls.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">{cls.level}</p>
+                <h3 className="font-bold text-gray-900 text-sm sm:text-lg">{cls.name}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">{cls.level}</p>
               </div>
-              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+              <span className="bg-blue-100 text-blue-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-semibold">
                 {Math.round(cls.progress)}%
               </span>
             </div>

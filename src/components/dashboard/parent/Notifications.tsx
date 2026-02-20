@@ -68,7 +68,7 @@ export default function Notifications() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50"
+          className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-white rounded-lg shadow-xl border border-gray-100 z-50"
         >
           <div className="p-4 border-b border-gray-100">
             <h3 className="font-bold text-gray-900">Notifications</h3>

@@ -90,19 +90,19 @@ export default function InstructorDashboard() {
 
   return (
     <InstructorDashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-start"
+          className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Welcome, {session?.user?.name}!</h1>
-            <p className="text-gray-600 mt-2">Manage your classes and track student progress</p>
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Welcome, {session?.user?.name}!</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Manage your classes and track student progress</p>
           </div>
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-            <Plus className="w-5 h-5" />
+          <button className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base self-start">
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
             Create Lesson
           </button>
         </motion.div>
@@ -111,51 +111,51 @@ export default function InstructorDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-6"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6"
         >
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 sm:p-6 border border-blue-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Active Classes</p>
-                <p className="text-3xl font-bold text-blue-600 mt-2">{stats.activeClasses}</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Active Classes</p>
+                <p className="text-lg sm:text-3xl font-bold text-blue-600 mt-1 sm:mt-2">{stats.activeClasses}</p>
               </div>
-              <BookOpen className="w-8 h-8 text-blue-400" />
+              <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 sm:p-6 border border-purple-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Students</p>
-                <p className="text-3xl font-bold text-purple-600 mt-2">{stats.totalStudents}</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Total Students</p>
+                <p className="text-lg sm:text-3xl font-bold text-purple-600 mt-1 sm:mt-2">{stats.totalStudents}</p>
               </div>
-              <Users className="w-8 h-8 text-purple-400" />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 sm:p-6 border border-green-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Avg. Progress</p>
-                <p className="text-3xl font-bold text-green-600 mt-2">{stats.avgProgress}%</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Avg. Progress</p>
+                <p className="text-lg sm:text-3xl font-bold text-green-600 mt-1 sm:mt-2">{stats.avgProgress}%</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-green-400" />
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 sm:p-6 border border-orange-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Assignments</p>
-                <p className="text-3xl font-bold text-orange-600 mt-2">{stats.totalAssignments}</p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium">Assignments</p>
+                <p className="text-lg sm:text-3xl font-bold text-orange-600 mt-1 sm:mt-2">{stats.totalAssignments}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-orange-400" />
+              <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-orange-400" />
             </div>
           </div>
         </motion.div>
 
         {/* Classes and Students */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="lg:col-span-2">
             <ClassList classes={classes} />
           </div>

@@ -27,11 +27,11 @@ export default function StudentList({ students }: StudentListProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
+      className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-gray-100"
     >
-      <div className="flex items-center gap-3 mb-6">
-        <Users className="w-6 h-6 text-purple-600" />
-        <h2 className="text-2xl font-bold text-gray-900">Students</h2>
+      <div className="flex items-center gap-3 mb-4 sm:mb-6">
+        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+        <h2 className="text-lg sm:text-2xl font-bold text-gray-900">Students</h2>
       </div>
 
       <div className="space-y-3">

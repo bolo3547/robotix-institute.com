@@ -84,7 +84,7 @@ export default function InstructorDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 overflow-x-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-transparent"></div>
@@ -132,7 +132,7 @@ export default function InstructorDashboard() {
       </header>
 
       {/* Main Content */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-20">
@@ -151,13 +151,13 @@ export default function InstructorDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-white/10 backdrop-blur-xl p-8">
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-white/10 backdrop-blur-xl p-4 sm:p-8">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 to-pink-400/10 opacity-50"></div>
             <div className="relative z-10">
-              <h2 className="text-4xl font-bold text-white mb-2">Welcome, {instructorName}! 👋</h2>
-              <p className="text-white/70">Manage your classes, monitor student progress, and inspire the next generation of innovators.</p>
+              <h2 className="text-2xl sm:text-4xl font-bold text-white mb-2">Welcome, {instructorName}! 👋</h2>
+              <p className="text-white/70 text-sm sm:text-base">Manage your classes, monitor student progress, and inspire the next generation of innovators.</p>
             </div>
           </div>
         </motion.div>
@@ -167,20 +167,20 @@ export default function InstructorDashboard() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
+          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-12"
         >
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
               <motion.div key={idx} variants={itemVariants}>
-                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-6 hover:border-white/40 transition-all duration-300 group cursor-pointer">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center ${stat.color}`}>
-                      <Icon className="w-5 h-5" />
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-4 sm:p-6 hover:border-white/40 transition-all duration-300 group cursor-pointer">
+                  <div className="flex items-center justify-between mb-2 sm:mb-4">
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/10 flex items-center justify-center ${stat.color}`}>
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                   </div>
-                  <p className="text-white/70 text-sm font-medium mb-1">{stat.label}</p>
-                  <p className="text-3xl font-bold text-white">{stat.value}</p>
+                  <p className="text-white/70 text-xs sm:text-sm font-medium mb-1">{stat.label}</p>
+                  <p className="text-xl sm:text-3xl font-bold text-white">{stat.value}</p>
                 </div>
               </motion.div>
             );
@@ -192,11 +192,11 @@ export default function InstructorDashboard() {
           variants={itemVariants}
           initial="hidden"
           animate="visible"
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-white">Your Classes</h3>
+              <h3 className="text-lg sm:text-2xl font-bold text-white">Your Classes</h3>
               <p className="text-white/60 text-sm mt-1">{classes.length} active classes</p>
             </div>
             <motion.button
@@ -208,7 +208,7 @@ export default function InstructorDashboard() {
             </motion.button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {classes.map((classItem, idx) => {
               const colors = ['from-blue-400 to-blue-600', 'from-purple-400 to-purple-600', 'from-emerald-400 to-emerald-600', 'from-orange-400 to-orange-600'];
               const emojis = ['🤖', '⚡', '💻', '🎮'];
@@ -262,11 +262,11 @@ export default function InstructorDashboard() {
           variants={itemVariants}
           initial="hidden"
           animate="visible"
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-white">Student Performance</h3>
+              <h3 className="text-lg sm:text-2xl font-bold text-white">Student Performance</h3>
               <p className="text-white/60 text-sm mt-1">{students.length} students being tracked</p>
             </div>
           </div>
@@ -282,7 +282,7 @@ export default function InstructorDashboard() {
                 whileHover={{ x: 4 }}
                 className="relative overflow-hidden rounded-lg bg-gradient-to-r from-white/10 to-white/5 border border-white/20 backdrop-blur-xl p-4 hover:border-white/40 transition-all duration-300"
               >
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-lg">{statusIcon}</span>
@@ -292,9 +292,9 @@ export default function InstructorDashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex-shrink-0 text-right">
+                  <div className="flex-shrink-0 sm:text-right">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-24 h-2 rounded-full bg-white/10 overflow-hidden">
+                      <div className="w-20 sm:w-24 h-2 rounded-full bg-white/10 overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${student.progress}%` }}
@@ -326,9 +326,9 @@ export default function InstructorDashboard() {
           animate="visible"
           className="mb-12"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-white">Quick Overview</h3>
+              <h3 className="text-lg sm:text-2xl font-bold text-white">Quick Overview</h3>
               <p className="text-white/60 text-sm mt-1">Summary of class performance</p>
             </div>
           </div>

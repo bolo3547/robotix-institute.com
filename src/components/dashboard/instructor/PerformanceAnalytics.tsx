@@ -23,12 +23,12 @@ export default function PerformanceAnalytics() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
     >
       {/* Performance Trend */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Performance Trend</h3>
-        <ResponsiveContainer width="100%" height={300}>
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-gray-100">
+        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Performance Trend</h3>
+        <ResponsiveContainer width="100%" height={250}>
           <LineChart data={performanceData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="week" />
@@ -40,9 +40,9 @@ export default function PerformanceAnalytics() {
       </div>
 
       {/* Skills Breakdown */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Skills Breakdown</h3>
-        <ResponsiveContainer width="100%" height={300}>
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-gray-100">
+        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Skills Breakdown</h3>
+        <ResponsiveContainer width="100%" height={250}>
           <BarChart data={skillData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="skill" />
