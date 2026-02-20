@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { ExternalLink, Heart, Award } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 interface Photo {
   id: string;
@@ -90,8 +89,9 @@ export default function GalleryPage() {
                   transition={{ delay: i * 0.05 }}
                   className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-gray-300 shadow-sm transition-colors group"
                 >
-                  <div className="relative h-48">
-                    <Image src={photo.url} alt={photo.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="relative h-48 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photo.url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute top-3 right-3 bg-brand-500/80 text-white text-xs font-bold px-3 py-1 rounded-full capitalize">
                       {photo.category}
                     </div>

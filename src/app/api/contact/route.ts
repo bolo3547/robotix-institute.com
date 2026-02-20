@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// In-memory store for contact submissions (replace with real DB in production)
-const contactSubmissions: any[] = [];
+import prisma from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,21 +13,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const submission = {
-      id: `contact-${Date.now()}`,
-      name,
-      email,
-      phone: phone || '',
-      program: program || '',
-      message,
-      createdAt: new Date().toISOString(),
-      read: false,
-    };
-
-    contactSubmissions.push(submission);
+    const submission = await prisma.contactSubmission.create({
+      data: {
+        name,
+        email,
+        phone: phone || '',
+        program: program || '',
+        message,
+      },
+    });
 
     return NextResponse.json(
-      { message: 'Message received! We will get back to you soon.' },
+      { message: 'Message received! We will get back to you soon.', id: submission.id },
       { status: 201 }
     );
   } catch (error) {
@@ -42,6 +37,16 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  // Return all contact submissions (for admin use)
-  return NextResponse.json(contactSubmissions, { status: 200 });
+  try {
+    const submissions = await prisma.contactSubmission.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return NextResponse.json(submissions, { status: 200 });
+  } catch (error) {
+    console.error('Failed to fetch contact submissions:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch submissions' },
+      { status: 500 }
+    );
+  }
 }

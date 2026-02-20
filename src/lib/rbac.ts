@@ -10,7 +10,7 @@ const ROLE_PERMISSIONS = {
     'contact_instructor',
     'view_programs',
   ],
-  child: [
+  student: [
     'view_own_profile',
     'view_enrolled_programs',
     'submit_assignments',
@@ -52,7 +52,7 @@ export function getPermissionsForRole(role: UserRole): string[] {
 
 export const ROLE_LABELS: Record<UserRole, string> = {
   parent: 'Parent',
-  child: 'Student',
+  student: 'Student',
   instructor: 'Instructor',
   admin: 'Administrator',
 };

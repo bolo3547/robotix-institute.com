@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowLeft, Plus, Trash2, Edit2, Eye, EyeOff, Upload, X, Image as ImageIcon } from 'lucide-react';
 
 interface Photo {
@@ -24,7 +23,11 @@ export default function AdminPhotosPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<Photo | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState({ title: '', description: '', url: '', category: 'general', published: true });
+  const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [form, setForm] = useState({
+    title: '', description: '', category: 'general', published: true,
+    imageData: '', mimeType: '',
+  });
 
   const fetchPhotos = useCallback(async () => {
     try {
@@ -46,29 +49,65 @@ export default function AdminPhotosPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', 'gallery');
-
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (data.url) {
-        setForm(prev => ({ ...prev, url: data.url }));
-      }
-    } catch (err) {
-      console.error('Upload failed:', err);
-    } finally {
-      setUploading(false);
+    // Validate file type
+    const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) {
+      alert('Invalid file type. Allowed: PNG, JPG, WebP, GIF');
+      return;
     }
+
+    // Validate size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File too large. Maximum size: 5MB');
+      return;
+    }
+
+    setUploading(true);
+
+    // Read file as base64 client-side (no filesystem involved)
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // result is like "data:image/jpeg;base64,/9j/4AAQ..."
+      const base64 = result.split(',')[1]; // extract only the base64 part
+      setForm(prev => ({ ...prev, imageData: base64, mimeType: file.type }));
+      setPreviewUrl(result); // full data URL for preview
+      setUploading(false);
+    };
+    reader.onerror = () => {
+      console.error('File read failed');
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!editingPhoto && !form.imageData) {
+      alert('Please upload an image');
+      return;
+    }
+
     try {
       const method = editingPhoto ? 'PUT' : 'POST';
-      const body = editingPhoto ? { id: editingPhoto.id, ...form } : form;
+      const body = editingPhoto
+        ? {
+            id: editingPhoto.id,
+            title: form.title,
+            description: form.description,
+            category: form.category,
+            published: form.published,
+            ...(form.imageData ? { imageData: form.imageData, mimeType: form.mimeType } : {}),
+          }
+        : {
+            title: form.title,
+            description: form.description,
+            category: form.category,
+            published: form.published,
+            imageData: form.imageData,
+            mimeType: form.mimeType,
+          };
 
       const res = await fetch('/api/admin/photos', {
         method,
@@ -79,8 +118,12 @@ export default function AdminPhotosPage() {
       if (res.ok) {
         setShowForm(false);
         setEditingPhoto(null);
-        setForm({ title: '', description: '', url: '', category: 'general', published: true });
+        setForm({ title: '', description: '', category: 'general', published: true, imageData: '', mimeType: '' });
+        setPreviewUrl('');
         fetchPhotos();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to save photo');
       }
     } catch (err) {
       console.error('Save failed:', err);
@@ -115,11 +158,20 @@ export default function AdminPhotosPage() {
     setForm({
       title: photo.title,
       description: photo.description || '',
-      url: photo.url,
       category: photo.category,
       published: photo.published,
+      imageData: '',
+      mimeType: '',
     });
+    setPreviewUrl(photo.url); // show current image via API URL
     setShowForm(true);
+  };
+
+  const resetForm = () => {
+    setShowForm(false);
+    setEditingPhoto(null);
+    setForm({ title: '', description: '', category: 'general', published: true, imageData: '', mimeType: '' });
+    setPreviewUrl('');
   };
 
   return (
@@ -137,7 +189,7 @@ export default function AdminPhotosPage() {
             </div>
           </div>
           <button
-            onClick={() => { setShowForm(true); setEditingPhoto(null); setForm({ title: '', description: '', url: '', category: 'general', published: true }); }}
+            onClick={() => { resetForm(); setShowForm(true); }}
             className="px-4 py-2 rounded-lg bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-medium hover:shadow-lg transition-all flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> Add Photo
@@ -152,7 +204,7 @@ export default function AdminPhotosPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowForm(false)}
+            onClick={() => resetForm()}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -162,7 +214,7 @@ export default function AdminPhotosPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white">{editingPhoto ? 'Edit Photo' : 'Add New Photo'}</h2>
-                <button onClick={() => setShowForm(false)} className="text-white/60 hover:text-white">
+                <button onClick={() => resetForm()} className="text-white/60 hover:text-white">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -192,27 +244,22 @@ export default function AdminPhotosPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/80 mb-1">Image *</label>
+                  <label className="block text-sm font-medium text-white/80 mb-1">
+                    Image * {editingPhoto && <span className="text-white/40 font-normal">(upload new to replace)</span>}
+                  </label>
                   <div className="space-y-2">
-                    {form.url && (
-                      <div className="relative w-full h-32 rounded-lg overflow-hidden">
-                        <Image src={form.url} alt="Preview" fill className="object-cover" />
+                    {previewUrl && (
+                      <div className="relative w-full h-32 rounded-lg overflow-hidden bg-white/5">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                       </div>
                     )}
-                    <div className="flex gap-2">
-                      <label className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed border-white/20 text-white/60 hover:border-brand-500 hover:text-brand-400 cursor-pointer transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                        <Upload className="w-4 h-4" />
-                        {uploading ? 'Uploading...' : 'Upload Image'}
-                        <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
-                      </label>
-                    </div>
-                    <input
-                      type="text"
-                      value={form.url}
-                      onChange={(e) => setForm(prev => ({ ...prev, url: e.target.value }))}
-                      className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 focus:border-brand-500 focus:outline-none text-sm"
-                      placeholder="Or paste image URL"
-                    />
+                    <label className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed border-white/20 text-white/60 hover:border-brand-500 hover:text-brand-400 cursor-pointer transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                      <Upload className="w-4 h-4" />
+                      {uploading ? 'Reading file...' : previewUrl ? 'Change Image' : 'Upload Image'}
+                      <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                    </label>
+                    <p className="text-xs text-white/30">Supported: PNG, JPG, WebP, GIF. Max 5MB. Stored in database (persists on Vercel).</p>
                   </div>
                 </div>
 
@@ -241,7 +288,7 @@ export default function AdminPhotosPage() {
                 </div>
 
                 <div className="flex gap-3 pt-4">
-                  <button type="button" onClick={() => setShowForm(false)} className="flex-1 px-4 py-2 rounded-lg border border-white/20 text-white/60 hover:text-white transition-colors">
+                  <button type="button" onClick={() => resetForm()} className="flex-1 px-4 py-2 rounded-lg border border-white/20 text-white/60 hover:text-white transition-colors">
                     Cancel
                   </button>
                   <button type="submit" className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-brand-500 to-brand-600 text-white font-medium hover:shadow-lg transition-all">
@@ -272,7 +319,8 @@ export default function AdminPhotosPage() {
                 className="group relative rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all"
               >
                 <div className="relative h-48">
-                  <Image src={photo.url} alt={photo.title} fill className="object-cover" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
                   {!photo.published && (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                       <span className="text-white/80 text-sm font-medium bg-black/60 px-3 py-1 rounded-full">Hidden</span>

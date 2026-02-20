@@ -81,6 +81,14 @@ const adminSections = [
     count: 'Track',
   },
   {
+    icon: CalendarDays,
+    title: 'Staff Timetable',
+    description: 'Manage the weekly worker/instructor schedule',
+    href: '/admin/schedule',
+    color: 'from-sky-500 to-blue-600',
+    count: 'Manage',
+  },
+  {
     icon: Upload,
     title: 'Website Logo',
     description: 'Upload & change the site logo',

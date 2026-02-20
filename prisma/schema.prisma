@@ -35,6 +35,8 @@ model User {
   portfolio         Portfolio?
   portfolioProjects PortfolioProject[]
   certificates      Certificate[]
+  // Notifications
+  notifications     Notification[]
   // For parents linking to children
   children    User[]         @relation("ParentChild")
   parent      User?          @relation("ParentChild", fields: [parentId], references: [id])
@@ -71,17 +73,6 @@ model SiteSetting {
   value String
 
   @@index([key])
-}
-
-model Photo {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  url         String
-  category    String   @default("general") // general | robotics | events | students | projects
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 model Event {
@@ -479,4 +470,125 @@ model Partner {
 
   @@index([active])
   @@index([displayOrder])
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Contact, Notifications, Scheduling, Team Applications & Quotes
+// ═══════════════════════════════════════════════════════════════
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?  @default("")
+  program   String?  @default("")
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([read])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   @default("info") // info | success | warning | alert | system
+  title     String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  link      String?  // optional deep-link URL
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+model Schedule {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  program     String    // e.g. "Robotics Foundations"
+  instructor  String?   // instructor name
+  dayOfWeek   String    // monday | tuesday | wednesday | thursday | friday | saturday | sunday
+  startTime   String    // HH:mm
+  endTime     String    // HH:mm
+  location    String?   // room / venue
+  ageGroup    String?   // e.g. "6-8", "9-12"
+  capacity    Int       @default(20)
+  enrolled    Int       @default(0)
+  recurring   Boolean   @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([program])
+  @@index([dayOfWeek])
+  @@index([active])
+}
+
+model TeamApplication {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  position    String   // e.g. "Instructor", "Curriculum Developer"
+  experience  String?  @db.Text
+  resumeUrl   String?  // uploaded CV path
+  coverLetter String?  @db.Text
+  linkedIn    String?
+  status      String   @default("pending") // pending | reviewed | interview | accepted | rejected
+  reviewedBy  String?  // admin user id
+  reviewedAt  DateTime?
+  adminNotes  String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([position])
+  @@index([createdAt])
+}
+
+model QuoteRequest {
+  id              String   @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  organization    String?  // school or company name
+  programInterest String   // which program(s)
+  numberOfStudents Int?    // estimated students
+  message         String?  @db.Text
+  status          String   @default("pending") // pending | quoted | accepted | expired
+  quotedAmount    Float?
+  quotedAt        DateTime?
+  quotedBy        String?  // admin user id
+  adminNotes      String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Photo Gallery - images stored as base64 in DB for Vercel compatibility
+model Photo {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  url         String   // served via /api/photos/[id]/image
+  imageData   String?  @db.Text  // base64-encoded image binary
+  mimeType    String?  // e.g. image/jpeg, image/png
+  category    String   @default("general")
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published])
+  @@index([category])
 }

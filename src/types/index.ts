@@ -1,5 +1,5 @@
 // User roles and permissions
-export type UserRole = 'parent' | 'child' | 'instructor' | 'admin';
+export type UserRole = 'parent' | 'student' | 'instructor' | 'admin';
 
 export interface User {
   id: string;
@@ -20,7 +20,7 @@ export interface Parent extends User {
 }
 
 export interface Child extends User {
-  role: 'child';
+  role: 'student';
   dateOfBirth: Date;
   parentId: string;
   enrolledPrograms: Enrollment[];

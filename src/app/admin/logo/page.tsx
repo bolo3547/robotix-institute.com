@@ -184,7 +184,7 @@ export default function AdminLogoPage() {
           </h2>
 
           {/* Upload Area */}
-          <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-orange-400/50 transition-colors">
+          <div className="relative border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-orange-400/50 transition-colors">
             {previewUrl ? (
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-6 inline-block">
@@ -213,8 +213,8 @@ export default function AdminLogoPage() {
               type="file"
               accept="image/png,image/jpeg,image/svg+xml,image/webp"
               onChange={handleFileSelect}
+              title="Upload logo image"
               className={previewUrl ? 'hidden' : 'absolute inset-0 w-full h-full opacity-0 cursor-pointer'}
-              style={previewUrl ? {} : { position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
             />
           </div>
 

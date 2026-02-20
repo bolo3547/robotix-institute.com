@@ -7,8 +7,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Simple protection: require a seed key
-    if (body.seedKey !== 'robotix-seed-2025') {
+    // Protection: require seed key from environment variable
+    const expectedKey = process.env.ADMIN_SEED_KEY;
+    if (!expectedKey || body.seedKey !== expectedKey) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
 export async function GET() {
   const hasSecret = !!process.env.NEXTAUTH_SECRET;
   const hasUrl = !!process.env.NEXTAUTH_URL;
-  const hasDb = !!process.env.DATABASE_URL;
+  const hasDb = !!process.env.POSTGRES_PRISMA_URL;
 
   let userCount = 0;
   let adminCount = 0;
@@ -58,7 +59,7 @@ export async function GET() {
     env: {
       NEXTAUTH_SECRET: hasSecret ? 'SET' : 'MISSING',
       NEXTAUTH_URL: hasUrl ? 'SET' : 'MISSING',
-      DATABASE_URL: hasDb ? 'SET' : 'MISSING',
+      POSTGRES_PRISMA_URL: hasDb ? 'SET' : 'MISSING',
     },
     users: { total: userCount, admins: adminCount },
   });

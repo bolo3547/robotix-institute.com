@@ -109,6 +109,7 @@ export default function Header() {
     { label: 'Leaderboard', href: '/leaderboard' },
     { label: 'Community', href: '/community' },
     { label: 'Schedule', href: '/schedule' },
+    { label: 'Timetable', href: '/timetable' },
     { label: 'Certificates', href: '/certificates' },
     { label: 'Portfolio', href: '/portfolio' },
     { label: 'Payments', href: '/payments' },
