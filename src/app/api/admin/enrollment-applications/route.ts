@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getToken } from 'next-auth/jwt';
 import prisma from '@/lib/prisma';
 import {
   sendAcceptanceLetter,
@@ -10,8 +9,8 @@ import {
 /* ─────────────── GET  — list applications ─────────────── */
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user as any)?.role !== 'admin') {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    if (!token || token.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -64,8 +63,8 @@ export async function GET(request: NextRequest) {
 /* ─────────────── PUT  — review / update status ─────────────── */
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user as any)?.role !== 'admin') {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    if (!token || token.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -85,7 +84,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
     }
 
-    const adminId = (session.user as any)?.id || 'admin';
+    const adminId = (token.id as string) || 'admin';
 
     /* ── ACCEPT ── */
     if (action === 'accept') {
