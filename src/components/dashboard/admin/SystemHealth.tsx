@@ -4,12 +4,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle, AlertTriangle, Zap } from 'lucide-react';
 
 export default function SystemHealth() {
-  const health = [
-    { label: 'API Server', status: 'healthy', uptime: '99.9%', icon: CheckCircle },
-    { label: 'Database', status: 'healthy', uptime: '99.95%', icon: CheckCircle },
-    { label: 'Cache', status: 'warning', uptime: '98.5%', icon: AlertTriangle },
-    { label: 'Mail Service', status: 'healthy', uptime: '99.8%', icon: CheckCircle },
-  ];
+  const health: { label: string; status: string; uptime: string; icon: typeof CheckCircle }[] = [];
 
   const statusColors = {
     healthy: 'bg-green-900 text-green-200 border-green-700',
@@ -29,29 +24,37 @@ export default function SystemHealth() {
       </div>
 
       <div className="space-y-3">
-        {health.map((item, idx) => {
-          const Icon = item.icon;
-          const colorClass = statusColors[item.status as keyof typeof statusColors];
+        {health.length === 0 ? (
+          <div className="text-center py-10 text-gray-400">
+            <Zap className="w-10 h-10 mx-auto mb-3 opacity-40" />
+            <p className="text-lg font-medium">No system health data</p>
+            <p className="text-sm mt-1">Health metrics will appear here once services are monitored.</p>
+          </div>
+        ) : (
+          health.map((item, idx) => {
+            const Icon = item.icon;
+            const colorClass = statusColors[item.status as keyof typeof statusColors];
 
-          return (
-            <motion.div
-              key={item.label}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className={`${colorClass} rounded-lg p-4 border flex items-center justify-between`}
-            >
-              <div className="flex items-center gap-3">
-                <Icon className="w-5 h-5" />
-                <div>
-                  <p className="font-semibold">{item.label}</p>
-                  <p className="text-sm opacity-80">Uptime: {item.uptime}</p>
+            return (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className={`${colorClass} rounded-lg p-4 border flex items-center justify-between`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-5 h-5" />
+                  <div>
+                    <p className="font-semibold">{item.label}</p>
+                    <p className="text-sm opacity-80">Uptime: {item.uptime}</p>
+                  </div>
                 </div>
-              </div>
-              <span className="text-xs font-bold uppercase">{item.status}</span>
-            </motion.div>
-          );
-        })}
+                <span className="text-xs font-bold uppercase">{item.status}</span>
+              </motion.div>
+            );
+          })
+        )}
       </div>
 
       <button className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-gray-200 py-2 rounded-lg transition font-medium">

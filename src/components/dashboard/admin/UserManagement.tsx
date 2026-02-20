@@ -4,12 +4,7 @@ import { motion } from 'framer-motion';
 import { Users, UserPlus, Edit2, Trash2 } from 'lucide-react';
 
 export default function UserManagement() {
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@robotix.com', role: 'parent', status: 'active', joined: '2024-01-15' },
-    { id: 2, name: 'Emma Smith', email: 'emma@robotix.com', role: 'student', status: 'active', joined: '2024-01-16' },
-    { id: 3, name: 'Alice Johnson', email: 'alice@robotix.com', role: 'instructor', status: 'active', joined: '2024-01-10' },
-    { id: 4, name: 'Bob Wilson', email: 'bob@robotix.com', role: 'parent', status: 'inactive', joined: '2024-01-05' },
-  ];
+  const users: { id: number; name: string; email: string; role: string; status: string; joined: string }[] = [];
 
   return (
     <motion.div
@@ -40,44 +35,54 @@ export default function UserManagement() {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, idx) => (
-              <motion.tr
-                key={user.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: idx * 0.1 }}
-                className="border-b border-gray-700 hover:bg-gray-700/50 transition"
-              >
-                <td className="py-3 px-4 text-gray-200 font-medium">{user.name}</td>
-                <td className="py-3 px-4 text-gray-400">{user.email}</td>
-                <td className="py-3 px-4">
-                  <span className="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm">
-                    {user.role}
-                  </span>
+            {users.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-12 text-center text-gray-400">
+                  <Users className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                  <p className="text-lg font-medium">No users yet</p>
+                  <p className="text-sm mt-1">Users will appear here once they register.</p>
                 </td>
-                <td className="py-3 px-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      user.status === 'active'
-                        ? 'bg-green-900 text-green-200'
-                        : 'bg-gray-700 text-gray-300'
-                    }`}
-                  >
-                    {user.status}
-                  </span>
-                </td>
-                <td className="py-3 px-4">
-                  <div className="flex gap-2">
-                    <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-blue-400 transition" aria-label={`Edit user ${user.name}`}>
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-red-400 transition" aria-label={`Delete user ${user.name}`}>
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </motion.tr>
-            ))}
+              </tr>
+            ) : (
+              users.map((user, idx) => (
+                <motion.tr
+                  key={user.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="border-b border-gray-700 hover:bg-gray-700/50 transition"
+                >
+                  <td className="py-3 px-4 text-gray-200 font-medium">{user.name}</td>
+                  <td className="py-3 px-4 text-gray-400">{user.email}</td>
+                  <td className="py-3 px-4">
+                    <span className="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-sm">
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        user.status === 'active'
+                          ? 'bg-green-900 text-green-200'
+                          : 'bg-gray-700 text-gray-300'
+                      }`}
+                    >
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex gap-2">
+                      <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-blue-400 transition" aria-label={`Edit user ${user.name}`}>
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-700 rounded text-gray-400 hover:text-red-400 transition" aria-label={`Delete user ${user.name}`}>
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

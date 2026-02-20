@@ -5,66 +5,9 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { ChevronLeft, Plus, Edit, Trash2, Save } from 'lucide-react';
+import { ChevronLeft, Plus, Edit, Trash2, Save, BookOpen } from 'lucide-react';
 
-const defaultPrograms = [
-  {
-    id: 1,
-    name: 'Robotics Foundations',
-    ageGroup: '6-8 years',
-    level: 'Beginner',
-    price: '2,500 ZMW/month',
-    duration: '8 weeks',
-  },
-  {
-    id: 2,
-    name: 'Coding Basics',
-    ageGroup: '7-10 years',
-    level: 'Beginner',
-    price: '3,000 ZMW/month',
-    duration: '8 weeks',
-  },
-  {
-    id: 3,
-    name: 'Python Programming',
-    ageGroup: '10-14 years',
-    level: 'Intermediate',
-    price: '4,000 ZMW/month',
-    duration: '12 weeks',
-  },
-  {
-    id: 4,
-    name: 'Digital Skills',
-    ageGroup: '8-12 years',
-    level: 'Beginner',
-    price: '2,000 ZMW/month',
-    duration: '8 weeks',
-  },
-  {
-    id: 5,
-    name: 'Advanced Robotics',
-    ageGroup: '11-16 years',
-    level: 'Advanced',
-    price: '4,500 ZMW/month',
-    duration: '12 weeks',
-  },
-  {
-    id: 6,
-    name: 'Web Development Pro',
-    ageGroup: '12-18 years',
-    level: 'Advanced',
-    price: '3,500 ZMW/month',
-    duration: '10 weeks',
-  },
-  {
-    id: 7,
-    name: 'AI & Machine Learning',
-    ageGroup: '13-18 years',
-    level: 'Advanced',
-    price: '4,500 ZMW/month',
-    duration: '12 weeks',
-  },
-];
+const defaultPrograms: { id: number; name: string; ageGroup: string; level: string; price: string; duration: string }[] = [];
 
 export default function AdminProgramsPage() {
   const [programs, setPrograms] = useState(defaultPrograms);
@@ -204,6 +147,13 @@ export default function AdminProgramsPage() {
 
         {/* Programs List */}
         <div className="space-y-4">
+          {programs.length === 0 && !isAdding && (
+            <div className="text-center py-16 bg-gray-800/50 rounded-xl border border-gray-700">
+              <BookOpen className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">No programs yet</h3>
+              <p className="text-gray-500 mb-6">Click &quot;Add Program&quot; to create your first program.</p>
+            </div>
+          )}
           {programs.map((program, index) => (
             <motion.div
               key={program.id}

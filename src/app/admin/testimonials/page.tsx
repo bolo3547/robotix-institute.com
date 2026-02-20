@@ -5,40 +5,9 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { ChevronLeft, Plus, Edit, Trash2, Save, Star } from 'lucide-react';
+import { ChevronLeft, Plus, Edit, Trash2, Save, Star, MessageSquare } from 'lucide-react';
 
-const defaultTestimonials = [
-  {
-    id: 1,
-    name: 'Mukamba Chanda',
-    role: 'Parent',
-    text: 'My daughter went from being shy to presenting her robotics project confidently. ROBOTIX transformed her completely!',
-    rating: 5,
-    childName: 'Zainab',
-    program: 'Robotics Basics',
-    location: 'Lusaka',
-  },
-  {
-    id: 2,
-    name: 'David Mwale',
-    role: 'Parent',
-    text: 'The instructors are exceptionally qualified and genuinely care about each child\'s progress. Worth every kwacha!',
-    rating: 5,
-    childName: 'Chanda',
-    program: 'Advanced Coding',
-    location: 'Livingstone',
-  },
-  {
-    id: 3,
-    name: 'Grace Banda',
-    role: 'Parent',
-    text: 'Outstanding safety protocols and transparent communication. I always know what my son is learning and how he\'s progressing.',
-    rating: 5,
-    childName: 'Lwamba',
-    program: 'Python Programming',
-    location: 'Kitwe',
-  },
-];
+const defaultTestimonials: { id: number; name: string; role: string; text: string; rating: number; childName: string; program: string; location: string }[] = [];
 
 export default function AdminTestimonialsPage() {
   const [testimonials, setTestimonials] = useState(defaultTestimonials);
@@ -192,6 +161,13 @@ export default function AdminTestimonialsPage() {
 
         {/* Testimonials List */}
         <div className="space-y-4">
+          {testimonials.length === 0 && !isAdding && (
+            <div className="text-center py-16 bg-gray-800/50 rounded-xl border border-gray-700">
+              <MessageSquare className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">No testimonials yet</h3>
+              <p className="text-gray-500 mb-6">Click &quot;Add Testimonial&quot; to add your first testimonial.</p>
+            </div>
+          )}
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}

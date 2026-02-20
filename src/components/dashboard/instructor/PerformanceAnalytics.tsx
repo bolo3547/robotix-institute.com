@@ -1,23 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { BarChart2 } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function PerformanceAnalytics() {
-  const performanceData = [
-    { week: 'Week 1', avgScore: 65 },
-    { week: 'Week 2', avgScore: 72 },
-    { week: 'Week 3', avgScore: 68 },
-    { week: 'Week 4', avgScore: 78 },
-    { week: 'Week 5', avgScore: 82 },
-  ];
+  const performanceData: { week: string; avgScore: number }[] = [];
 
-  const skillData = [
-    { skill: 'Coding', score: 75 },
-    { skill: 'Robotics', score: 68 },
-    { skill: 'Logic', score: 82 },
-    { skill: 'Teamwork', score: 70 },
-  ];
+  const skillData: { skill: string; score: number }[] = [];
 
   return (
     <motion.div
@@ -28,29 +18,47 @@ export default function PerformanceAnalytics() {
       {/* Performance Trend */}
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-gray-100">
         <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Performance Trend</h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={performanceData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="week" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="avgScore" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6', r: 5 }} />
-          </LineChart>
-        </ResponsiveContainer>
+        {performanceData.length === 0 ? (
+          <div className="flex items-center justify-center h-[250px] text-gray-400">
+            <div className="text-center">
+              <BarChart2 className="w-10 h-10 mx-auto mb-3 opacity-40" />
+              <p className="text-sm">No performance data available yet.</p>
+            </div>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={performanceData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="week" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="avgScore" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6', r: 5 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* Skills Breakdown */}
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 border border-gray-100">
         <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Skills Breakdown</h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={skillData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="skill" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="score" fill="#8b5cf6" />
-          </BarChart>
-        </ResponsiveContainer>
+        {skillData.length === 0 ? (
+          <div className="flex items-center justify-center h-[250px] text-gray-400">
+            <div className="text-center">
+              <BarChart2 className="w-10 h-10 mx-auto mb-3 opacity-40" />
+              <p className="text-sm">No skill data available yet.</p>
+            </div>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={skillData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="skill" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="score" fill="#8b5cf6" />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </motion.div>
   );

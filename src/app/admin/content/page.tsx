@@ -6,50 +6,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { ChevronLeft, FileText, Edit } from 'lucide-react';
 
-const pages = [
-  {
-    id: 1,
-    name: 'Homepage',
-    route: '/',
-    sections: ['Hero', 'Programs', 'Testimonials', 'CTA'],
-    lastEdited: '2 days ago',
-  },
-  {
-    id: 2,
-    name: 'About Us',
-    route: '/about',
-    sections: ['Mission', 'Team', 'Journey', 'Values'],
-    lastEdited: '1 week ago',
-  },
-  {
-    id: 3,
-    name: 'Programs',
-    route: '/programs',
-    sections: ['Programs Grid', 'Details', 'Pricing'],
-    lastEdited: '3 days ago',
-  },
-  {
-    id: 4,
-    name: 'Testimonials',
-    route: '/testimonials',
-    sections: ['Success Stories', 'Ratings', 'Feedback'],
-    lastEdited: '5 days ago',
-  },
-  {
-    id: 5,
-    name: 'Contact',
-    route: '/contact',
-    sections: ['Form', 'Map', 'FAQ'],
-    lastEdited: '1 week ago',
-  },
-  {
-    id: 6,
-    name: 'What You Get',
-    route: '/what-you-get',
-    sections: ['Offers', 'Benefits', 'Pricing'],
-    lastEdited: 'Today',
-  },
-];
+const pages: { id: number; name: string; route: string; sections: string[]; lastEdited: string }[] = [];
 
 export default function AdminContentPage() {
   return (
@@ -66,6 +23,13 @@ export default function AdminContentPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {pages.length === 0 ? (
+          <div className="text-center py-16 bg-gray-800/50 rounded-xl border border-gray-700">
+            <FileText className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">No content pages configured</h3>
+            <p className="text-gray-500 mb-6">Content management will appear here once pages are set up.</p>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {pages.map((page, index) => (
             <motion.div
@@ -116,6 +80,7 @@ export default function AdminContentPage() {
             </motion.div>
           ))}
         </div>
+        )}
 
         {/* Content Tips */}
         <Card className="bg-gradient-to-r from-blue-900 to-purple-900 border border-blue-700 p-6 mt-12">

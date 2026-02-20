@@ -134,7 +134,7 @@ const adminSections = [
     description: 'Manage all courses and programs',
     href: '/admin/programs',
     color: 'from-blue-500 to-blue-600',
-    count: '7 Programs',
+    count: 'Manage',
   },
   {
     icon: MessageSquare,
@@ -142,7 +142,7 @@ const adminSections = [
     description: 'Manage student & parent reviews',
     href: '/admin/testimonials',
     color: 'from-purple-500 to-purple-600',
-    count: '6 Testimonials',
+    count: 'Manage',
   },
   {
     icon: Users,
@@ -150,7 +150,7 @@ const adminSections = [
     description: 'Manage instructors & staff',
     href: '/admin/team',
     color: 'from-green-500 to-green-600',
-    count: '4 Members',
+    count: 'Manage',
   },
   {
     icon: FileText,
@@ -158,7 +158,7 @@ const adminSections = [
     description: 'Edit website content & pages',
     href: '/admin/content',
     color: 'from-pink-500 to-pink-600',
-    count: '8 Pages',
+    count: 'Manage',
   },
   {
     icon: Settings,
@@ -171,10 +171,10 @@ const adminSections = [
 ];
 
 const stats = [
-  { label: '2,500+', value: 'Students' },
-  { label: '7', value: 'Programs' },
-  { label: '4', value: 'Instructors' },
-  { label: '95%', value: 'Satisfaction' },
+  { label: '—', value: 'Students' },
+  { label: '—', value: 'Programs' },
+  { label: '—', value: 'Instructors' },
+  { label: '—', value: 'Satisfaction' },
 ];
 
 export default function AdminDashboard() {

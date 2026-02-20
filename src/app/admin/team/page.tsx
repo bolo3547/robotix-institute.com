@@ -5,38 +5,9 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { ChevronLeft, Plus, Edit, Trash2, Save } from 'lucide-react';
+import { ChevronLeft, Plus, Edit, Trash2, Save, Users } from 'lucide-react';
 
-const defaultTeam = [
-  {
-    id: 1,
-    name: 'Dr. Chileshe Mwale',
-    role: 'Founder & Director',
-    bio: 'PhD in Computer Science, 15+ years in tech education',
-    specialty: 'Robotics & AI',
-  },
-  {
-    id: 2,
-    name: 'Linda Banda',
-    role: 'Head of Curriculum',
-    bio: 'Master\'s in Education, expert in STEM pedagogy',
-    specialty: 'Curriculum Design',
-  },
-  {
-    id: 3,
-    name: 'Thomas Kafwimbi',
-    role: 'Lead Instructor - Robotics',
-    bio: 'Certified robotics engineer, competition winner',
-    specialty: 'Robotics',
-  },
-  {
-    id: 4,
-    name: 'Grace Nkonde',
-    role: 'Lead Instructor - Programming',
-    bio: 'Full-stack developer, 8 years industry experience',
-    specialty: 'Web Development & Python',
-  },
-];
+const defaultTeam: { id: number; name: string; role: string; bio: string; specialty: string }[] = [];
 
 export default function AdminTeamPage() {
   const [team, setTeam] = useState(defaultTeam);
@@ -163,6 +134,13 @@ export default function AdminTeamPage() {
 
         {/* Team List */}
         <div className="space-y-4">
+          {team.length === 0 && !isAdding && (
+            <div className="text-center py-16 bg-gray-800/50 rounded-xl border border-gray-700">
+              <Users className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">No team members yet</h3>
+              <p className="text-gray-500 mb-6">Click &quot;Add Team Member&quot; to add your first team member.</p>
+            </div>
+          )}
           {team.map((member, index) => (
             <motion.div
               key={member.id}
