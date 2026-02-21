@@ -35,7 +35,7 @@ const defaultPageContent: Record<string, object> = {
     mission: {
       title: 'Our Mission',
       description: 'To inspire and educate the next generation of innovators through hands-on STEM learning experiences.',
-      image: '/images/mission.jpg',
+      image: '',
     },
     team: {
       title: 'Meet Our Team',
@@ -90,7 +90,7 @@ const defaultPageContent: Record<string, object> = {
       title: 'Visit Us',
       address: '123 Innovation Drive, Lusaka, Zambia',
       coordinates: { lat: -15.3875, lng: 28.3228 },
-      image: '/images/map.jpg',
+      image: '',
     },
     faq: {
       title: 'Frequently Asked Questions',
