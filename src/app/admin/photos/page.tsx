@@ -17,6 +17,44 @@ interface Photo {
 
 const categories = ['general', 'robotics', 'events', 'students', 'projects'];
 
+// Compress image client-side to fit within Vercel's 4.5MB body limit
+function compressImage(file: File, maxWidth = 1920, quality = 0.8): Promise<{ base64: string; mimeType: string }> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let { width, height } = img;
+
+      // Scale down if larger than maxWidth
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { reject(new Error('Canvas not supported')); return; }
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Output as JPEG for best compression (keep PNG only for small images)
+      const outputType = file.size < 200 * 1024 ? file.type : 'image/jpeg';
+      const dataUrl = canvas.toDataURL(outputType, quality);
+      const base64 = dataUrl.split(',')[1];
+
+      // If still too large, reduce quality
+      if (base64.length > 3.5 * 1024 * 1024) {
+        const smallerUrl = canvas.toDataURL('image/jpeg', 0.6);
+        resolve({ base64: smallerUrl.split(',')[1], mimeType: 'image/jpeg' });
+      } else {
+        resolve({ base64, mimeType: outputType });
+      }
+    };
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 export default function AdminPhotosPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,29 +94,25 @@ export default function AdminPhotosPage() {
       return;
     }
 
-    // Validate size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('File too large. Maximum size: 5MB');
+    // Validate size (10MB raw — we'll compress before sending)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File too large. Maximum size: 10MB');
       return;
     }
 
     setUploading(true);
 
-    // Read file as base64 client-side (no filesystem involved)
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      // result is like "data:image/jpeg;base64,/9j/4AAQ..."
-      const base64 = result.split(',')[1]; // extract only the base64 part
-      setForm(prev => ({ ...prev, imageData: base64, mimeType: file.type }));
-      setPreviewUrl(result); // full data URL for preview
+    try {
+      // Compress & resize image client-side to stay within Vercel body limit
+      const { base64, mimeType } = await compressImage(file);
+      setForm(prev => ({ ...prev, imageData: base64, mimeType }));
+      setPreviewUrl(`data:${mimeType};base64,${base64}`);
+    } catch (err) {
+      console.error('Image processing failed:', err);
+      alert('Failed to process image. Try a smaller file.');
+    } finally {
       setUploading(false);
-    };
-    reader.onerror = () => {
-      console.error('File read failed');
-      setUploading(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,7 +156,7 @@ export default function AdminPhotosPage() {
         setPreviewUrl('');
         fetchPhotos();
       } else {
-        const data = await res.json();
+        const data = await res.json().catch(() => ({ error: `Server error ${res.status}` }));
         alert(data.error || 'Failed to save photo');
       }
     } catch (err) {
@@ -259,7 +293,7 @@ export default function AdminPhotosPage() {
                       {uploading ? 'Reading file...' : previewUrl ? 'Change Image' : 'Upload Image'}
                       <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
                     </label>
-                    <p className="text-xs text-white/30">Supported: PNG, JPG, WebP, GIF. Max 5MB. Stored in database (persists on Vercel).</p>
+                    <p className="text-xs text-white/30">Supported: PNG, JPG, WebP, GIF. Max 10MB (auto-compressed). Stored in database.</p>
                   </div>
                 </div>
 

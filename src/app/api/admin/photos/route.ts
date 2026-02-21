@@ -2,27 +2,35 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/adminAuth';
 
+// Vercel body limit is 4.5MB; base64 inflates ~33%, so limit raw images to 3MB
+const MAX_IMAGE_BASE64_LENGTH = 4 * 1024 * 1024; // ~3MB raw image
+
 // GET /api/admin/photos - List all photos (admin)
 export async function GET(request: NextRequest) {
   const authError = await requireAdmin(request);
   if (authError) return authError;
 
-  const photos = await prisma.photo.findMany({
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      url: true,
-      category: true,
-      published: true,
-      mimeType: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+  try {
+    const photos = await prisma.photo.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        url: true,
+        category: true,
+        published: true,
+        mimeType: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-  return NextResponse.json(photos);
+    return NextResponse.json(photos);
+  } catch (error) {
+    console.error('List photos error:', error);
+    return NextResponse.json({ error: 'Failed to load photos' }, { status: 500 });
+  }
 }
 
 // POST /api/admin/photos - Create a new photo (with base64 image data)
@@ -31,27 +39,32 @@ export async function POST(request: NextRequest) {
   if (authError) return authError;
 
   try {
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('JSON parse error (photos POST):', parseError);
+      return NextResponse.json(
+        { error: 'Request body too large or invalid. Reduce image size to under 3MB.' },
+        { status: 400 }
+      );
+    }
+
     const { title, description, category, published, imageData, mimeType } = body;
 
     if (!title) {
-      return NextResponse.json(
-        { error: 'Title is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
 
     if (!imageData) {
-      return NextResponse.json(
-        { error: 'Image data is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Image data is required' }, { status: 400 });
     }
 
-    // Validate base64 size (max ~5MB raw = ~6.7MB base64)
-    if (imageData.length > 7 * 1024 * 1024) {
+    // Validate base64 size (keep well under Vercel's 4.5MB body limit)
+    if (imageData.length > MAX_IMAGE_BASE64_LENGTH) {
+      const approxMB = ((imageData.length * 3) / 4 / 1024 / 1024).toFixed(1);
       return NextResponse.json(
-        { error: 'Image too large. Maximum size: 5MB' },
+        { error: `Image too large (~${approxMB}MB). Maximum: 3MB. Please resize the image before uploading.` },
         { status: 400 }
       );
     }
@@ -99,7 +112,17 @@ export async function PUT(request: NextRequest) {
   if (authError) return authError;
 
   try {
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('JSON parse error (photos PUT):', parseError);
+      return NextResponse.json(
+        { error: 'Request body too large or invalid. Reduce image size to under 3MB.' },
+        { status: 400 }
+      );
+    }
+
     const { id, title, description, category, published, imageData, mimeType } = body;
 
     if (!id) {
@@ -114,9 +137,10 @@ export async function PUT(request: NextRequest) {
 
     // If new image data is provided, update it and refresh the URL
     if (imageData) {
-      if (imageData.length > 7 * 1024 * 1024) {
+      if (imageData.length > MAX_IMAGE_BASE64_LENGTH) {
+        const approxMB = ((imageData.length * 3) / 4 / 1024 / 1024).toFixed(1);
         return NextResponse.json(
-          { error: 'Image too large. Maximum size: 5MB' },
+          { error: `Image too large (~${approxMB}MB). Maximum: 3MB. Please resize before uploading.` },
           { status: 400 }
         );
       }

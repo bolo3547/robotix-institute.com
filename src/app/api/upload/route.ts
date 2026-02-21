@@ -26,22 +26,14 @@ export async function POST(request: NextRequest) {
   if (authError) return authError;
 
   try {
-    // Check content-type header
-    const contentType = request.headers.get('content-type') || '';
-    if (!contentType.includes('multipart/form-data')) {
-      return NextResponse.json(
-        { error: 'Request must be multipart/form-data', received: contentType },
-        { status: 400 }
-      );
-    }
-
     let formData: FormData;
     try {
       formData = await request.formData();
     } catch (parseError) {
       console.error('FormData parse error:', parseError);
+      const contentType = request.headers.get('content-type') || 'missing';
       return NextResponse.json(
-        { error: 'Failed to parse upload. File may be too large (max 4MB).' },
+        { error: 'Failed to parse upload. Ensure the request is multipart/form-data with a file under 4MB.', contentType },
         { status: 400 }
       );
     }
