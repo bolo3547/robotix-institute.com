@@ -6,7 +6,50 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { ChevronLeft, FileText, Edit } from 'lucide-react';
 
-const pages: { id: number; name: string; route: string; sections: string[]; lastEdited: string }[] = [];
+const pages: { id: number; name: string; route: string; sections: string[]; lastEdited: string }[] = [
+  {
+    id: 1,
+    name: 'Homepage',
+    route: '/',
+    sections: ['Hero', 'Programs', 'Testimonials', 'CTA'],
+    lastEdited: 'Recently',
+  },
+  {
+    id: 2,
+    name: 'About Us',
+    route: '/about',
+    sections: ['Mission', 'Team', 'Journey', 'Values'],
+    lastEdited: 'Recently',
+  },
+  {
+    id: 3,
+    name: 'Programs',
+    route: '/programs',
+    sections: ['Programs Grid', 'Details', 'Pricing'],
+    lastEdited: 'Recently',
+  },
+  {
+    id: 4,
+    name: 'Testimonials',
+    route: '/testimonials',
+    sections: ['Success Stories', 'Ratings', 'Feedback'],
+    lastEdited: 'Recently',
+  },
+  {
+    id: 5,
+    name: 'Contact',
+    route: '/contact',
+    sections: ['Form', 'Map', 'FAQ'],
+    lastEdited: 'Recently',
+  },
+  {
+    id: 6,
+    name: 'What You Get',
+    route: '/what-you-get',
+    sections: ['Offers', 'Benefits', 'Pricing'],
+    lastEdited: 'Recently',
+  },
+];
 
 export default function AdminContentPage() {
   return (

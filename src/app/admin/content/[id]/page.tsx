@@ -476,12 +476,21 @@ export default function ContentEditorPage() {
                             <div className="space-y-3">
                               {content[section.key]?.[field.name] && (
                                 <div className="relative w-full h-48 rounded-lg overflow-hidden bg-white/10">
-                                  <Image
-                                    src={content[section.key]?.[field.name] || ''}
-                                    alt={field.label}
-                                    fill
-                                    className="object-cover"
-                                  />
+                                  {(content[section.key]?.[field.name] || '').startsWith('/api/') || (content[section.key]?.[field.name] || '').startsWith('data:') ? (
+                                    /* eslint-disable-next-line @next/next/no-img-element */
+                                    <img
+                                      src={content[section.key]?.[field.name] || ''}
+                                      alt={field.label}
+                                      className="absolute inset-0 w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <Image
+                                      src={content[section.key]?.[field.name] || ''}
+                                      alt={field.label}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  )}
                                   <button
                                     onClick={() => handleFieldChange(section.key, field.name, '')}
                                     className="absolute top-2 right-2 p-2 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
