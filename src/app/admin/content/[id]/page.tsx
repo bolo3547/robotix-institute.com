@@ -25,6 +25,8 @@ const pageDefinitions: Record<string, { name: string; route: string; sections: S
           { name: 'subtitle', type: 'textarea', label: 'Subtitle' },
           { name: 'ctaText', type: 'text', label: 'CTA Button Text' },
           { name: 'ctaLink', type: 'text', label: 'CTA Button Link' },
+          { name: 'heroImage', type: 'image', label: 'Hero Main Image (right side)' },
+          { name: 'heroImageSecondary', type: 'image', label: 'Hero Secondary Image (small overlay)' },
           { name: 'backgroundImage', type: 'image', label: 'Background Image' },
         ]
       },

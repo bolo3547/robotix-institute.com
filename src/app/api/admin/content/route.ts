@@ -9,6 +9,8 @@ const defaultPageContent: Record<string, object> = {
       subtitle: 'Empowering young minds with robotics, coding, and AI education',
       ctaText: 'Start Learning',
       ctaLink: '/programs',
+      heroImage: '/robotix3.jpg',
+      heroImageSecondary: '/students2.jpg',
       backgroundImage: '/images/hero-bg.jpg',
     },
     programs: {

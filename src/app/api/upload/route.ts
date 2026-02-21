@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
 import prisma from '@/lib/prisma';
 import { requireAdmin } from '@/lib/adminAuth';
 
@@ -11,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const type = formData.get('type') as string; // 'logo' | 'favicon' | 'banner' | 'gallery' | 'general'
+    const type = formData.get('type') as string; // 'logo' | 'favicon' | 'content' | 'hero' | 'partner' | 'gallery' | 'general'
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -37,10 +35,10 @@ export async function POST(request: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64 = buffer.toString('base64');
 
-    // For logo/favicon: store as base64 data URL in database (persists on Vercel)
+    // For logo/favicon: store as data URL in SiteSetting (backwards compatible)
     if (type === 'logo' || type === 'favicon') {
-      const base64 = buffer.toString('base64');
       const dataUrl = `data:${file.type};base64,${base64}`;
 
       await prisma.siteSetting.upsert({
@@ -59,25 +57,28 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // For other files: store on filesystem (works locally, ephemeral on Vercel)
-    const uploadDir = path.join(process.cwd(), 'public', 'images', 'uploads');
-    await mkdir(uploadDir, { recursive: true });
+    // For ALL other files: store as base64 in the Upload table (persists on Vercel)
+    const upload = await prisma.upload.create({
+      data: {
+        filename: file.name,
+        mimeType: file.type,
+        imageData: base64,
+        size: file.size,
+        type: type || 'general',
+      },
+    });
 
-    const ext = path.extname(file.name) || '.png';
-    const filename = `${type || 'general'}-${Date.now()}${ext}`;
-    const filepath = path.join(uploadDir, filename);
-
-    await writeFile(filepath, buffer);
-
-    const publicUrl = `/images/uploads/${filename}`;
+    // Return a URL that serves the image from the database
+    const publicUrl = `/api/uploads/${upload.id}`;
 
     return NextResponse.json({
       success: true,
       url: publicUrl,
-      filename,
+      id: upload.id,
+      filename: file.name,
       size: file.size,
       type: file.type,
-      stored: 'filesystem',
+      stored: 'database',
     });
   } catch (error) {
     console.error('Upload error:', error);

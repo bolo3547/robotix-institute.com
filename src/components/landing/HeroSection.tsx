@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import HeroClient from './HeroClient';
+import prisma from '@/lib/prisma';
 
 const benefits = [
   {
@@ -41,7 +42,27 @@ const benefits = [
   },
 ];
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  // Fetch hero content from database
+  let heroImage = '/robotix3.jpg';
+  let heroImageSecondary = '/students2.jpg';
+
+  try {
+    const pageContent = await prisma.pageContent.findUnique({
+      where: { pageId: 'homepage' },
+    });
+    if (pageContent) {
+      const parsed = JSON.parse(pageContent.content);
+      if (parsed?.hero?.heroImage) heroImage = parsed.hero.heroImage;
+      if (parsed?.hero?.heroImageSecondary) heroImageSecondary = parsed.hero.heroImageSecondary;
+    }
+  } catch {
+    // Use defaults on error
+  }
+
+  // For API-served images, use <img> tag; for static files, use next/image
+  const isApiImage = (src: string) => src.startsWith('/api/');
+
   return (
     <>
       {/* Hero */}
@@ -132,23 +153,41 @@ export default function HeroSection() {
             <div className="relative hidden lg:block">
               {/* Main image */}
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-                <Image
-                  src="/robotix3.jpg"
-                  alt="Students learning robotics at Robotix Institute"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+                {isApiImage(heroImage) ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={heroImage}
+                    alt="Students learning robotics at Robotix Institute"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={heroImage}
+                    alt="Students learning robotics at Robotix Institute"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                )}
               </div>
 
               {/* Secondary image */}
               <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-2xl overflow-hidden shadow-xl border-4 border-white/30">
-                <Image
-                  src="/students2.jpg"
-                  alt="Young students coding"
-                  fill
-                  className="object-cover"
-                />
+                {isApiImage(heroImageSecondary) ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={heroImageSecondary}
+                    alt="Young students coding"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={heroImageSecondary}
+                    alt="Young students coding"
+                    fill
+                    className="object-cover"
+                  />
+                )}
               </div>
 
               {/* Floating award card */}

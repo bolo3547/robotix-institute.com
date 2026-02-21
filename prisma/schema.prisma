@@ -657,3 +657,15 @@ model ChatMessage {
   @@index([channelId, createdAt])
   @@index([senderId])
 }
+
+model Upload {
+  id        String   @id @default(cuid())
+  filename  String
+  mimeType  String
+  imageData String   @db.Text // base64 encoded
+  size      Int      @default(0)
+  type      String   @default("general") // content | partner | gallery | banner | hero | general
+  createdAt DateTime @default(now())
+
+  @@index([type])
+}
