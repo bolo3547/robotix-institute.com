@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/adminAuth';
 
-// Mock database for team
-let teamMembers = [
-  {
-    id: 1,
-    name: 'Dr. Chileshe Mwale',
-    role: 'Founder & Director',
-    bio: 'PhD in Computer Science, 15+ years in tech education',
-    specialty: 'Robotics & AI',
-  },
-];
+// In-memory database for team (starts empty — admin adds via dashboard)
+let teamMembers: { id: number; [key: string]: unknown }[] = [];
 
 export async function GET() {
   try {

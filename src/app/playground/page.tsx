@@ -8,6 +8,9 @@ import {
   RotateCcw, ChevronRight,
   Palette, Shapes, Music, Gamepad2, Code, Brain
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+const AIGameCreator = dynamic(() => import('@/components/playground/AIGameCreator'), { ssr: false });
 
 // Age groups for the playground
 const ageGroups = [
@@ -3013,6 +3016,18 @@ export default function PlaygroundPage() {
           </p>
         </motion.div>
       </section>
+
+      {/* AI Game Creator */}
+      <section className="px-4 pb-12">
+        <AIGameCreator />
+      </section>
+
+      {/* Divider */}
+      <div className="flex items-center gap-4 max-w-2xl mx-auto px-8 pb-8">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent to-purple-500/30" />
+        <span className="text-purple-300/40 text-sm font-medium">or play our built-in games</span>
+        <div className="flex-1 h-px bg-gradient-to-l from-transparent to-purple-500/30" />
+      </div>
 
       {/* Age Selector */}
       <section className="px-4 pb-8">

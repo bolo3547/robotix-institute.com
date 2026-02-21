@@ -148,6 +148,7 @@ export default function Header() {
   const platformLinks = [
     { label: 'Learning', href: '/learning' },
     { label: 'Playground', href: '/playground' },
+    { label: 'Python Challenges', href: '/python-challenges' },
     { label: 'Leaderboard', href: '/leaderboard' },
     { label: 'Community', href: '/community' },
     { label: 'Messages', href: '/chat' },

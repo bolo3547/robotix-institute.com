@@ -68,87 +68,12 @@ function generateQuotationNumber(): string {
   return `ROBOTIX-${year}${month}-${random}`;
 }
 
-// Sample quotation requests
-const mockRequests: QuotationRequest[] = [
-  {
-    id: 'QR-001',
-    parentName: 'Mary Mwanza',
-    parentEmail: 'mary.mwanza@email.com',
-    parentPhone: '+260 97 1234567',
-    childName: 'James Mwanza',
-    childAge: 10,
-    programs: ['advanced-robotics', 'python'],
-    message: 'My son is very interested in robotics and has been watching YouTube videos about it. Would love more info on class schedules.',
-    preferredSchedule: 'Saturday Mornings (9AM - 12PM)',
-    createdAt: new Date('2026-02-07T10:30:00'),
-    status: 'pending',
-  },
-  {
-    id: 'QR-002',
-    parentName: 'John Banda',
-    parentEmail: 'jbanda@gmail.com',
-    parentPhone: '+260 96 7654321',
-    childName: 'Sarah Banda',
-    childAge: 7,
-    programs: ['robotics-foundations', 'scratch'],
-    preferredSchedule: 'Weekday Afternoons (2PM - 5PM)',
-    createdAt: new Date('2026-02-06T14:15:00'),
-    status: 'pending',
-  },
-  {
-    id: 'QR-003',
-    parentName: 'Grace Phiri',
-    parentEmail: 'grace.phiri@company.zm',
-    parentPhone: '+260 95 5555555',
-    childName: 'David Phiri',
-    childAge: 14,
-    programs: ['ai-ml', 'web-dev'],
-    message: 'David wants to pursue computer science in university. Looking for programs to prepare him.',
-    preferredSchedule: 'Flexible / To be discussed',
-    createdAt: new Date('2026-02-05T09:00:00'),
-    status: 'sent',
-  },
-];
-
-const mockQuotations: Quotation[] = [
-  {
-    id: 'Q-001',
-    requestId: 'QR-003',
-    quotationNumber: 'ROBOTIX-202602-0001',
-    parentName: 'Grace Phiri',
-    parentEmail: 'grace.phiri@company.zm',
-    parentPhone: '+260 95 5555555',
-    childName: 'David Phiri',
-    childAge: 14,
-    items: [
-      { programName: 'AI & Machine Learning', description: 'AI fundamentals and neural networks - 8 months program', duration: '8 months', sessionsPerWeek: 3, pricePerMonth: 4500, quantity: 1 },
-      { programName: 'Web Development', description: 'HTML, CSS, JavaScript web skills - 5 months program', duration: '5 months', sessionsPerWeek: 2, pricePerMonth: 3200, quantity: 1 },
-    ],
-    subtotal: 7700,
-    discount: 500,
-    discountReason: 'Multi-program enrollment discount',
-    total: 7200,
-    currency: 'ZMW',
-    validUntil: new Date('2026-02-19'),
-    notes: 'Welcome package included. First session scheduled for orientation.',
-    terms: `1. This quotation is valid for 14 days from the date of issue.
-2. Payment is due upon enrollment confirmation.
-3. All fees are quoted in Zambian Kwacha (ZMW).
-4. Materials and equipment are included in the program fees.
-5. Classes are held at ROBOTIX Institute, Lusaka.
-6. A minimum of 48 hours notice is required for class rescheduling.
-7. Refunds are available within 7 days of enrollment if unsatisfied.`,
-    status: 'sent',
-    sentAt: new Date('2026-02-05T11:30:00'),
-    createdAt: new Date('2026-02-05T11:30:00'),
-    updatedAt: new Date('2026-02-05T11:30:00'),
-  },
-];
+// Quotation requests and quotations fetched from API (no mock data)
 
 export default function AdminQuotationsPage() {
   const [activeTab, setActiveTab] = useState<'requests' | 'sent'>('requests');
-  const [requests, setRequests] = useState<QuotationRequest[]>(mockRequests);
-  const [quotations, setQuotations] = useState<Quotation[]>(mockQuotations);
+  const [requests, setRequests] = useState<QuotationRequest[]>([]);
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
   const [expandedRequest, setExpandedRequest] = useState<string | null>(null);
   const [showSendModal, setShowSendModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<QuotationRequest | null>(null);
@@ -174,7 +99,7 @@ export default function AdminQuotationsPage() {
       const reqRes = await fetch('/api/quotations');
       if (reqRes.ok) {
         const reqData = await reqRes.json();
-        if (reqData.data?.length > 0) {
+        if (reqData.data && reqData.data.length > 0) {
           // Map Prisma QuoteRequest fields to QuotationRequest type
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const mapped: QuotationRequest[] = reqData.data.map((r: any) => ({
@@ -193,14 +118,18 @@ export default function AdminQuotationsPage() {
             status: r.status === 'pending' ? 'pending' : 'sent',
           }));
           setRequests(mapped);
+        } else {
+          setRequests([]);
         }
       }
 
       const quoteRes = await fetch('/api/admin/quotations');
       if (quoteRes.ok) {
         const quoteData = await quoteRes.json();
-        if (quoteData.data?.length > 0) {
+        if (quoteData.data && quoteData.data.length > 0) {
           setQuotations(quoteData.data);
+        } else {
+          setQuotations([]);
         }
       }
     } catch (error) {

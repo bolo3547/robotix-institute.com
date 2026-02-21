@@ -1,32 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Flame, Star, Zap, Crown, Medal, ChevronDown } from 'lucide-react';
 
-const mockLeaderboard = [
-  { rank: 1, childName: 'Mwamba Chisanga', avatar: '👦🏾', xp: 12450, level: 15, streak: 42, badges: 18, program: 'All Programs' },
-  { rank: 2, childName: 'Natasha Mulenga', avatar: '👧🏾', xp: 11200, level: 14, streak: 38, badges: 15, program: 'All Programs' },
-  { rank: 3, childName: 'Chilufya Bwalya', avatar: '👦🏿', xp: 10800, level: 13, streak: 35, badges: 14, program: 'All Programs' },
-  { rank: 4, childName: 'Thandiwe Nyirenda', avatar: '👧🏿', xp: 9500, level: 12, streak: 28, badges: 12, program: 'All Programs' },
-  { rank: 5, childName: 'Kunda Tembo', avatar: '👦🏾', xp: 8900, level: 11, streak: 25, badges: 11, program: 'All Programs' },
-  { rank: 6, childName: 'Mapalo Zulu', avatar: '👧🏾', xp: 8200, level: 10, streak: 22, badges: 10, program: 'All Programs' },
-  { rank: 7, childName: 'Bupe Mwale', avatar: '👦🏿', xp: 7600, level: 9, streak: 20, badges: 9, program: 'All Programs' },
-  { rank: 8, childName: 'Chanda Kapata', avatar: '👧🏿', xp: 7100, level: 9, streak: 18, badges: 8, program: 'All Programs' },
-  { rank: 9, childName: 'Luka Sakala', avatar: '👦🏾', xp: 6500, level: 8, streak: 15, badges: 7, program: 'All Programs' },
-  { rank: 10, childName: 'Monde Sichone', avatar: '👧🏾', xp: 6000, level: 7, streak: 12, badges: 6, program: 'All Programs' },
-];
+interface LeaderboardEntry {
+  rank: number;
+  childName: string;
+  avatar: string;
+  xp: number;
+  level: number;
+  streak: number;
+  badges: number;
+  program: string;
+}
 
-const allBadges = [
-  { id: '1', name: 'First Steps', icon: '🎯', rarity: 'common' as const, description: 'Complete your first lesson' },
-  { id: '2', name: 'Code Warrior', icon: '⚔️', rarity: 'rare' as const, description: 'Complete 10 coding challenges' },
-  { id: '3', name: 'Robot Master', icon: '🤖', rarity: 'epic' as const, description: 'Build 5 robot projects' },
-  { id: '4', name: 'Streak Legend', icon: '🔥', rarity: 'legendary' as const, description: '30-day attendance streak' },
-  { id: '5', name: 'Team Player', icon: '🤝', rarity: 'common' as const, description: 'Collaborate on a group project' },
-  { id: '6', name: 'Bug Hunter', icon: '🐛', rarity: 'rare' as const, description: 'Find and fix 20 bugs' },
-  { id: '7', name: 'Creative Mind', icon: '💡', rarity: 'epic' as const, description: 'Create an original project' },
-  { id: '8', name: 'Zambian Champion', icon: '🇿🇲', rarity: 'legendary' as const, description: 'Top scorer in national competition' },
-];
+interface Badge {
+  id: string;
+  name: string;
+  icon: string;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  description: string;
+}
 
 const rarityColors = {
   common: 'border-gray-400 bg-gray-500/20 text-gray-300',
@@ -71,6 +66,14 @@ function XPLevelBar({ xp, level }: { xp: number; level: number }) {
 export default function LeaderboardPage() {
   const [selectedTab, setSelectedTab] = useState<'leaderboard' | 'badges' | 'streaks'>('leaderboard');
   const [showProgram, setShowProgram] = useState('all');
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [badges, setBadges] = useState<Badge[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // TODO: Fetch from /api/leaderboard and /api/badges when endpoints are ready
+    setLoading(false);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -109,97 +112,101 @@ export default function LeaderboardPage() {
           {/* Leaderboard Tab */}
           {selectedTab === 'leaderboard' && (
             <motion.div key="leaderboard" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-              {/* Top 3 Podium */}
-              <div className="grid grid-cols-3 gap-4 mb-8">
-                {[mockLeaderboard[1], mockLeaderboard[0], mockLeaderboard[2]].map((student, idx) => (
-                  <motion.div
-                    key={student.rank}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.15 }}
-                    className={`text-center p-6 rounded-2xl border ${
-                      student.rank === 1
-                        ? 'bg-gradient-to-b from-yellow-500/20 to-yellow-50 border-yellow-500/30 order-2 scale-105'
-                        : student.rank === 2
-                        ? 'bg-gradient-to-b from-gray-400/20 to-gray-50 border-gray-400/30 order-1'
-                        : 'bg-gradient-to-b from-amber-700/20 to-amber-50 border-amber-700/30 order-3'
-                    }`}
-                  >
-                    <div className="text-4xl mb-2">{student.avatar}</div>
-                    <RankBadge rank={student.rank} />
-                    <h3 className="text-gray-900 font-bold mt-2">{student.childName}</h3>
-                    <p className="text-accent-400 font-bold text-lg">{student.xp.toLocaleString()} XP</p>
-                    <div className="flex items-center justify-center gap-1 mt-1 text-gray-600 text-sm">
-                      <Flame className="w-3.5 h-3.5 text-orange-400" />
-                      {student.streak} day streak
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Program Filter */}
-              <div className="flex justify-end mb-4">
-                <div className="relative">
-                  <select
-                    aria-label="Filter by program"
-                    value={showProgram}
-                    onChange={(e) => setShowProgram(e.target.value)}
-                    className="appearance-none px-4 py-2 pr-8 bg-white border border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/50"
-                  >
-                    <option value="all">All Programs</option>
-                    <option value="robotics">Robotics Fundamentals</option>
-                    <option value="python">Python for Kids</option>
-                    <option value="web">Web Development</option>
-                  </select>
-                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              {loading ? (
+                <div className="text-center py-16">
+                  <div className="w-8 h-8 border-4 border-accent-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <p className="text-gray-500">Loading rankings...</p>
                 </div>
-              </div>
-
-              {/* Full Leaderboard */}
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-100 text-gray-500 text-xs font-semibold uppercase tracking-wider">
-                  <div className="col-span-1">Rank</div>
-                  <div className="col-span-4">Student</div>
-                  <div className="col-span-3">XP & Level</div>
-                  <div className="col-span-2 text-center">Streak</div>
-                  <div className="col-span-2 text-center">Badges</div>
+              ) : leaderboard.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+                  <Trophy className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No rankings yet</h3>
+                  <p className="text-gray-500 max-w-sm mx-auto">Rankings will appear here as students earn XP by attending classes, completing assignments, and participating in challenges.</p>
                 </div>
-                {mockLeaderboard.map((student, idx) => (
-                  <motion.div
-                    key={student.rank}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="grid grid-cols-12 gap-4 px-6 py-4 items-center border-t border-gray-100 hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="col-span-1"><RankBadge rank={student.rank} /></div>
-                    <div className="col-span-4 flex items-center gap-3">
-                      <span className="text-2xl">{student.avatar}</span>
-                      <span className="text-gray-900 font-medium">{student.childName}</span>
+              ) : (
+                <>
+                  {/* Top 3 Podium */}
+                  <div className="grid grid-cols-3 gap-4 mb-8">
+                    {[leaderboard[1], leaderboard[0], leaderboard[2]].filter(Boolean).map((student, idx) => (
+                      <motion.div
+                        key={student.rank}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.15 }}
+                        className={`text-center p-6 rounded-2xl border ${
+                          student.rank === 1
+                            ? 'bg-gradient-to-b from-yellow-500/20 to-yellow-50 border-yellow-500/30 order-2 scale-105'
+                            : student.rank === 2
+                            ? 'bg-gradient-to-b from-gray-400/20 to-gray-50 border-gray-400/30 order-1'
+                            : 'bg-gradient-to-b from-amber-700/20 to-amber-50 border-amber-700/30 order-3'
+                        }`}
+                      >
+                        <div className="text-4xl mb-2">{student.avatar}</div>
+                        <RankBadge rank={student.rank} />
+                        <h3 className="text-gray-900 font-bold mt-2">{student.childName}</h3>
+                        <p className="text-accent-400 font-bold text-lg">{student.xp.toLocaleString()} XP</p>
+                        <div className="flex items-center justify-center gap-1 mt-1 text-gray-600 text-sm">
+                          <Flame className="w-3.5 h-3.5 text-orange-400" />
+                          {student.streak} day streak
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Full Leaderboard */}
+                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-100 text-gray-500 text-xs font-semibold uppercase tracking-wider">
+                      <div className="col-span-1">Rank</div>
+                      <div className="col-span-4">Student</div>
+                      <div className="col-span-3">XP & Level</div>
+                      <div className="col-span-2 text-center">Streak</div>
+                      <div className="col-span-2 text-center">Badges</div>
                     </div>
-                    <div className="col-span-3">
-                      <XPLevelBar xp={student.xp} level={student.level} />
-                    </div>
-                    <div className="col-span-2 flex items-center justify-center gap-1">
-                      <Flame className="w-4 h-4 text-orange-400" />
-                      <span className="text-gray-900 font-semibold">{student.streak}</span>
-                      <span className="text-gray-500 text-sm">days</span>
-                    </div>
-                    <div className="col-span-2 flex items-center justify-center gap-1">
-                      <Star className="w-4 h-4 text-accent-400" />
-                      <span className="text-gray-900 font-semibold">{student.badges}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                    {leaderboard.map((student, idx) => (
+                      <motion.div
+                        key={student.rank}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="grid grid-cols-12 gap-4 px-6 py-4 items-center border-t border-gray-100 hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="col-span-1"><RankBadge rank={student.rank} /></div>
+                        <div className="col-span-4 flex items-center gap-3">
+                          <span className="text-2xl">{student.avatar}</span>
+                          <span className="text-gray-900 font-medium">{student.childName}</span>
+                        </div>
+                        <div className="col-span-3">
+                          <XPLevelBar xp={student.xp} level={student.level} />
+                        </div>
+                        <div className="col-span-2 flex items-center justify-center gap-1">
+                          <Flame className="w-4 h-4 text-orange-400" />
+                          <span className="text-gray-900 font-semibold">{student.streak}</span>
+                          <span className="text-gray-500 text-sm">days</span>
+                        </div>
+                        <div className="col-span-2 flex items-center justify-center gap-1">
+                          <Star className="w-4 h-4 text-accent-400" />
+                          <span className="text-gray-900 font-semibold">{student.badges}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </>
+              )}
             </motion.div>
           )}
 
           {/* Badges Tab */}
           {selectedTab === 'badges' && (
             <motion.div key="badges" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              {badges.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+                  <Star className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No badges available yet</h3>
+                  <p className="text-gray-500 max-w-sm mx-auto">Badges will be available as the gamification system is set up. Check back soon!</p>
+                </div>
+              ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {allBadges.map((badge, idx) => (
+                {badges.map((badge, idx) => (
                   <motion.div
                     key={badge.id}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -216,6 +223,7 @@ export default function LeaderboardPage() {
                   </motion.div>
                 ))}
               </div>
+              )}
             </motion.div>
           )}
 
@@ -229,8 +237,13 @@ export default function LeaderboardPage() {
                   <p className="text-gray-600">Students with the longest consecutive attendance streaks</p>
                 </div>
 
+                {leaderboard.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No streak data yet. Streaks will appear as students attend classes consistently.</p>
+                  </div>
+                ) : (
                 <div className="space-y-4">
-                  {mockLeaderboard.slice(0, 5).map((student, idx) => (
+                  {leaderboard.slice(0, 5).map((student, idx) => (
                     <motion.div
                       key={student.rank}
                       initial={{ opacity: 0, x: -20 }}
@@ -262,6 +275,7 @@ export default function LeaderboardPage() {
                     </motion.div>
                   ))}
                 </div>
+                )}
 
                 {/* XP Earning Guide */}
                 <div className="mt-8 p-6 bg-gray-100 rounded-xl">

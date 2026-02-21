@@ -1,19 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/adminAuth';
 
-// Mock database for testimonials
-let testimonials = [
-  {
-    id: 1,
-    name: 'Mukamba Chanda',
-    role: 'Parent',
-    text: 'My daughter went from being shy to presenting her robotics project confidently!',
-    rating: 5,
-    childName: 'Zainab',
-    program: 'Robotics Basics',
-    location: 'Lusaka',
-  },
-];
+// In-memory database for testimonials (starts empty — admin adds via dashboard)
+let testimonials: { id: number; [key: string]: unknown }[] = [];
 
 export async function GET() {
   try {

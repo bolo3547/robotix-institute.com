@@ -21,77 +21,10 @@ interface BlogPost {
   featured: boolean;
 }
 
-const fallbackPosts: BlogPost[] = [
-  {
-    id: 1,
-    slug: 'why-every-child-in-zambia-should-learn-to-code',
-    title: 'Why Every Child in Zambia Should Learn to Code',
-    excerpt: 'In the digital age, coding is becoming as fundamental as reading and writing. Here\'s why starting early gives children a massive advantage...',
-    category: 'Parent Guide',
-    date: '2026-01-28',
-    readTime: '5 min',
-    image: '/robotix1.jpg',
-    featured: true,
-  },
-  {
-    id: 2,
-    slug: '5-robotics-projects-kids-can-build-at-home',
-    title: '5 Robotics Projects Kids Can Build at Home',
-    excerpt: 'You don\'t need expensive equipment to get started with robotics. Here are 5 fun projects using everyday materials...',
-    category: 'Robotics',
-    date: '2026-01-20',
-    readTime: '7 min',
-    image: '/robotix3.jpg',
-    featured: false,
-  },
-  {
-    id: 3,
-    slug: 'robotix-institute-wins-best-stem-initiative-2025',
-    title: 'Robotix Institute Wins Best STEM Initiative 2025',
-    excerpt: 'We\'re proud to announce that Robotix Institute has been awarded the Best STEM Initiative at the Zambia Education Awards...',
-    category: 'News',
-    date: '2026-01-15',
-    readTime: '3 min',
-    image: '/students2.jpg',
-    featured: false,
-  },
-  {
-    id: 4,
-    slug: 'python-vs-scratch-which-should-your-child-learn-first',
-    title: 'Python vs Scratch: Which Should Your Child Learn First?',
-    excerpt: 'Both are excellent starting points, but the right choice depends on your child\'s age and learning style...',
-    category: 'Coding',
-    date: '2026-01-10',
-    readTime: '6 min',
-    image: '/ai-learning.jpg',
-    featured: false,
-  },
-  {
-    id: 5,
-    slug: 'how-stem-education-bridges-the-digital-divide-in-africa',
-    title: 'How STEM Education Bridges the Digital Divide in Africa',
-    excerpt: 'Access to quality STEM education is key to empowering the next generation of African innovators and creators...',
-    category: 'STEM Tips',
-    date: '2026-01-05',
-    readTime: '8 min',
-    image: '/digital-divide.jpg',
-    featured: false,
-  },
-  {
-    id: 6,
-    slug: 'preparing-your-child-for-robotics-competitions',
-    title: 'Preparing Your Child for Robotics Competitions',
-    excerpt: 'From First LEGO League to World Robot Olympiad — a parent\'s complete guide to competitive robotics...',
-    category: 'Parent Guide',
-    date: '2025-12-28',
-    readTime: '10 min',
-    image: '/team1.jpg',
-    featured: false,
-  },
-];
+/* Posts fetched from API — no hardcoded fallback */
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>(fallbackPosts);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -117,7 +50,7 @@ export default function BlogPage() {
           }
         }
       } catch {
-        // fallback to hardcoded posts already set
+        // API not available yet — posts stay empty
       }
     };
     loadPosts();

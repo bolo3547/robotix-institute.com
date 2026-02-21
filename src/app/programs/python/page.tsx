@@ -188,6 +188,24 @@ export default function PythonPage() {
         </div>
       </section>
 
+      {/* Python Challenge Arena CTA */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl p-8 text-white text-center">
+            <span className="text-5xl mb-4 block">🐍</span>
+            <h2 className="text-3xl font-bold mb-3">Python Challenge Arena</h2>
+            <p className="text-lg opacity-90 mb-6 max-w-xl mx-auto">
+              Practice your Python skills with 30 real-world coding challenges. Earn XP, level up, and build the problem-solving skills that top tech companies look for.
+            </p>
+            <Link href="/python-challenges">
+              <Button variant="outline" className="bg-white text-orange-600 border-white hover:bg-orange-50 font-bold px-8 py-3">
+                Start Solving Challenges →
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* What You Build */}
       <section className="py-12 px-4">
         <div className="max-w-4xl mx-auto">

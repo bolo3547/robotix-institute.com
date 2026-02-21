@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar, Clock, MapPin, Users, ChevronLeft, ChevronRight,
@@ -10,27 +10,35 @@ import {
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const programs = [
-  { id: '1', name: 'Robotics Fundamentals', ageGroup: '9-12', color: 'bg-blue-500' },
-  { id: '2', name: 'Python for Kids', ageGroup: '10-14', color: 'bg-green-500' },
-  { id: '3', name: 'Web Development Junior', ageGroup: '12-16', color: 'bg-purple-500' },
-  { id: '4', name: 'Scratch Coding', ageGroup: '6-8', color: 'bg-orange-500' },
-];
+interface Program {
+  id: string;
+  name: string;
+  ageGroup: string;
+  color: string;
+}
 
-const mockSlots = [
-  { id: '1', programId: '1', date: '2026-02-12', startTime: '09:00', endTime: '10:30', instructor: 'Mr. Banda', capacity: 12, booked: 8, type: 'regular' as const, location: 'Lab A' },
-  { id: '2', programId: '1', date: '2026-02-12', startTime: '14:00', endTime: '15:30', instructor: 'Mr. Banda', capacity: 12, booked: 12, type: 'regular' as const, location: 'Lab A' },
-  { id: '3', programId: '2', date: '2026-02-13', startTime: '10:00', endTime: '11:30', instructor: 'Ms. Phiri', capacity: 10, booked: 6, type: 'regular' as const, location: 'Lab B' },
-  { id: '4', programId: '3', date: '2026-02-14', startTime: '14:00', endTime: '16:00', instructor: 'Mr. Mumba', capacity: 8, booked: 3, type: 'trial' as const, location: 'Lab A' },
-  { id: '5', programId: '4', date: '2026-02-15', startTime: '09:00', endTime: '10:00', instructor: 'Ms. Zulu', capacity: 15, booked: 10, type: 'regular' as const, location: 'Lab C' },
-  { id: '6', programId: '1', date: '2026-02-16', startTime: '09:00', endTime: '10:30', instructor: 'Mr. Banda', capacity: 12, booked: 5, type: 'regular' as const, location: 'Lab A' },
-];
+interface Slot {
+  id: string;
+  programId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  instructor: string;
+  capacity: number;
+  booked: number;
+  type: 'regular' | 'trial';
+  location: string;
+}
 
-const myBookings = [
-  { id: '1', program: 'Robotics Fundamentals', child: 'Mwamba', date: '2026-02-12', time: '09:00 - 10:30', status: 'confirmed', type: 'regular' },
-  { id: '2', program: 'Python for Kids', child: 'Natasha', date: '2026-02-13', time: '10:00 - 11:30', status: 'confirmed', type: 'regular' },
-  { id: '3', program: 'Web Dev Junior', child: 'Chilufya', date: '2026-02-14', time: '14:00 - 16:00', status: 'pending', type: 'trial' },
-];
+interface Booking {
+  id: string;
+  program: string;
+  child: string;
+  date: string;
+  time: string;
+  status: string;
+  type: string;
+}
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -42,12 +50,20 @@ function getFirstDayOfMonth(year: number, month: number) {
 
 export default function SchedulePage() {
   const [activeTab, setActiveTab] = useState<'calendar' | 'book' | 'my-bookings'>('calendar');
-  const [currentMonth, setCurrentMonth] = useState(1); // February
-  const [currentYear, setCurrentYear] = useState(2026);
+  const now = new Date();
+  const [currentMonth, setCurrentMonth] = useState(now.getMonth());
+  const [currentYear, setCurrentYear] = useState(now.getFullYear());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedProgram, setSelectedProgram] = useState<string>('all');
-  const [bookingModal, setBookingModal] = useState<typeof mockSlots[0] | null>(null);
+  const [bookingModal, setBookingModal] = useState<Slot | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+
+  useEffect(() => {
+    // TODO: Fetch from /api/schedule/slots, /api/schedule/bookings, /api/programs when endpoints are ready
+  }, []);
 
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
@@ -63,12 +79,12 @@ export default function SchedulePage() {
   };
 
   const slotsForDate = selectedDate
-    ? mockSlots.filter(s => s.date === selectedDate && (selectedProgram === 'all' || s.programId === selectedProgram))
+    ? slots.filter(s => s.date === selectedDate && (selectedProgram === 'all' || s.programId === selectedProgram))
     : [];
 
   const hasEvents = (day: number) => {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return mockSlots.some(s => s.date === dateStr);
+    return slots.some(s => s.date === dateStr);
   };
 
   const handleBook = () => {
@@ -145,7 +161,7 @@ export default function SchedulePage() {
                       const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                       const isSelected = selectedDate === dateStr;
                       const hasClass = hasEvents(day);
-                      const isToday = day === 9 && currentMonth === 1 && currentYear === 2026;
+                      const isToday = day === now.getDate() && currentMonth === now.getMonth() && currentYear === now.getFullYear();
 
                       return (
                         <button
@@ -280,8 +296,15 @@ export default function SchedulePage() {
 
               {/* All Available Slots */}
               <h2 className="text-xl font-bold text-gray-900 mb-4">Upcoming Available Classes</h2>
+              {slots.filter(s => s.booked < s.capacity).length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+                  <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No classes available yet</h3>
+                  <p className="text-gray-500">Check back soon or contact us via WhatsApp to enquire about upcoming classes.</p>
+                </div>
+              ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {mockSlots.filter(s => s.booked < s.capacity).map(slot => {
+                {slots.filter(s => s.booked < s.capacity).map(slot => {
                   const program = programs.find(p => p.id === slot.programId);
                   return (
                     <motion.div
@@ -318,14 +341,22 @@ export default function SchedulePage() {
                   );
                 })}
               </div>
+              )}
             </motion.div>
           )}
 
           {/* My Bookings Tab */}
           {activeTab === 'my-bookings' && (
             <motion.div key="my-bookings" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              {bookings.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+                  <Check className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No bookings yet</h3>
+                  <p className="text-gray-500">Your booked classes will appear here once you make a booking.</p>
+                </div>
+              ) : (
               <div className="space-y-4">
-                {myBookings.map((booking, idx) => (
+                {bookings.map((booking, idx) => (
                   <motion.div
                     key={booking.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -365,6 +396,7 @@ export default function SchedulePage() {
                   </motion.div>
                 ))}
               </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -421,9 +453,7 @@ export default function SchedulePage() {
                     <div className="mb-4">
                       <label htmlFor="select-child" className="text-gray-900 text-sm font-medium mb-2 block">Select Child</label>
                       <select id="select-child" className="w-full px-3 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/50">
-                        <option>Mwamba Chisanga</option>
-                        <option>Natasha Mulenga</option>
-                        <option>Chilufya Bwalya</option>
+                        <option>Select a child</option>
                       </select>
                     </div>
 

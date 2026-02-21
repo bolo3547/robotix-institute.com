@@ -1,27 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/adminAuth';
 
-// Mock database for programs
-let programs = [
-  {
-    id: 1,
-    name: 'Robotics Foundations',
-    ageGroup: '6-8 years',
-    level: 'Beginner',
-    price: '2,500 ZMW/month',
-    duration: '8 weeks',
-    description: 'Learn the basics of robotics and programming',
-  },
-  {
-    id: 2,
-    name: 'Coding Basics',
-    ageGroup: '7-10 years',
-    level: 'Beginner',
-    price: '3,000 ZMW/month',
-    duration: '8 weeks',
-    description: 'Introduction to programming concepts',
-  },
-];
+// In-memory database for programs (starts empty — admin adds via dashboard)
+let programs: { id: number; [key: string]: unknown }[] = [];
 
 export async function GET() {
   try {

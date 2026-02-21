@@ -1,12 +1,22 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell, BellOff, Check, CheckCheck, Trash2,
   GraduationCap, Calendar, CreditCard, Award, Megaphone,
   MessageSquare, UserCheck, FileCheck, Settings, X
 } from 'lucide-react';
+
+interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  actionUrl?: string;
+}
 
 const typeIcons: Record<string, { icon: typeof Bell; color: string; bg: string }> = {
   grade_posted: { icon: GraduationCap, color: 'text-blue-400', bg: 'bg-blue-500/20' },
@@ -21,17 +31,6 @@ const typeIcons: Record<string, { icon: typeof Bell; color: string; bg: string }
   certificate_ready: { icon: FileCheck, color: 'text-accent-400', bg: 'bg-accent-500/20' },
 };
 
-const mockNotifications = [
-  { id: '1', type: 'grade_posted', title: 'New Grade Posted', message: 'Mwamba received 92% in Robotics Week 5 Quiz.', read: false, createdAt: '2026-02-09T10:30:00Z', actionUrl: '/dashboard/parent' },
-  { id: '2', type: 'class_reminder', title: 'Class Tomorrow', message: 'Robotics Fundamentals class at 9:00 AM tomorrow.', read: false, createdAt: '2026-02-09T08:00:00Z', actionUrl: '/schedule' },
-  { id: '3', type: 'achievement_unlocked', title: 'Badge Earned! 🎉', message: 'Mwamba earned the "Code Warrior" badge!', read: false, createdAt: '2026-02-08T15:00:00Z', actionUrl: '/leaderboard' },
-  { id: '4', type: 'payment_due', title: 'Payment Reminder', message: 'March tuition of ZMW 2,500 for Python for Kids is due.', read: true, createdAt: '2026-02-07T09:00:00Z', actionUrl: '/payments' },
-  { id: '5', type: 'announcement', title: 'Holiday Schedule', message: 'Classes will be suspended from March 15-22 for school break.', read: true, createdAt: '2026-02-06T12:00:00Z' },
-  { id: '6', type: 'attendance_marked', title: 'Attendance Recorded', message: 'Natasha was marked present in Python for Kids class.', read: true, createdAt: '2026-02-05T10:00:00Z' },
-  { id: '7', type: 'certificate_ready', title: 'Certificate Ready! 🏆', message: 'Download Chilufya\'s certificate for Web Development Junior.', read: true, createdAt: '2026-02-04T14:00:00Z', actionUrl: '/certificates' },
-  { id: '8', type: 'message', title: 'Message from Mr. Banda', message: 'Regarding Mwamba\'s excellent progress in the robotics project...', read: true, createdAt: '2026-02-03T11:00:00Z' },
-];
-
 function timeAgo(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();
@@ -44,13 +43,17 @@ function timeAgo(dateStr: string): string {
 }
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState({
     inApp: true, email: true, sms: true, whatsapp: false,
     grades: true, attendance: true, payments: true, announcements: true, reminders: true,
   });
+
+  useEffect(() => {
+    // TODO: Fetch from /api/notifications when endpoint is ready
+  }, []);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
