@@ -77,6 +77,13 @@ export default function AdminPartnersPage() {
     const file = input?.files?.[0];
     if (!file) return null;
 
+    // Client-side validation
+    const maxSize = 4 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum: 4MB`);
+      return null;
+    }
+
     setUploading(true);
     try {
       const formData = new FormData();
@@ -85,6 +92,7 @@ export default function AdminPartnersPage() {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       const data = await res.json();
       if (res.ok) return data.url;
+      alert(data.error || 'Upload failed');
       return null;
     } catch {
       return null;

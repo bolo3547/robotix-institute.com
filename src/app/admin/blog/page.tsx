@@ -167,15 +167,25 @@ export default function AdminBlogPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Client-side validation
+    const maxSize = 4 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showMessage('error', `File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum: 4MB`);
+      return;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('type', 'blog');
 
     try {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setForm(prev => ({ ...prev, image: data.url || data.path }));
         showMessage('success', 'Image uploaded!');
+      } else {
+        showMessage('error', data.error || 'Upload failed');
       }
     } catch {
       showMessage('error', 'Failed to upload image');

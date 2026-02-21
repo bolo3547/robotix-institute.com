@@ -272,6 +272,13 @@ export default function ContentEditorPage() {
   };
 
   const handleImageUpload = async (sectionKey: string, fieldName: string, file: File) => {
+    // Client-side validation
+    const maxSize = 4 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum: 4MB`);
+      return;
+    }
+
     const uploadKey = `${sectionKey}.${fieldName}`;
     setUploadingField(uploadKey);
 
@@ -283,10 +290,10 @@ export default function ContentEditorPage() {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       const data = await res.json();
       
-      if (data.url) {
+      if (res.ok && data.url) {
         handleFieldChange(sectionKey, fieldName, data.url);
       } else {
-        setError('Failed to upload image');
+        setError(data.error || 'Failed to upload image');
       }
     } catch (err) {
       console.error('Upload failed:', err);

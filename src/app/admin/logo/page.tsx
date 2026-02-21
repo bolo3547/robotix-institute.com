@@ -57,6 +57,13 @@ export default function AdminLogoPage() {
       return;
     }
 
+    // Client-side validation
+    const maxSize = 4 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum: 4MB`);
+      return;
+    }
+
     setUploading(true);
     setError('');
     setSuccess(false);

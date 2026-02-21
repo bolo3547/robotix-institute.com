@@ -101,6 +101,19 @@ function FileUploader({
 
   const handleFile = async (file: File) => {
     setUploadError('');
+
+    // Client-side validation before sending to server
+    const maxSize = 4 * 1024 * 1024; // 4MB (Vercel limit)
+    if (file.size > maxSize) {
+      setUploadError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum: 4MB`);
+      return;
+    }
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/webp', 'image/gif', 'image/x-icon'];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError(`Invalid file type "${file.type}". Allowed: PNG, JPG, SVG, WebP, GIF, ICO`);
+      return;
+    }
+
     setIsUploading(true);
     try {
       const formData = new FormData();
